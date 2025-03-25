@@ -5,9 +5,9 @@ from wtforms.validators import DataRequired, Length, URL, Optional, EqualTo, Val
 from models import User
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=64)])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Login')
+    username = StringField('اسم المستخدم', validators=[DataRequired(), Length(min=3, max=64)])
+    password = PasswordField('كلمة المرور', validators=[DataRequired()])
+    submit = SubmitField('تسجيل الدخول')
 
 class VideoUploadForm(FlaskForm):
     title = StringField('عنوان الفيديو', validators=[DataRequired(), Length(min=3, max=100)])
@@ -21,20 +21,30 @@ class VideoUploadForm(FlaskForm):
     submit = SubmitField('رفع الفيديو')
 
 class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired(), Length(min=3, max=100)])
-    content = TextAreaField('Content', validators=[DataRequired(), Length(min=10, max=5000)])
-    submit = SubmitField('Create Post')
+    title = StringField('عنوان المنشور', validators=[DataRequired(), Length(min=3, max=100)])
+    content = TextAreaField('محتوى المنشور', validators=[DataRequired(), Length(min=10, max=5000)])
+    submit = SubmitField('إنشاء منشور')
 
 class CommentForm(FlaskForm):
-    comment_text = TextAreaField('Comment', validators=[DataRequired(), Length(min=1, max=500)])
-    video_id = HiddenField('Video ID', validators=[DataRequired()])
-    submit = SubmitField('Post Comment')
+    comment_text = TextAreaField('التعليق', validators=[DataRequired(), Length(min=1, max=500)])
+    video_id = HiddenField('معرف الفيديو', validators=[DataRequired()])
+    submit = SubmitField('نشر التعليق')
+
+class LectureCodeForm(FlaskForm):
+    code = StringField('كود المحاضرة', validators=[DataRequired(), Length(min=4, max=20)])
+    video_id = HiddenField('معرف الفيديو', validators=[DataRequired()])
+    submit = SubmitField('الدخول للمحاضرة')
+
+class GenerateCodeForm(FlaskForm):
+    video_id = HiddenField('معرف الفيديو', validators=[DataRequired()])
+    submit = SubmitField('توليد كود جديد')
     
 class RegistrationForm(FlaskForm):
     username = StringField('اسم المستخدم', validators=[DataRequired(), Length(min=3, max=64)])
+    full_name = StringField('الاسم الثلاثي', validators=[DataRequired(), Length(min=5, max=100)])
     password = PasswordField('كلمة المرور', validators=[DataRequired(), Length(min=6)])
     password2 = PasswordField('تأكيد كلمة المرور', validators=[DataRequired(), EqualTo('password')])
-    role = SelectField('نوع الحساب', choices=[('student', 'طالب'), ('admin', 'مسؤول')], validators=[DataRequired()])
+    role = SelectField('نوع الحساب', choices=[('student', 'طالب')], validators=[DataRequired()])
     submit = SubmitField('تسجيل')
     
     def validate_username(self, username):
