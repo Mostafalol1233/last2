@@ -1,12 +1,13 @@
 /* Custom styles to complement Bootstrap */
 .theme-toggle {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.2em;
 }
 
 .navbar-brand {
@@ -14,9 +15,40 @@
     align-items: center;
 }
 
+.navbar-brand span {
+    font-size: 1.3em;
+    color: var(--bs-body-color);
+}
+
 .navbar-brand small {
-    font-size: 0.75em;
-    opacity: 0.8;
+    font-size: 1em;
+    color: var(--bs-body-color);
+    opacity: 0.9;
+}
+
+/* Comment section sizing */
+.comment {
+    margin-bottom: 1.5rem;
+    padding: 1.2rem;
+    border-radius: 0.5rem;
+    font-size: 1.1em;
+    background-color: var(--bs-secondary-bg);
+    border: 1px solid var(--bs-border-color);
+}
+
+[data-bs-theme="light"] {
+    --bs-body-color: #000;
+    --bs-body-bg: #fff;
+}
+
+[data-bs-theme="dark"] {
+    --bs-body-color: #fff;
+    --bs-body-bg: #212529;
+}
+
+/* Ensure text is visible in both themes */
+.navbar-brand, .nav-link, .text-muted {
+    color: var(--bs-body-color) !important;
 }
 
 /* Right to Left (RTL) Support for Arabic Content */
