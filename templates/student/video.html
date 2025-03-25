@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ video.title }} - Educational Platform{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card bg-dark mb-4">
+            <div class="card-header">
+                <h4>{{ video.title }}</h4>
+            </div>
+            <div class="card-body">
+                <div class="video-container mb-4">
+                    <!-- Embed video based on URL -->
+                    {% if 'youtube.com' in video.url or 'youtu.be' in video.url %}
+                        {% if 'youtube.com/watch' in video.url %}
+                            {% set video_id = video.url.split('v=')[1].split('&')[0] %}
+                        {% elif 'youtu.be/' in video.url %}
+                            {% set video_id = video.url.split('youtu.be/')[1] %}
+                        {% endif %}
+                        <iframe src="https://www.youtube.com/embed/{{ video_id }}" allowfullscreen></iframe>
+                    {% elif 'vimeo.com' in video.url %}
+                        {% set video_id = video.url.split('vimeo.com/')[1] %}
+                        <iframe src="https://player.vimeo.com/video/{{ video_id }}" allowfullscreen></iframe>
+                    {% elif 'dailymotion.com' in video.url %}
+                        {% set video_id = video.url.split('video/')[1] %}
+                        <iframe src="https://www.dailymotion.com/embed/video/{{ video_id }}" allowfullscreen></iframe>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Unsupported video URL. <a href="{{ video.url }}" target="_blank">Open directly</a>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <h5><i class="fas fa-info-circle me-2"></i>Description</h5>
+                <p>{{ video.description or 'No description available.' }}</p>
+                
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <i class="fas fa-calendar-alt me-1"></i>Uploaded on {{ video.created_at.strftime('%B %d, %Y') }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card bg-dark mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-comments me-2"></i>Comments</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('student.view_video', video_id=video.id) }}">
+                    {{ form.hidden_tag() }}
+                    {{ form.video_id }}
+                    
+                    <div class="mb-3">
+                        {{ form.comment_text.label(class="form-label") }}
+                        {% if form.comment_text.errors %}
+                            {{ form.comment_text(class="form-control is-invalid", rows=3) }}
+                            <div class="invalid-feedback">
+                                {% for error in form.comment_text.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.comment_text(class="form-control", rows=3, placeholder="Share your thoughts about this video...") }}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+                
+                <hr>
+                
+                <div class="comments-section mt-4">
+                    <h6>{{ comments|length }} Comments</h6>
+                    
+                    {% if comments %}
+                        {% for comment in comments %}
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <strong>{{ comment.author.username }}</strong>
+                                    <small class="text-muted">{{ comment.created_at.strftime('%B %d, %Y') }}</small>
+                                </div>
+                                <div class="comment-body">
+                                    {{ comment.comment_text }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>No comments yet. Be the first to comment!
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card bg-dark mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-video me-2"></i>More Videos</h5>
+            </div>
+            <div class="card-body">
+                {% set other_videos = Video.query.filter(Video.id != video.id).order_by(Video.created_at.desc()).limit(5).all() %}
+                
+                {% if other_videos %}
+                    <div class="list-group list-group-flush">
+                        {% for other_video in other_videos %}
+                            <a href="{{ url_for('student.view_video', video_id=other_video.id) }}" class="list-group-item list-group-item-action bg-dark">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ other_video.title }}</h6>
+                                    <small>{{ other_video.created_at.strftime('%m/%d/%Y') }}</small>
+                                </div>
+                                {% if other_video.description %}
+                                    <small>{{ other_video.description[:50] }}{% if other_video.description|length > 50 %}...{% endif %}</small>
+                                {% endif %}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>No other videos available.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h5><i class="fas fa-lightbulb me-2"></i>Study Tips</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-dark">Take notes while watching</li>
+                    <li class="list-group-item bg-dark">Rewatch sections you don't understand</li>
+                    <li class="list-group-item bg-dark">Discuss with classmates in the comments</li>
+                    <li class="list-group-item bg-dark">Apply concepts to real-world scenarios</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
