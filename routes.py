@@ -316,7 +316,11 @@ def view_video(video_id):
         return redirect(url_for('student.view_video', video_id=video_id))
     
     comments = Comment.query.filter_by(video_id=video_id).order_by(Comment.created_at.desc()).all()
-    return render_template('student/video.html', video=video, form=form, comments=comments)
+    
+    # جلب الفيديوهات الأخرى للعرض في الشريط الجانبي
+    other_videos = Video.query.filter(Video.id != video_id).order_by(Video.created_at.desc()).limit(5).all()
+    
+    return render_template('student/video.html', video=video, form=form, comments=comments, other_videos=other_videos)
 
 @student_bp.route('/enter_lecture_code/<int:video_id>', methods=['GET', 'POST'])
 @login_required
