@@ -33,8 +33,6 @@
                 <h5><i class="fas fa-file-alt me-2"></i>Recent Posts</h5>
             </div>
             <div class="card-body">
-                {% set other_posts = Post.query.filter(Post.id != post.id).order_by(Post.created_at.desc()).limit(5).all() %}
-                
                 {% if other_posts %}
                     <div class="list-group list-group-flush">
                         {% for other_post in other_posts %}
@@ -60,8 +58,6 @@
                 <h5><i class="fas fa-video me-2"></i>Related Videos</h5>
             </div>
             <div class="card-body">
-                {% set recent_videos = Video.query.order_by(Video.created_at.desc()).limit(5).all() %}
-                
                 {% if recent_videos %}
                     <div class="list-group list-group-flush">
                         {% for video in recent_videos %}

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="ar" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Educational Platform{% endblock %}</title>
+    <title>{% block title %}منصة الأستاذ أحمد حلي التعليمية{% endblock %}</title>
     <!-- Bootstrap CSS (Replit-themed) -->
     <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
     <!-- Font Awesome -->
@@ -16,7 +16,8 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
                 <a class="navbar-brand" href="{{ url_for('main.index') }}">
-                    <i class="fas fa-graduation-cap me-2"></i>Educational Platform
+                    <img src="{{ url_for('static', filename='img/ahmed-helly-logo.png') }}" alt="شعار الأستاذ أحمد حلي" height="40" class="me-2">
+                    منصة الأستاذ أحمد حلي التعليمية
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -27,23 +28,23 @@
                             {% if current_user.role == 'admin' %}
                                 <li class="nav-item">
                                     <a class="nav-link {% if request.path.startswith('/admin/dashboard') %}active{% endif %}" href="{{ url_for('admin.dashboard') }}">
-                                        <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                                        <i class="fas fa-tachometer-alt me-1"></i>لوحة التحكم
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link {% if request.path.startswith('/admin/upload_video') %}active{% endif %}" href="{{ url_for('admin.upload_video') }}">
-                                        <i class="fas fa-video me-1"></i>Upload Video
+                                        <i class="fas fa-video me-1"></i>رفع فيديو
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link {% if request.path.startswith('/admin/create_post') %}active{% endif %}" href="{{ url_for('admin.create_post') }}">
-                                        <i class="fas fa-edit me-1"></i>Create Post
+                                        <i class="fas fa-edit me-1"></i>إنشاء منشور
                                     </a>
                                 </li>
                             {% else %}
                                 <li class="nav-item">
                                     <a class="nav-link {% if request.path.startswith('/student/dashboard') %}active{% endif %}" href="{{ url_for('student.dashboard') }}">
-                                        <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                                        <i class="fas fa-tachometer-alt me-1"></i>لوحة التحكم
                                     </a>
                                 </li>
                             {% endif %}
@@ -54,13 +55,13 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('main.logout') }}">
-                                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                                    <i class="fas fa-sign-out-alt me-1"></i>تسجيل الخروج
                                 </a>
                             </li>
                         {% else %}
                             <li class="nav-item">
                                 <a class="nav-link {% if request.path.startswith('/login') %}active{% endif %}" href="{{ url_for('main.login') }}">
-                                    <i class="fas fa-sign-in-alt me-1"></i>Login
+                                    <i class="fas fa-sign-in-alt me-1"></i>تسجيل الدخول
                                 </a>
                             </li>
                         {% endif %}
@@ -88,12 +89,19 @@
     <footer class="bg-dark text-white py-4 mt-5">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
-                    <h5><i class="fas fa-graduation-cap me-2"></i>Educational Platform</h5>
-                    <p>A platform for learning and sharing knowledge</p>
+                <div class="col-md-4">
+                    <img src="{{ url_for('static', filename='img/ahmed-helly-logo.png') }}" alt="شعار الأستاذ أحمد حلي" height="40" class="mb-3">
+                    <h5>منصة الأستاذ أحمد حلي التعليمية</h5>
+                    <p>منصة تعليمية متكاملة للتعلم وتبادل المعرفة</p>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <p>&copy; 2023 Educational Platform. All rights reserved.</p>
+                <div class="col-md-4 text-center d-flex flex-column align-items-center justify-content-center">
+                    <a href="#" class="text-white text-decoration-none">
+                        <img src="{{ url_for('static', filename='img/mustafa-logo.png') }}" alt="شعار مصطفى محمد" height="40" class="mb-2">
+                        <p>تطوير: مصطفى محمد</p>
+                    </a>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <p class="mt-4">&copy; 2025 منصة الأستاذ أحمد حلي. جميع الحقوق محفوظة.</p>
                 </div>
             </div>
         </div>

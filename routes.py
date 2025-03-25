@@ -364,4 +364,11 @@ def enter_lecture_code(video_id):
 @login_required
 def view_post(post_id):
     post = Post.query.get_or_404(post_id)
-    return render_template('student/post.html', post=post)
+    
+    # جلب المنشورات الأخرى للعرض في الشريط الجانبي
+    other_posts = Post.query.filter(Post.id != post_id).order_by(Post.created_at.desc()).limit(5).all()
+    
+    # جلب أحدث الفيديوهات للعرض في الشريط الجانبي
+    recent_videos = Video.query.order_by(Video.created_at.desc()).limit(5).all()
+    
+    return render_template('student/post.html', post=post, other_posts=other_posts, recent_videos=recent_videos)

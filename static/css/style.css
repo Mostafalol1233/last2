@@ -1,5 +1,36 @@
 /* Custom styles to complement Bootstrap */
 
+/* Right to Left (RTL) Support for Arabic Content */
+body {
+    direction: rtl;
+    text-align: right;
+}
+
+/* Adjust navigation for RTL */
+.navbar-nav {
+    padding-right: 0;
+}
+
+.me-1, .me-2, .me-3, .me-4 {
+    margin-left: 0.25rem !important;
+    margin-right: 0 !important;
+}
+
+.ms-auto {
+    margin-right: auto !important;
+    margin-left: 0 !important;
+}
+
+.text-md-end {
+    text-align: left !important;
+}
+
+/* Reset direction for specific elements */
+.navbar-brand img {
+    margin-left: 0.5rem;
+    margin-right: 0;
+}
+
 /* For video embedding */
 .video-container {
     position: relative;

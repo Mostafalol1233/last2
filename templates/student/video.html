@@ -112,7 +112,7 @@
                             <a href="{{ url_for('student.view_video', video_id=other_video.id) }}" class="list-group-item list-group-item-action bg-dark">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h6 class="mb-1">{{ other_video.title }}</h6>
-                                    <small>{{ other_video.created_at.strftime('%m/%d/%Y') }}</small>
+                                    <small>{{ other_video.created_at.strftime('%d/%m/%Y') }}</small>
                                 </div>
                                 {% if other_video.description %}
                                     <small>{{ other_video.description[:50] }}{% if other_video.description|length > 50 %}...{% endif %}</small>
@@ -122,7 +122,7 @@
                     </div>
                 {% else %}
                     <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>No other videos available.
+                        <i class="fas fa-info-circle me-2"></i>لا توجد فيديوهات أخرى متاحة.
                     </div>
                 {% endif %}
             </div>
