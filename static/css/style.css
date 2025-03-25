@@ -54,8 +54,8 @@ footer a, footer p {
 }
 
 /* Ensure text is visible */
-.navbar-brand, .nav-link {
-    color: var(--bs-navbar-color) !important;
+.navbar-brand, .nav-link, .nav-link span, .navbar-nav span {
+    color: #000 !important;
 }
 
 .card {
