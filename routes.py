@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse
 from app import db
 from models import User, Video, Comment, Post
-from forms import LoginForm, VideoUploadForm, PostForm, CommentForm
+from forms import LoginForm, VideoUploadForm, PostForm, CommentForm, RegistrationForm
 
 # Create blueprints
 main_bp = Blueprint('main', __name__)
@@ -44,11 +44,30 @@ def login():
     
     return render_template('login.html', form=form)
 
+@main_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        if current_user.role == 'admin':
+            return redirect(url_for('admin.dashboard'))
+        else:
+            return redirect(url_for('student.dashboard'))
+            
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, role=form.role.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('تم تسجيل الحساب بنجاح! يمكنك الآن تسجيل الدخول.', 'success')
+        return redirect(url_for('main.login'))
+    
+    return render_template('register.html', form=form)
+
 @main_bp.route('/logout')
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.', 'info')
+    flash('تم تسجيل الخروج بنجاح.', 'info')
     return redirect(url_for('main.login'))
 
 # Admin routes
