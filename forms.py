@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, HiddenField
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, HiddenField, BooleanField
 from wtforms.validators import DataRequired, Length, URL, Optional, EqualTo, ValidationError
 from models import User
 
@@ -9,10 +10,15 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class VideoUploadForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired(), Length(min=3, max=100)])
-    url = StringField('Video URL', validators=[DataRequired(), URL()])
-    description = TextAreaField('Description', validators=[Optional(), Length(max=2000)])
-    submit = SubmitField('Upload Video')
+    title = StringField('عنوان الفيديو', validators=[DataRequired(), Length(min=3, max=100)])
+    url = StringField('رابط الفيديو', validators=[Optional(), URL()])
+    video_file = FileField('ملف الفيديو', validators=[
+        Optional(),
+        FileAllowed(['mp4', 'avi', 'mov', 'mkv'], 'المرجو رفع ملفات فيديو فقط')
+    ])
+    description = TextAreaField('الوصف', validators=[Optional(), Length(max=2000)])
+    requires_code = BooleanField('يتطلب كود للمشاهدة', default=True)
+    submit = SubmitField('رفع الفيديو')
 
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(min=3, max=100)])

@@ -32,7 +32,7 @@ db.init_app(app)
 # Setup Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'main.login'
 login_manager.login_message_category = 'info'
 
 # Import models and routes after initialization to avoid circular imports
