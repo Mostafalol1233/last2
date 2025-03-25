@@ -1,4 +1,23 @@
 /* Custom styles to complement Bootstrap */
+.theme-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand small {
+    font-size: 0.75em;
+    opacity: 0.8;
+}
 
 /* Right to Left (RTL) Support for Arabic Content */
 body {
