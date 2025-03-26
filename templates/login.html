@@ -7,10 +7,10 @@
     <h2 class="text-center mb-4">
         <i class="fas fa-sign-in-alt me-2"></i>Login
     </h2>
-    
+
     <form method="POST" action="{{ url_for('main.login') }}">
         {{ form.hidden_tag() }}
-        
+
         <div class="mb-3">
             {{ form.username.label(class="form-label") }}
             {% if form.username.errors %}
@@ -21,10 +21,10 @@
                     {% endfor %}
                 </div>
             {% else %}
-                {{ form.username(class="form-control", placeholder="Enter your username") }}
+                {{ form.username(class="form-control", placeholder="Enter your username", id="username") }}
             {% endif %}
         </div>
-        
+
         <div class="mb-3">
             {{ form.password.label(class="form-label") }}
             {% if form.password.errors %}
@@ -35,19 +35,36 @@
                     {% endfor %}
                 </div>
             {% else %}
-                {{ form.password(class="form-control", placeholder="Enter your password") }}
+                {{ form.password(class="form-control", placeholder="Enter your password", id="password") }}
             {% endif %}
         </div>
-        
+
         <div class="d-grid gap-2">
             {{ form.submit(class="btn btn-primary") }}
         </div>
     </form>
-    
+
     <div class="mt-4 text-center">
         <p class="mb-0">
             <small class="text-muted">ليس لديك حساب؟ <a href="{{ url_for('main.register') }}">تسجيل حساب جديد</a></small>
         </p>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get('username');
+
+    if (username) {
+        const usernameField = document.querySelector('#username');
+        if (usernameField) {
+            usernameField.value = username;
+            const passwordField = document.querySelector('#password');
+            if (passwordField) {
+                passwordField.focus();
+            }
+        }
+    }
+});
+</script>
 {% endblock %}

@@ -95,7 +95,7 @@ def register():
             db.session.add(user)
             db.session.commit()
             flash('تم تسجيل الحساب بنجاح! يمكنك الآن تسجيل الدخول.', 'success')
-            return redirect(url_for('main.login'))
+            return redirect(url_for('main.login', username=form.username.data))
         except Exception as e:
             db.session.rollback()
             flash('حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.', 'danger')
