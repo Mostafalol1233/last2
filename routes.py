@@ -394,4 +394,11 @@ def users_list():
     if not current_user.is_admin():
         abort(403)
     users = User.query.all()
+    print("\nقائمة المستخدمين:")
+    print("================")
+    for user in users:
+        print(f"اسم المستخدم: {user.username}")
+        print(f"الاسم الكامل: {user.full_name}")
+        print(f"نوع المستخدم: {'مشرف' if user.role == 'admin' else 'طالب'}")
+        print("----------------")
     return render_template('admin/users_list.html', users=users)
