@@ -30,6 +30,14 @@ def create_default_users():
             student.set_password('student12345')
             db.session.add(student)
             print("Student user created")
+
+        # إضافة حساب الأمن
+        security = User.query.filter_by(username='security').first()
+        if not security:
+            security = User(username='security', role='admin', full_name='مسؤول الأمن')
+            security.set_password('Security@123')
+            db.session.add(security)
+            print("Security admin user created")
         
         db.session.commit()
         print("Users updated successfully!")
