@@ -32,13 +32,32 @@
                     {% endif %}
                 </div>
                 
-                <h5><i class="fas fa-info-circle me-2"></i>Description</h5>
-                <p>{{ video.description or 'No description available.' }}</p>
+                <h5><i class="fas fa-info-circle me-2"></i>الوصف</h5>
+                <p>{{ video.description or 'لا يوجد وصف متاح.' }}</p>
                 
-                <div class="mt-3">
+                <div class="mt-3 d-flex justify-content-between align-items-center">
                     <small class="text-muted">
-                        <i class="fas fa-calendar-alt me-1"></i>Uploaded on {{ video.created_at.strftime('%B %d, %Y') }}
+                        <i class="fas fa-calendar-alt me-1"></i>تم الرفع في {{ video.created_at.strftime('%Y-%m-%d') }}
                     </small>
+                    
+                    <!-- زر الإعجاب -->
+                    <div>
+                        {% set like_count = video.likes.count() %}
+                        {% set user_liked = current_user.liked_videos.filter_by(video_id=video.id).first() is not none %}
+                        
+                        <form method="POST" action="{{ url_for('student.like_video', video_id=video.id) }}" class="d-inline">
+                            <button type="submit" class="btn {% if user_liked %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                                <i class="fas fa-heart me-1"></i>
+                                {% if user_liked %}إلغاء الإعجاب{% else %}أعجبني{% endif %}
+                                <span class="badge bg-light text-dark ms-1">{{ like_count }}</span>
+                            </button>
+                        </form>
+                        
+                        <!-- زر حفظ ملاحظة عن الفيديو -->
+                        <a href="{{ url_for('student.view_notes') }}" class="btn btn-outline-info ms-2">
+                            <i class="fas fa-sticky-note me-1"></i>إضافة ملاحظة
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
