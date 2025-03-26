@@ -1,19 +1,12 @@
+
 services:
   - type: web
-    name: mr-ahmed-helly
+    name: educational-platform
     env: python
-    buildCommand: pip install email-validator flask flask-login flask-sqlalchemy flask-wtf gunicorn psycopg2-binary sqlalchemy werkzeug wtforms
-    startCommand: gunicorn --bind 0.0.0.0:$PORT --reuse-port main:app
-    autoDeploy: true
-    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app
     envVars:
-      - key: DATABASE_URL
-        sync: false
       - key: FLASK_SECRET_KEY
         generateValue: true
-  
-databases:
-  - name: mr-ahmed-helly-db
-    plan: free
-    databaseName: mrahmedhelly
-    user: mrahmedhelly
+      - key: DATABASE_URL
+        value: sqlite:///instance/app.db
