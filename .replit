@@ -5,7 +5,8 @@ channel = "stable-24_05"
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["sh", "-c", "python main.py"]
+run = ["sh", "-c", "gunicorn main:app"]
+build = ["sh", "-c", "pip install -r requirements.txt"]
 
 [workflows]
 runButton = "تشغيل التطبيق"
