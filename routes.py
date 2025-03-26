@@ -568,8 +568,22 @@ def ai_chat():
     if form.validate_on_submit():
         message = form.message.data
         
-        # هنا يمكن استبدال هذا بدمج مع واجهة برمجة للذكاء الاصطناعي
-        response = f"شكراً لسؤالك: '{message}'. هذه ميزة الدردشة الذكية التي ستتيح للمستخدمين طرح الأسئلة والحصول على إجابات."
+        try:
+            # استخدام OpenAI API للحصول على إجابة
+            chat_response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "أنت مساعد تعليمي متخصص في مساعدة الطلاب. قدم إجابات موجزة ومفيدة باللغة العربية."},
+                    {"role": "user", "content": message}
+                ],
+                max_tokens=300,
+                temperature=0.7
+            )
+            response = chat_response.choices[0].message.content
+        except Exception as e:
+            # في حالة حدوث خطأ مع API
+            print(f"خطأ في OpenAI API: {str(e)}")
+            response = "عذراً، حدث خطأ أثناء معالجة سؤالك. يرجى المحاولة مرة أخرى لاحقاً."
         
         # حفظ المحادثة في قاعدة البيانات
         chat_message = AIChatMessage(
