@@ -64,7 +64,7 @@
         
         <div class="card bg-dark mb-4">
             <div class="card-header">
-                <h5><i class="fas fa-comments me-2"></i>Comments</h5>
+                <h5><i class="fas fa-comments me-2"></i>التعليقات</h5>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ url_for('student.view_video', video_id=video.id) }}">
@@ -81,7 +81,7 @@
                                 {% endfor %}
                             </div>
                         {% else %}
-                            {{ form.comment_text(class="form-control", rows=3, placeholder="Share your thoughts about this video...") }}
+                            {{ form.comment_text(class="form-control", rows=3, placeholder="شارك رأيك حول هذا الفيديو...") }}
                         {% endif %}
                     </div>
                     
@@ -93,14 +93,14 @@
                 <hr>
                 
                 <div class="comments-section mt-4">
-                    <h6>{{ comments|length }} Comments</h6>
+                    <h6>{{ comments|length }} تعليقات</h6>
                     
                     {% if comments %}
                         {% for comment in comments %}
                             <div class="comment">
                                 <div class="comment-header">
                                     <strong>{{ comment.author.username }}</strong>
-                                    <small class="text-muted">{{ comment.created_at.strftime('%B %d, %Y') }}</small>
+                                    <small class="text-muted">{{ comment.created_at.strftime('%Y-%m-%d') }}</small>
                                 </div>
                                 <div class="comment-body">
                                     {{ comment.comment_text }}
@@ -109,7 +109,7 @@
                         {% endfor %}
                     {% else %}
                         <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>No comments yet. Be the first to comment!
+                            <i class="fas fa-info-circle me-2"></i>لا توجد تعليقات حتى الآن. كن أول من يعلق!
                         </div>
                     {% endif %}
                 </div>
@@ -120,7 +120,7 @@
     <div class="col-lg-4">
         <div class="card bg-dark mb-4">
             <div class="card-header">
-                <h5><i class="fas fa-video me-2"></i>More Videos</h5>
+                <h5><i class="fas fa-video me-2"></i>فيديوهات أخرى</h5>
             </div>
             <div class="card-body">
                 <!-- الفيديوهات الأخرى تأتي من ملف routes.py -->
@@ -149,14 +149,14 @@
         
         <div class="card bg-dark">
             <div class="card-header">
-                <h5><i class="fas fa-lightbulb me-2"></i>Study Tips</h5>
+                <h5><i class="fas fa-lightbulb me-2"></i>نصائح للدراسة</h5>
             </div>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item bg-dark">Take notes while watching</li>
-                    <li class="list-group-item bg-dark">Rewatch sections you don't understand</li>
-                    <li class="list-group-item bg-dark">Discuss with classmates in the comments</li>
-                    <li class="list-group-item bg-dark">Apply concepts to real-world scenarios</li>
+                    <li class="list-group-item bg-dark">دوّن ملاحظات أثناء المشاهدة</li>
+                    <li class="list-group-item bg-dark">أعد مشاهدة الأجزاء التي لم تفهمها</li>
+                    <li class="list-group-item bg-dark">ناقش مع زملائك في التعليقات</li>
+                    <li class="list-group-item bg-dark">طبق المفاهيم في مواقف حياتية واقعية</li>
                 </ul>
             </div>
         </div>
