@@ -20,6 +20,13 @@ class VideoUploadForm(FlaskForm):
     requires_code = BooleanField('يتطلب كود للمشاهدة', default=True)
     submit = SubmitField('رفع الفيديو')
 
+class VideoEditForm(FlaskForm):
+    title = StringField('عنوان الفيديو', validators=[DataRequired(), Length(min=3, max=100)])
+    url = StringField('رابط الفيديو', validators=[Optional(), URL()])
+    description = TextAreaField('الوصف', validators=[Optional(), Length(max=2000)])
+    requires_code = BooleanField('يتطلب كود للمشاهدة')
+    submit = SubmitField('تحديث الفيديو')
+
 class PostForm(FlaskForm):
     title = StringField('عنوان المنشور', validators=[DataRequired(), Length(min=3, max=100)])
     content = TextAreaField('محتوى المنشور', validators=[DataRequired(), Length(min=10, max=5000)])

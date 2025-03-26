@@ -2,6 +2,7 @@ import logging
 import os
 import secrets
 import string
+import openai
 from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
 from flask_login import login_user, logout_user, login_required, current_user
@@ -10,9 +11,12 @@ from werkzeug.utils import secure_filename
 from app import db
 from models import User, Video, Comment, Post, VideoView, LectureCode, VideoLike, StudentNote, AIChatMessage
 from forms import (
-    LoginForm, VideoUploadForm, PostForm, CommentForm, RegistrationForm,
+    LoginForm, VideoUploadForm, VideoEditForm, PostForm, CommentForm, RegistrationForm,
     LectureCodeForm, GenerateCodeForm, StudentNoteForm, AIChatForm
 )
+
+# إعداد OpenAI API
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # Create blueprints
 main_bp = Blueprint('main', __name__)
@@ -280,6 +284,56 @@ def view_stats(video_id):
     viewers = User.query.join(VideoView, User.id == VideoView.user_id).filter(VideoView.video_id == video_id).all()
     
     return render_template('admin/video_stats.html', video=video, views=views, viewers=viewers)
+
+@admin_bp.route('/edit_video/<int:video_id>', methods=['GET', 'POST'])
+@login_required
+def edit_video(video_id):
+    if not current_user.is_admin():
+        abort(403)
+        
+    video = Video.query.get_or_404(video_id)
+    form = VideoEditForm()
+    
+    if request.method == 'GET':
+        form.title.data = video.title
+        form.url.data = video.url
+        form.description.data = video.description
+        form.requires_code.data = video.requires_code
+    
+    if form.validate_on_submit():
+        # تحديث بيانات الفيديو
+        video.title = form.title.data
+        video.url = form.url.data
+        video.description = form.description.data
+        
+        # التحقق من تغيير خاصية "يتطلب كود"
+        if not video.requires_code and form.requires_code.data:
+            # تغيير من عام إلى خاص - إنشاء كود جديد
+            video.requires_code = True
+            code = generate_random_code()
+            lecture_code = LectureCode(
+                video_id=video.id,
+                code=code,
+                is_active=True
+            )
+            db.session.add(lecture_code)
+            db.session.commit()
+            flash(f'تم تحديث الفيديو وتعيينه كمحاضرة خاصة. كود الوصول الجديد: {code}', 'success')
+        elif video.requires_code and not form.requires_code.data:
+            # تغيير من خاص إلى عام - تعطيل الأكواد الحالية
+            video.requires_code = False
+            LectureCode.query.filter_by(video_id=video.id, is_active=True).update({'is_active': False})
+            db.session.commit()
+            flash('تم تحديث الفيديو وتعيينه كمحاضرة عامة (متاح للجميع بدون كود).', 'success')
+        else:
+            # تحديث عادي
+            video.requires_code = form.requires_code.data
+            db.session.commit()
+            flash('تم تحديث بيانات الفيديو بنجاح!', 'success')
+        
+        return redirect(url_for('admin.dashboard'))
+    
+    return render_template('admin/edit_video.html', form=form, video=video)
 
 # Student routes
 @student_bp.route('/dashboard')
