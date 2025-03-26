@@ -86,6 +86,12 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         try:
+            # Check if username already exists
+            existing_user = User.query.filter_by(username=form.username.data).first()
+            if existing_user:
+                flash('اسم المستخدم موجود بالفعل. برجاء اختيار اسم آخر.', 'danger')
+                return render_template('register.html', form=form)
+                
             user = User(
                 username=form.username.data,
                 role='student',
@@ -94,11 +100,16 @@ def register():
             user.set_password(form.password.data)
             db.session.add(user)
             db.session.commit()
-            flash('تم تسجيل الحساب بنجاح! يمكنك الآن تسجيل الدخول.', 'success')
-            return redirect(url_for('main.login', username=form.username.data))
+            
+            # Store credentials in session for auto-fill
+            flash('تم تسجيل الحساب بنجاح! يمكنك الآن تسجيل الدخول باستخدام بياناتك.', 'success')
+            return redirect(url_for('main.login', 
+                username=form.username.data,
+                password=form.password.data))
+                
         except Exception as e:
             db.session.rollback()
-            flash('حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.', 'danger')
+            flash('حدث خطأ أثناء التسجيل. برجاء التأكد من البيانات وإعادة المحاولة.', 'danger')
             print(f"Registration error: {str(e)}")
     
     return render_template('register.html', form=form)

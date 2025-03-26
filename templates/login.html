@@ -54,14 +54,22 @@
 document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const username = urlParams.get('username');
+    const password = urlParams.get('password');
 
     if (username) {
         const usernameField = document.querySelector('#username');
         if (usernameField) {
             usernameField.value = username;
-            const passwordField = document.querySelector('#password');
-            if (passwordField) {
-                passwordField.focus();
+        }
+    }
+    
+    if (password) {
+        const passwordField = document.querySelector('#password');
+        if (passwordField) {
+            passwordField.value = password;
+            const submitBtn = document.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.focus();
             }
         }
     }
