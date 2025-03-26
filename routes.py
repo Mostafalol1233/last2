@@ -388,3 +388,10 @@ def view_post(post_id):
     recent_videos = Video.query.order_by(Video.created_at.desc()).limit(5).all()
     
     return render_template('student/post.html', post=post, other_posts=other_posts, recent_videos=recent_videos)
+@admin_bp.route('/users_list')
+@login_required
+def users_list():
+    if not current_user.is_admin():
+        abort(403)
+    users = User.query.all()
+    return render_template('admin/users_list.html', users=users)

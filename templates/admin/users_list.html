@@ -1,0 +1,30 @@
+
+{% extends 'base.html' %}
+
+{% block title %}قائمة المستخدمين{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">قائمة المستخدمين</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>اسم المستخدم</th>
+                    <th>الاسم الكامل</th>
+                    <th>نوع المستخدم</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.full_name }}</td>
+                    <td>{{ "مشرف" if user.role == 'admin' else "طالب" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
