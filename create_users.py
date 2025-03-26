@@ -19,7 +19,7 @@ def create_default_users():
         admin2 = User.query.filter_by(username='admin2').first()
         if not admin2:
             admin2 = User(username='admin2', role='admin', full_name='مسؤول النظام 2')
-            admin2.set_password('Admin123@#')
+            admin2.set_password('Ahmedhelly')
             db.session.add(admin2)
             print("Second admin user created")
         
