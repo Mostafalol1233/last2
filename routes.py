@@ -359,21 +359,22 @@ def enter_lecture_code(video_id):
                 code=code, 
                 is_active=True
             ).first()
-        
-        if lecture_code:
-            # الكود صحيح، تسجيل المشاهدة
-            view = VideoView(
-                video_id=video_id,
-                user_id=current_user.id
-            )
-            db.session.add(view)
-            db.session.commit()
-            flash('تم التحقق من الكود بنجاح!', 'success')
-            return redirect(url_for('student.view_video', video_id=video_id))
-        else:
-            flash('الكود غير صحيح أو غير نشط. يرجى المحاولة مرة أخرى.', 'danger')
+            
+            if lecture_code:
+                # الكود صحيح، تسجيل المشاهدة
+                view = VideoView(
+                    video_id=video_id,
+                    user_id=current_user.id
+                )
+                db.session.add(view)
+                db.session.commit()
+                flash('تم التحقق من الكود بنجاح! يمكنك مشاهدة المحاضرة الآن.', 'success')
+                return redirect(url_for('student.view_video', video_id=video_id))
+            else:
+                # الكود غير صحيح
+                flash('عذراً، الكود غير صحيح أو غير نشط. الرجاء التحقق والمحاولة مرة أخرى.', 'danger')
     
-    return render_template('student/enter_lecture_code.html', form=form, video=video)
+    return render_template('student/enter_lecture_code.html', video=video, form=form)
 
 @student_bp.route('/post/<int:post_id>')
 @login_required
