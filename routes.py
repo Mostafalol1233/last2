@@ -84,18 +84,22 @@ def register():
             return redirect(url_for('student.dashboard'))
             
     form = RegistrationForm()
-    # تحديد الدور للمستخدم كطالب فقط، لا يمكن إنشاء حسابات بصلاحيات مسؤول عن طريق التسجيل
     if form.validate_on_submit():
-        user = User(
-            username=form.username.data, 
-            role='student',  # دائمًا نجعل المستخدم المسجل طالبًا وليس مسؤولًا
-            full_name=form.full_name.data
-        )
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        flash('تم تسجيل الحساب بنجاح! يمكنك الآن تسجيل الدخول.', 'success')
-        return redirect(url_for('main.login'))
+        try:
+            user = User(
+                username=form.username.data,
+                role='student',
+                full_name=form.full_name.data
+            )
+            user.set_password(form.password.data)
+            db.session.add(user)
+            db.session.commit()
+            flash('تم تسجيل الحساب بنجاح! يمكنك الآن تسجيل الدخول.', 'success')
+            return redirect(url_for('main.login'))
+        except Exception as e:
+            db.session.rollback()
+            flash('حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.', 'danger')
+            print(f"Registration error: {str(e)}")
     
     return render_template('register.html', form=form)
 
