@@ -19,7 +19,21 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SESSION_SECRET", "default_secret_key_for_development")
 
 # Configure the database
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
+# Check if we're in production (InfinityFree) or development mode
+if os.environ.get("INFINITYFREE") == "true":
+    # InfinityFree MySQL configuration
+    db_user = os.environ.get("INFINITYFREE_DB_USER")
+    db_password = os.environ.get("INFINITYFREE_DB_PASSWORD")
+    db_name = os.environ.get("INFINITYFREE_DB_NAME")
+    db_host = os.environ.get("INFINITYFREE_DB_HOST", "sql312.infinityfree.com")
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}"
+elif os.environ.get("DATABASE_URL") and os.environ.get("DATABASE_URL") != "DATABASE_URL":
+    # Use existing PostgreSQL database if available (and not a literal "DATABASE_URL")
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+else:
+    # Fallback to SQLite for local development
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
+
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
