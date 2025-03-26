@@ -569,8 +569,9 @@ def ai_chat():
         message = form.message.data
         
         try:
-            # استخدام OpenAI API للحصول على إجابة
-            chat_response = openai.ChatCompletion.create(
+            # استخدام OpenAI API للحصول على إجابة باستخدام واجهة البرمجة الجديدة
+            client = openai.OpenAI()
+            chat_response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "أنت مساعد تعليمي متخصص في مساعدة الطلاب. قدم إجابات موجزة ومفيدة باللغة العربية."},
