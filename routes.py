@@ -569,9 +569,8 @@ def ai_chat():
         message = form.message.data
         
         try:
-            # استخدام OpenAI API للحصول على إجابة باستخدام واجهة البرمجة الجديدة
-            client = openai.OpenAI()
-            chat_response = client.chat.completions.create(
+            # استخدام OpenAI API للحصول على إجابة (الإصدار 0.28)
+            chat_response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "أنت مساعد تعليمي متخصص في مساعدة الطلاب. قدم إجابات موجزة ومفيدة باللغة العربية."},
@@ -580,7 +579,7 @@ def ai_chat():
                 max_tokens=300,
                 temperature=0.7
             )
-            response = chat_response.choices[0].message.content
+            response = chat_response.choices[0].message['content']
         except Exception as e:
             # في حالة حدوث خطأ مع API
             print(f"خطأ في OpenAI API: {str(e)}")
