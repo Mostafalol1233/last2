@@ -38,6 +38,15 @@ class LectureCodeForm(FlaskForm):
 class GenerateCodeForm(FlaskForm):
     video_id = HiddenField('معرف الفيديو', validators=[DataRequired()])
     submit = SubmitField('توليد كود جديد')
+
+class StudentNoteForm(FlaskForm):
+    title = StringField('عنوان الملاحظة', validators=[DataRequired(), Length(min=3, max=100)])
+    content = TextAreaField('محتوى الملاحظة', validators=[DataRequired(), Length(min=10, max=2000)])
+    submit = SubmitField('حفظ الملاحظة')
+
+class AIChatForm(FlaskForm):
+    message = TextAreaField('سؤالك', validators=[DataRequired(), Length(min=3, max=1000)])
+    submit = SubmitField('إرسال')
     
 class RegistrationForm(FlaskForm):
     username = StringField('اسم المستخدم', validators=[

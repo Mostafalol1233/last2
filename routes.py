@@ -8,10 +8,10 @@ from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse
 from werkzeug.utils import secure_filename
 from app import db
-from models import User, Video, Comment, Post, VideoView, LectureCode
+from models import User, Video, Comment, Post, VideoView, LectureCode, VideoLike, StudentNote, AIChatMessage
 from forms import (
     LoginForm, VideoUploadForm, PostForm, CommentForm, RegistrationForm,
-    LectureCodeForm, GenerateCodeForm
+    LectureCodeForm, GenerateCodeForm, StudentNoteForm, AIChatForm
 )
 
 # Create blueprints
@@ -402,3 +402,134 @@ def users_list():
         print(f"نوع المستخدم: {'مشرف' if user.role == 'admin' else 'طالب'}")
         print("----------------")
     return render_template('admin/users_list.html', users=users)
+
+# صفحة أكواد المحاضرات للمشرف
+@admin_bp.route('/lecture_codes')
+@login_required
+def lecture_codes():
+    if not current_user.is_admin():
+        abort(403)
+    
+    # جلب كل الفيديوهات والأكواد
+    videos = Video.query.filter_by(requires_code=True).all()
+    active_codes = LectureCode.query.filter_by(is_active=True).order_by(LectureCode.created_at.desc()).all()
+    inactive_codes = LectureCode.query.filter_by(is_active=False).order_by(LectureCode.created_at.desc()).all()
+    
+    return render_template(
+        'admin/lecture_codes.html', 
+        videos=videos, 
+        active_codes=active_codes, 
+        inactive_codes=inactive_codes
+    )
+
+# إضافة ميزة اللايك للفيديوهات
+@student_bp.route('/like_video/<int:video_id>', methods=['POST'])
+@login_required
+def like_video(video_id):
+    video = Video.query.get_or_404(video_id)
+    
+    # التحقق مما إذا كان المستخدم قد أعجب بالفيديو من قبل
+    existing_like = VideoLike.query.filter_by(video_id=video_id, user_id=current_user.id).first()
+    
+    if existing_like:
+        # إلغاء الإعجاب
+        db.session.delete(existing_like)
+        db.session.commit()
+        flash('تم إلغاء الإعجاب بنجاح', 'info')
+    else:
+        # إضافة إعجاب جديد
+        like = VideoLike(video_id=video_id, user_id=current_user.id)
+        db.session.add(like)
+        db.session.commit()
+        flash('تم تسجيل إعجابك بنجاح', 'success')
+    
+    return redirect(url_for('student.view_video', video_id=video_id))
+
+# ميزة الملاحظات الشخصية
+@student_bp.route('/notes', methods=['GET'])
+@login_required
+def view_notes():
+    notes = StudentNote.query.filter_by(user_id=current_user.id).order_by(StudentNote.updated_at.desc()).all()
+    form = StudentNoteForm()
+    return render_template('student/notes.html', notes=notes, form=form)
+
+@student_bp.route('/notes/add', methods=['POST'])
+@login_required
+def add_note():
+    form = StudentNoteForm()
+    if form.validate_on_submit():
+        note = StudentNote(
+            user_id=current_user.id,
+            title=form.title.data,
+            content=form.content.data
+        )
+        db.session.add(note)
+        db.session.commit()
+        flash('تم إضافة الملاحظة بنجاح', 'success')
+    return redirect(url_for('student.view_notes'))
+
+@student_bp.route('/notes/edit/<int:note_id>', methods=['GET', 'POST'])
+@login_required
+def edit_note(note_id):
+    note = StudentNote.query.get_or_404(note_id)
+    
+    # التأكد من أن المستخدم هو صاحب الملاحظة
+    if note.user_id != current_user.id:
+        abort(403)
+    
+    form = StudentNoteForm()
+    
+    if form.validate_on_submit():
+        note.title = form.title.data
+        note.content = form.content.data
+        note.updated_at = datetime.utcnow()
+        db.session.commit()
+        flash('تم تحديث الملاحظة بنجاح', 'success')
+        return redirect(url_for('student.view_notes'))
+    
+    form.title.data = note.title
+    form.content.data = note.content
+    return render_template('student/edit_note.html', form=form, note=note)
+
+@student_bp.route('/notes/delete/<int:note_id>', methods=['POST'])
+@login_required
+def delete_note(note_id):
+    note = StudentNote.query.get_or_404(note_id)
+    
+    # التأكد من أن المستخدم هو صاحب الملاحظة
+    if note.user_id != current_user.id:
+        abort(403)
+    
+    db.session.delete(note)
+    db.session.commit()
+    flash('تم حذف الملاحظة بنجاح', 'success')
+    return redirect(url_for('student.view_notes'))
+
+# ميزة الدردشة الذكية
+@student_bp.route('/ai_chat', methods=['GET', 'POST'])
+@login_required
+def ai_chat():
+    form = AIChatForm()
+    
+    if form.validate_on_submit():
+        message = form.message.data
+        
+        # هنا يمكن استبدال هذا بدمج مع واجهة برمجة للذكاء الاصطناعي
+        response = f"شكراً لسؤالك: '{message}'. هذه ميزة الدردشة الذكية التي ستتيح للمستخدمين طرح الأسئلة والحصول على إجابات."
+        
+        # حفظ المحادثة في قاعدة البيانات
+        chat_message = AIChatMessage(
+            user_id=current_user.id,
+            message=message,
+            response=response
+        )
+        db.session.add(chat_message)
+        db.session.commit()
+        
+        flash('تم إرسال سؤالك بنجاح', 'success')
+        
+    # جلب آخر 10 رسائل للمستخدم
+    messages = AIChatMessage.query.filter_by(user_id=current_user.id).order_by(AIChatMessage.created_at.desc()).limit(10).all()
+    messages.reverse()  # عرض الرسائل بترتيب تصاعدي
+    
+    return render_template('student/ai_chat.html', form=form, messages=messages)

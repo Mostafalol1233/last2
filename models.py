@@ -100,3 +100,55 @@ class LectureCode(db.Model):
     
     def __repr__(self):
         return f'<LectureCode {self.code} for Video {self.video_id}>'
+
+# إضافة نموذج الإعجابات (اللايك)
+class VideoLike(db.Model):
+    __tablename__ = 'video_likes'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    video_id = db.Column(db.Integer, db.ForeignKey('videos.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # العلاقات مع الجداول الأخرى
+    video = db.relationship('Video', backref=db.backref('likes', lazy='dynamic'))
+    user = db.relationship('User', backref=db.backref('liked_videos', lazy='dynamic'))
+    
+    # ضمان أن كل مستخدم يمكنه عمل لايك واحد فقط لكل فيديو
+    __table_args__ = (db.UniqueConstraint('video_id', 'user_id', name='_video_user_like_uc'),)
+    
+    def __repr__(self):
+        return f'<VideoLike by User {self.user_id} on Video {self.video_id}>'
+
+# إضافة نموذج الملاحظات الشخصية
+class StudentNote(db.Model):
+    __tablename__ = 'student_notes'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # العلاقة مع المستخدم
+    user = db.relationship('User', backref=db.backref('notes', lazy='dynamic'))
+    
+    def __repr__(self):
+        return f'<StudentNote {self.id} by User {self.user_id}: {self.title}>'
+
+# إضافة نموذج رسائل الدردشة الذكية
+class AIChatMessage(db.Model):
+    __tablename__ = 'ai_chat_messages'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    response = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # العلاقة مع المستخدم
+    user = db.relationship('User', backref=db.backref('ai_chat_messages', lazy='dynamic'))
+    
+    def __repr__(self):
+        return f'<AIChatMessage {self.id} by User {self.user_id}>'
