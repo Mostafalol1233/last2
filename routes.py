@@ -806,11 +806,23 @@ def view_notes():
     form = StudentNoteForm()
     return render_template('student/notes.html', notes=notes, form=form)
     
-# صفحة القوانين الرياضية
+# صفحة القوانين الرياضية العامة
 @student_bp.route('/formulas')
 @login_required
 def math_formulas():
     return render_template('student/formulas.html')
+    
+# صفحة قوانين الجبر للمرحلة الثانوية
+@student_bp.route('/algebra_formulas')
+@login_required
+def algebra_formulas():
+    return render_template('student/algebra_formulas.html')
+    
+# صفحة الآلة الحاسبة المتقدمة
+@student_bp.route('/calculator')
+@login_required
+def advanced_calculator():
+    return render_template('student/advanced_calculator.html')
 
 @student_bp.route('/notes/add', methods=['POST'])
 @login_required
