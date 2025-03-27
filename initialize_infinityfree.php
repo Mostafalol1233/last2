@@ -170,6 +170,65 @@ header('Content-Type: text/html; charset=utf-8');
                 echo '</div>';
                 
                 $conn->close();
+                // Make sure logs directory exists
+                if (!is_dir('logs')) {
+                    mkdir('logs', 0755, true);
+                    echo '<div class="success">تم إنشاء مجلد السجلات بنجاح!</div>';
+                }
+                
+                // Make sure uploads directory exists
+                $uploads_dir = 'static/uploads';
+                if (!is_dir($uploads_dir)) {
+                    mkdir($uploads_dir, 0755, true);
+                    echo '<div class="success">تم إنشاء مجلد الملفات المرفوعة بنجاح!</div>';
+                }
+                
+                // Check if sitemap.xml has proper domain
+                $site_domain = $_SERVER['HTTP_HOST'];
+                $sitemap_file = 'static/sitemap.xml';
+                if (file_exists($sitemap_file)) {
+                    $sitemap_content = file_get_contents($sitemap_file);
+                    
+                    // Update domain name in sitemap
+                    $pattern = '/https:\/\/your-domain\.com/';
+                    $replacement = 'https://' . $site_domain;
+                    
+                    if (preg_match($pattern, $sitemap_content)) {
+                        $sitemap_content = preg_replace($pattern, $replacement, $sitemap_content);
+                        file_put_contents($sitemap_file, $sitemap_content);
+                        echo '<div class="success">تم تحديث ملف sitemap.xml بعنوان النطاق الصحيح!</div>';
+                    }
+                }
+                
+                // Update robots.txt with the correct domain for sitemap
+                $robots_file = 'static/robots.txt';
+                if (file_exists($robots_file)) {
+                    $robots_content = file_get_contents($robots_file);
+                    
+                    // Update domain name in robots.txt
+                    $pattern = '/Sitemap: https:\/\/your-domain\.com/';
+                    $replacement = 'Sitemap: https://' . $site_domain;
+                    
+                    if (preg_match($pattern, $robots_content)) {
+                        $robots_content = preg_replace($pattern, $replacement, $robots_content);
+                        file_put_contents($robots_file, $robots_content);
+                        echo '<div class="success">تم تحديث ملف robots.txt بعنوان النطاق الصحيح!</div>';
+                    }
+                }
+                
+                // Create or check permission for ratelimit.txt if used in .htaccess
+                if (is_file('.htaccess')) {
+                    $htaccess_content = file_get_contents('.htaccess');
+                    if (strpos($htaccess_content, 'RewriteMap limiter') !== false) {
+                        $ratelimit_file = 'ratelimit.txt';
+                        if (!file_exists($ratelimit_file)) {
+                            file_put_contents($ratelimit_file, '');
+                            chmod($ratelimit_file, 0666); // Make writable
+                            echo '<div class="success">تم إنشاء ملف ratelimit.txt للحد من معدل الطلبات!</div>';
+                        }
+                    }
+                }
+                
                 $success = true;
                 
             } catch (Exception $e) {
@@ -183,8 +242,19 @@ header('Content-Type: text/html; charset=utf-8');
             echo '<p>تم تهيئة المنصة بنجاح. يمكنك الآن استخدام المنصة.</p>';
             echo '<p>بيانات تسجيل الدخول الافتراضية للمسؤول:</p>';
             echo '<p>اسم المستخدم: <strong>admin</strong><br>كلمة المرور: <strong>admin123</strong></p>';
-            echo '<p class="warning">ملاحظة مهمة: يرجى تغيير كلمة المرور الافتراضية بعد تسجيل الدخول لأول مرة!</p>';
-            echo '<a href="/" class="btn">الذهاب إلى الصفحة الرئيسية</a>';
+            echo '<p class="warning" style="background-color:#f8d7da;padding:10px;color:#721c24;border-radius:4px;">ملاحظة مهمة: يرجى تغيير كلمة المرور الافتراضية بعد تسجيل الدخول لأول مرة!</p>';
+            
+            echo '<div style="margin-top:20px;padding:15px;background:#fcf8e3;border-radius:4px;border-right:4px solid #f0ad4e;">';
+            echo '<h3 style="color:#8a6d3b;margin-top:0;">خطوات إضافية لتحسين الموقع</h3>';
+            echo '<ol style="padding-right:20px;line-height:1.8;">';
+            echo '<li><strong>تفعيل شهادة SSL:</strong> للحصول على اتصال آمن (https)، يرجى الذهاب إلى لوحة تحكم استضافة InfinityFree، واختيار "SSL/TLS" من القائمة، ثم تفعيل شهادة SSL المجانية لنطاقك. هذا سيساعد على حماية بيانات المستخدمين وتحسين ترتيب الموقع في محركات البحث.</li>';
+            echo '<li><strong>ضبط إعدادات النطاق:</strong> إذا كنت تستخدم نطاقاً خاصاً، تأكد من تكوين سجلات DNS بشكل صحيح وتوجيهها إلى خوادم InfinityFree.</li>';
+            echo '<li><strong>تخصيص الشعار:</strong> قم بتغيير الشعار والأيقونات في مجلد <code>static/img</code> لتعكس هوية مشروعك.</li>';
+            echo '<li><strong>إنشاء نسخة احتياطية:</strong> يُنصح بتنزيل نسخة احتياطية من قاعدة البيانات بانتظام من لوحة التحكم (phpMyAdmin) للحفاظ على البيانات.</li>';
+            echo '</ol>';
+            echo '</div>';
+            
+            echo '<a href="/" class="btn" style="margin-top:25px;display:block;text-align:center;">الذهاب إلى الصفحة الرئيسية</a>';
             echo '</div>';
         } else {
             // Setup form
@@ -228,7 +298,42 @@ header('Content-Type: text/html; charset=utf-8');
                     <div>
                         <label for="openai_key">مفتاح API الخاص بـ OpenAI (اختياري، لميزة الدردشة الذكية):</label>
                         <input type="text" id="openai_key" name="openai_key" style="width: 100%; padding: 8px; margin: 5px 0 15px;">
+                        <p style="font-size:0.9em;color:#6c757d;">
+                            <i>لتفعيل ميزة الدردشة الذكية، تحتاج إلى الحصول على مفتاح API من <a href="https://platform.openai.com/api-keys" target="_blank" style="color:#3498db;">موقع OpenAI</a>.</i>
+                        </p>
                     </div>
+                    
+                    <div style="margin-top:20px;">
+                        <label><strong>تكوين المسؤول:</strong></label>
+                        <p style="font-size:0.9em;color:#6c757d;margin-bottom:15px;">
+                            بعد الإعداد، سيتم إنشاء حساب مسؤول افتراضي بالمعلومات التالية. يمكنك تغيير هذه المعلومات لاحقاً من لوحة التحكم.
+                        </p>
+                        <table style="width:100%;border-collapse:collapse;margin-bottom:15px;">
+                            <tr style="background:#f8f9fa;">
+                                <td style="padding:8px;border:1px solid #dee2e6;">اسم المستخدم</td>
+                                <td style="padding:8px;border:1px solid #dee2e6;">admin</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px;border:1px solid #dee2e6;">كلمة المرور</td>
+                                <td style="padding:8px;border:1px solid #dee2e6;">admin123</td>
+                            </tr>
+                            <tr style="background:#f8f9fa;">
+                                <td style="padding:8px;border:1px solid #dee2e6;">الصلاحيات</td>
+                                <td style="padding:8px;border:1px solid #dee2e6;">مسؤول مع إمكانية الوصول الكامل</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <h2>معلومات متقدمة</h2>
+                    <p>معلومات مفيدة حول النظام والإعداد:</p>
+                    <ul style="padding-right:20px;line-height:1.5;">
+                        <li>يدعم النظام تحميل ملفات فيديو بحجم أقصى 10 ميجابايت في وضع الإنتاج.</li>
+                        <li>تأكد من تغيير كلمة المرور الافتراضية فور تسجيل الدخول الأول.</li>
+                        <li>لإنشاء نسخة احتياطية من قاعدة البيانات، استخدم phpMyAdmin من لوحة تحكم استضافة InfinityFree.</li>
+                        <li>لمشاكل الأداء، يمكنك تقليل حجم الصور المرفوعة واستخدام الفيديو عبر روابط YouTube بدلاً من التحميل المباشر.</li>
+                    </ul>
                 </div>
                 
                 <input type="submit" name="setup" value="بدء الإعداد" class="btn" style="width: 100%;">

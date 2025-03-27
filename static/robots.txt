@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /register
+Allow: /forgot_password
+
+Disallow: /admin/
+Disallow: /student/dashboard
+Disallow: /student/video/
+Disallow: /student/notes
+Disallow: /profile
+
+Sitemap: https://your-domain.com/static/sitemap.xml
