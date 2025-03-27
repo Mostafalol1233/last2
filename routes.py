@@ -50,6 +50,7 @@ def generate_random_code(length=8):
 def handle_simple_queries(message):
     """معالجة الاستعلامات البسيطة دون الحاجة إلى OpenAI API"""
     import re
+    import math
     
     # تبسيط النص وإزالة الزوائد
     message = message.strip().lower()
@@ -117,6 +118,217 @@ def handle_simple_queries(message):
         except:
             pass
     
+    # القوانين الرياضية (بالإنجليزية)
+    # نظرية فيثاغورس
+    pythagorean_keywords = ['فيثاغورس', 'نظرية فيثاغورس', 'pythagoras', 'pythagorean']
+    if any(keyword in message for keyword in pythagorean_keywords):
+        return """**Pythagorean Theorem**
+        
+The Pythagorean theorem states that in a right-angled triangle, the square of the length of the hypotenuse equals the sum of squares of the lengths of the other two sides.
+
+Formula: c² = a² + b²
+
+Where:
+- c is the length of the hypotenuse
+- a and b are the lengths of the other two sides
+
+Example:
+If a = 3 and b = 4, then c² = 3² + 4² = 9 + 16 = 25
+Therefore, c = 5"""
+
+    # مساحة المثلث
+    triangle_area_keywords = ['مساحة المثلث', 'triangle area', 'قانون مساحة المثلث']
+    if any(keyword in message for keyword in triangle_area_keywords):
+        return """**Triangle Area Formulas**
+
+1. Base and Height Method:
+   Area = (1/2) × base × height
+   
+2. Using Three Sides (Heron's Formula):
+   Area = √(s(s-a)(s-b)(s-c))
+   Where s = (a + b + c)/2 and a, b, c are the sides
+
+3. Using Two Sides and the Included Angle:
+   Area = (1/2) × a × b × sin(C)
+   Where C is the included angle"""
+
+    # مساحة ومحيط الدائرة
+    circle_keywords = ['مساحة الدائرة', 'محيط الدائرة', 'circle area', 'circle circumference']
+    if any(keyword in message for keyword in circle_keywords):
+        return """**Circle Formulas**
+
+Area = π × r²
+Circumference = 2π × r
+
+Where:
+- r is the radius of the circle
+- π (pi) is approximately 3.14159
+
+Example:
+For a circle with radius 5 units:
+- Area = π × 5² = 25π ≈ 78.54 square units
+- Circumference = 2π × 5 = 10π ≈ 31.42 units"""
+
+    # المعادلة التربيعية
+    quadratic_keywords = ['المعادلة التربيعية', 'quadratic equation', 'حل المعادلة التربيعية']
+    if any(keyword in message for keyword in quadratic_keywords):
+        return """**Quadratic Equation Formula**
+
+For a quadratic equation in the form: ax² + bx + c = 0
+
+The solutions (roots) are given by:
+x = (-b ± √(b² - 4ac)) / 2a
+
+Where:
+- a, b, and c are coefficients
+- The discriminant b² - 4ac determines the nature of the roots:
+  * If b² - 4ac > 0: Two real and distinct roots
+  * If b² - 4ac = 0: One real root (repeated)
+  * If b² - 4ac < 0: Two complex conjugate roots"""
+
+    # المسافة بين نقطتين
+    distance_keywords = ['المسافة بين نقطتين', 'distance formula', 'distance between points']
+    if any(keyword in message for keyword in distance_keywords):
+        return """**Distance Formula**
+
+The distance between two points (x₁, y₁) and (x₂, y₂) is:
+
+d = √[(x₂ - x₁)² + (y₂ - y₁)²]
+
+Example:
+For points (2, 3) and (5, 7):
+d = √[(5 - 2)² + (7 - 3)²]
+d = √[9 + 16]
+d = √25 = 5 units"""
+
+    # قوانين حساب المثلثات
+    trigonometry_keywords = ['حساب المثلثات', 'trigonometry', 'نسب مثلثية', 'trig', 'قوانين المثلثات']
+    if any(keyword in message for keyword in trigonometry_keywords):
+        return """**Basic Trigonometric Formulas**
+
+In a right triangle:
+- sin(θ) = opposite/hypotenuse
+- cos(θ) = adjacent/hypotenuse
+- tan(θ) = opposite/adjacent
+
+Pythagorean Identities:
+- sin²(θ) + cos²(θ) = 1
+- 1 + tan²(θ) = sec²(θ)
+- 1 + cot²(θ) = csc²(θ)
+
+Law of Sines:
+sin(A)/a = sin(B)/b = sin(C)/c
+
+Law of Cosines:
+c² = a² + b² - 2ab·cos(C)"""
+
+    # الاشتقاق
+    derivative_keywords = ['اشتقاق', 'derivative', 'calculus', 'تفاضل']
+    if any(keyword in message for keyword in derivative_keywords):
+        return """**Basic Derivatives**
+
+1. d/dx(xⁿ) = n·xⁿ⁻¹
+2. d/dx(sin x) = cos x
+3. d/dx(cos x) = -sin x
+4. d/dx(eˣ) = eˣ
+5. d/dx(ln x) = 1/x
+
+Chain Rule:
+If y = f(g(x)), then dy/dx = (df/dg)·(dg/dx)
+
+Product Rule:
+If y = f(x)·g(x), then dy/dx = f(x)·g'(x) + g(x)·f'(x)
+
+Quotient Rule:
+If y = f(x)/g(x), then dy/dx = [g(x)·f'(x) - f(x)·g'(x)]/[g(x)]²"""
+
+    # التكامل
+    integral_keywords = ['تكامل', 'integral', 'integration']
+    if any(keyword in message for keyword in integral_keywords):
+        return """**Basic Integrals**
+
+1. ∫ xⁿ dx = (x^(n+1))/(n+1) + C, where n ≠ -1
+2. ∫ 1/x dx = ln|x| + C
+3. ∫ eˣ dx = eˣ + C
+4. ∫ sin x dx = -cos x + C
+5. ∫ cos x dx = sin x + C
+
+Substitution Method:
+∫ f(g(x))·g'(x) dx = ∫ f(u) du, where u = g(x)
+
+Integration by Parts:
+∫ u dv = uv - ∫ v du"""
+
+    # المتواليات والمتسلسلات
+    sequence_keywords = ['متوالية', 'متسلسلة', 'sequence', 'series']
+    if any(keyword in message for keyword in sequence_keywords):
+        return """**Sequence and Series Formulas**
+
+Arithmetic Sequence:
+- nth term: aₙ = a₁ + (n - 1)d
+- Sum of n terms: Sₙ = (n/2)·(a₁ + aₙ) = (n/2)·[2a₁ + (n - 1)d]
+
+Geometric Sequence:
+- nth term: aₙ = a₁·rⁿ⁻¹
+- Sum of n terms: Sₙ = a₁·(1 - rⁿ)/(1 - r), for r ≠ 1
+- Sum of infinite terms: S∞ = a₁/(1 - r), for |r| < 1
+
+Binomial Theorem:
+(a + b)ⁿ = ∑(k=0 to n) (n choose k)·aⁿ⁻ᵏ·bᵏ"""
+
+    # الحجوم والمساحات السطحية
+    volume_keywords = ['حجم', 'مساحة سطحية', 'volume', 'surface area']
+    if any(keyword in message for keyword in volume_keywords):
+        return """**Volume and Surface Area Formulas**
+
+Cube:
+- Volume = s³
+- Surface Area = 6s²
+Where s is the side length
+
+Rectangular Prism:
+- Volume = l × w × h
+- Surface Area = 2(lw + lh + wh)
+Where l, w, h are length, width, and height
+
+Sphere:
+- Volume = (4/3)πr³
+- Surface Area = 4πr²
+Where r is the radius
+
+Cylinder:
+- Volume = πr²h
+- Surface Area = 2πr² + 2πrh
+Where r is the radius and h is the height
+
+Cone:
+- Volume = (1/3)πr²h
+- Surface Area = πr² + πrl
+Where l is the slant height and l = √(r² + h²)"""
+
+    # قوانين الحركة
+    physics_motion_keywords = ['قوانين الحركة', 'motion', 'قوانين نيوتن', 'newton']
+    if any(keyword in message for keyword in physics_motion_keywords):
+        return """**Laws of Motion and Kinematics**
+
+Newton's Laws:
+1. An object at rest stays at rest, and an object in motion stays in motion with the same speed and direction unless acted upon by an unbalanced force.
+2. F = ma (Force equals mass times acceleration)
+3. For every action, there is an equal and opposite reaction.
+
+Kinematics Equations (constant acceleration):
+1. v = v₀ + at
+2. d = v₀t + (1/2)at²
+3. v² = v₀² + 2ad
+4. d = (v₀ + v)t/2
+
+Where:
+- v is final velocity
+- v₀ is initial velocity
+- a is acceleration
+- t is time
+- d is displacement"""
+
     # لم يتم التعرف على السؤال كسؤال بسيط
     return None
 
@@ -593,6 +805,12 @@ def view_notes():
     notes = StudentNote.query.filter_by(user_id=current_user.id).order_by(StudentNote.updated_at.desc()).all()
     form = StudentNoteForm()
     return render_template('student/notes.html', notes=notes, form=form)
+    
+# صفحة القوانين الرياضية
+@student_bp.route('/formulas')
+@login_required
+def math_formulas():
+    return render_template('student/formulas.html')
 
 @student_bp.route('/notes/add', methods=['POST'])
 @login_required
