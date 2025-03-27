@@ -64,6 +64,14 @@ class RegistrationForm(FlaskForm):
         DataRequired(message='يجب إدخال الاسم الثلاثي'),
         Length(min=5, max=100, message='يجب أن يكون الاسم الثلاثي بين 5 و 100 حرف')
     ])
+    email = StringField('البريد الإلكتروني', validators=[
+        Optional(),
+        Length(max=100, message='يجب أن لا يتجاوز البريد الإلكتروني 100 حرف')
+    ])
+    phone = StringField('رقم الهاتف', validators=[
+        Optional(),
+        Length(max=20, message='يجب أن لا يتجاوز رقم الهاتف 20 رقماً')
+    ])
     password = PasswordField('كلمة المرور', validators=[
         DataRequired(message='يجب إدخال كلمة المرور'),
         Length(min=6, message='يجب أن تكون كلمة المرور 6 أحرف على الأقل')
@@ -83,3 +91,36 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
             raise ValidationError('هذا الاسم مستخدم بالفعل، يرجى اختيار اسم آخر')
+
+class ForgotPasswordForm(FlaskForm):
+    username = StringField('اسم المستخدم', validators=[
+        DataRequired(message='يجب إدخال اسم المستخدم'),
+        Length(min=3, max=64, message='يجب أن يكون اسم المستخدم بين 3 و 64 حرفاً')
+    ])
+    submit = SubmitField('إرسال رمز الاستعادة')
+    
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('كلمة المرور الجديدة', validators=[
+        DataRequired(message='يجب إدخال كلمة المرور'),
+        Length(min=6, message='يجب أن تكون كلمة المرور 6 أحرف على الأقل')
+    ])
+    password2 = PasswordField('تأكيد كلمة المرور', validators=[
+        DataRequired(message='يجب تأكيد كلمة المرور'),
+        EqualTo('password', message='كلمة المرور غير متطابقة')
+    ])
+    submit = SubmitField('تغيير كلمة المرور')
+    
+class ProfileForm(FlaskForm):
+    full_name = StringField('الاسم الثلاثي', validators=[
+        DataRequired(message='يجب إدخال الاسم الثلاثي'),
+        Length(min=5, max=100, message='يجب أن يكون الاسم الثلاثي بين 5 و 100 حرف')
+    ])
+    email = StringField('البريد الإلكتروني', validators=[
+        Optional(),
+        Length(max=100, message='يجب أن لا يتجاوز البريد الإلكتروني 100 حرف')
+    ])
+    phone = StringField('رقم الهاتف', validators=[
+        Optional(),
+        Length(max=20, message='يجب أن لا يتجاوز رقم الهاتف 20 رقماً')
+    ])
+    submit = SubmitField('تحديث البيانات')

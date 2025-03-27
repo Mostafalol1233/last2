@@ -12,7 +12,8 @@ from app import db
 from models import User, Video, Comment, Post, VideoView, LectureCode, VideoLike, StudentNote, AIChatMessage
 from forms import (
     LoginForm, VideoUploadForm, VideoEditForm, PostForm, CommentForm, RegistrationForm,
-    LectureCodeForm, GenerateCodeForm, StudentNoteForm, AIChatForm
+    LectureCodeForm, GenerateCodeForm, StudentNoteForm, AIChatForm, ForgotPasswordForm,
+    ResetPasswordForm, ProfileForm
 )
 
 # إعداد OpenAI API
@@ -99,7 +100,9 @@ def register():
             user = User(
                 username=form.username.data,
                 role='student',
-                full_name=form.full_name.data
+                full_name=form.full_name.data,
+                email=form.email.data,
+                phone=form.phone.data
             )
             user.set_password(form.password.data)
             db.session.add(user)
@@ -421,6 +424,10 @@ def enter_lecture_code(video_id):
                     user_id=current_user.id
                 )
                 db.session.add(view)
+                
+                # جعل الكود غير فعال بعد الاستخدام
+                lecture_code.is_active = False
+                
                 db.session.commit()
                 flash('تم التحقق من الكود بنجاح! يمكنك مشاهدة المحاضرة الآن.', 'success')
                 return redirect(url_for('student.view_video', video_id=video_id))
@@ -601,3 +608,85 @@ def ai_chat():
     messages.reverse()  # عرض الرسائل بترتيب تصاعدي
     
     return render_template('student/ai_chat.html', form=form, messages=messages)
+
+# مسارات استعادة كلمة المرور
+@main_bp.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+        
+    form = ForgotPasswordForm()
+    
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        
+        if user:
+            # التحقق من وجود بيانات للاتصال
+            if not user.email and not user.phone:
+                flash('لا يمكن استعادة كلمة المرور لهذا الحساب لأنه لا يوجد بيانات للاتصال. يرجى التواصل مع المشرف.', 'danger')
+                return redirect(url_for('main.forgot_password'))
+            
+            # توليد رمز استعادة وحفظه
+            token = user.generate_reset_token()
+            db.session.commit()
+            
+            # في التطبيق الحقيقي، يتم إرسال رسالة إلى البريد الإلكتروني أو رسالة نصية
+            reset_link = url_for('main.reset_password', token=token, username=user.username, _external=True)
+            
+            flash(f'تم إرسال رمز الاستعادة. رابط الاستعادة هو: {reset_link}', 'info')
+            return redirect(url_for('main.login'))
+        else:
+            flash('لم يتم العثور على حساب بهذا الاسم.', 'danger')
+            
+    return render_template('forgot_password.html', form=form)
+
+@main_bp.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+        
+    username = request.args.get('username')
+    if not username:
+        flash('رابط استعادة غير صالح.', 'danger')
+        return redirect(url_for('main.login'))
+        
+    user = User.query.filter_by(username=username).first()
+    
+    if not user or not user.check_reset_token(token):
+        flash('رابط استعادة غير صالح أو منتهي الصلاحية.', 'danger')
+        return redirect(url_for('main.login'))
+    
+    form = ResetPasswordForm()
+    
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        user.reset_token = None
+        user.reset_token_expiry = None
+        db.session.commit()
+        
+        flash('تم تغيير كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة.', 'success')
+        return redirect(url_for('main.login'))
+        
+    return render_template('reset_password.html', form=form)
+
+# مسارات الملف الشخصي
+@main_bp.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    form = ProfileForm()
+    
+    if request.method == 'GET':
+        form.full_name.data = current_user.full_name
+        form.email.data = current_user.email
+        form.phone.data = current_user.phone
+    
+    if form.validate_on_submit():
+        current_user.full_name = form.full_name.data
+        current_user.email = form.email.data
+        current_user.phone = form.phone.data
+        
+        db.session.commit()
+        flash('تم تحديث بياناتك الشخصية بنجاح.', 'success')
+        return redirect(url_for('main.profile'))
+        
+    return render_template('profile.html', form=form)

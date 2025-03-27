@@ -9,8 +9,12 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     full_name = db.Column(db.String(100), nullable=True)  # الاسم الثلاثي
+    email = db.Column(db.String(100), nullable=True)  # البريد الإلكتروني للاستعادة
+    phone = db.Column(db.String(20), nullable=True)   # رقم الهاتف للاستعادة
     password_hash = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(20), nullable=False)  # 'admin' or 'student'
+    reset_token = db.Column(db.String(100), nullable=True)  # رمز استعادة كلمة المرور
+    reset_token_expiry = db.Column(db.DateTime, nullable=True)  # تاريخ انتهاء صلاحية الرمز
     
     # Relationships
     videos = db.relationship('Video', backref='uploader', lazy='dynamic')
@@ -26,6 +30,23 @@ class User(UserMixin, db.Model):
     
     def is_admin(self):
         return self.role == 'admin'
+    
+    def generate_reset_token(self):
+        """توليد رمز استعادة كلمة المرور وتاريخ انتهاء صلاحيته (24 ساعة)"""
+        import secrets
+        from datetime import datetime, timedelta
+        self.reset_token = secrets.token_hex(16)
+        self.reset_token_expiry = datetime.utcnow() + timedelta(hours=24)
+        return self.reset_token
+    
+    def check_reset_token(self, token):
+        """التحقق من صلاحية رمز استعادة كلمة المرور"""
+        from datetime import datetime
+        if self.reset_token != token:
+            return False
+        if self.reset_token_expiry < datetime.utcnow():
+            return False
+        return True
         
     def __repr__(self):
         return f'<User {self.username}>'
