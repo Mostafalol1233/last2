@@ -46,6 +46,79 @@ def generate_random_code(length=8):
     """Generate a random code for lecture access"""
     alphabet = string.ascii_uppercase + string.digits
     return ''.join(secrets.choice(alphabet) for i in range(length))
+    
+def handle_simple_queries(message):
+    """معالجة الاستعلامات البسيطة دون الحاجة إلى OpenAI API"""
+    import re
+    
+    # تبسيط النص وإزالة الزوائد
+    message = message.strip().lower()
+    
+    # التحيات والمقدمات
+    greetings = ['السلام', 'مرحبا', 'اهلا', 'اهلين', 'صباح الخير', 'مساء الخير', 'هاي', 'هلو']
+    for greeting in greetings:
+        if greeting in message:
+            return f"{greeting} وسهلاً بك! أنا المساعد الذكي لمنصة الأستاذ أحمد حلي التعليمية. كيف يمكنني مساعدتك اليوم؟"
+    
+    # أسئلة عن هوية المساعد
+    identity_questions = ['من انت', 'من أنت', 'عرف نفسك', 'عرف بنفسك', 'من انتم', 'من أنتم']
+    for question in identity_questions:
+        if question in message:
+            return "أنا المساعد الذكي لمنصة الأستاذ أحمد حلي التعليمية. أساعد الطلاب في فهم المواد ودروس الأستاذ أحمد حلي والإجابة على أسئلتهم."
+    
+    # العمليات الحسابية البسيطة
+    # للجمع: مثال "كم يساوي 2+3" أو "2 + 3"
+    addition_match = re.search(r'(\d+)\s*\+\s*(\d+)', message)
+    if addition_match:
+        try:
+            num1 = int(addition_match.group(1))
+            num2 = int(addition_match.group(2))
+            result = num1 + num2
+            return f"ناتج جمع {num1} و {num2} هو {result}"
+        except:
+            pass
+    
+    # للطرح: مثال "كم يساوي 5-2" أو "5 - 2"
+    subtraction_match = re.search(r'(\d+)\s*\-\s*(\d+)', message)
+    if subtraction_match:
+        try:
+            num1 = int(subtraction_match.group(1))
+            num2 = int(subtraction_match.group(2))
+            result = num1 - num2
+            return f"ناتج طرح {num2} من {num1} هو {result}"
+        except:
+            pass
+    
+    # للضرب: مثال "كم يساوي 3*4" أو "3 × 4"
+    multiplication_match = re.search(r'(\d+)\s*[\*×]\s*(\d+)', message)
+    if multiplication_match:
+        try:
+            num1 = int(multiplication_match.group(1))
+            num2 = int(multiplication_match.group(2))
+            result = num1 * num2
+            return f"ناتج ضرب {num1} في {num2} هو {result}"
+        except:
+            pass
+    
+    # للقسمة: مثال "كم يساوي 8/2" أو "8 ÷ 2"
+    division_match = re.search(r'(\d+)\s*[\/÷]\s*(\d+)', message)
+    if division_match:
+        try:
+            num1 = int(division_match.group(1))
+            num2 = int(division_match.group(2))
+            if num2 == 0:
+                return "لا يمكن القسمة على صفر"
+            result = num1 / num2
+            # إذا كانت النتيجة عدد صحيح، نعرضها كعدد صحيح
+            if result.is_integer():
+                return f"ناتج قسمة {num1} على {num2} هو {int(result)}"
+            else:
+                return f"ناتج قسمة {num1} على {num2} هو {result:.2f}"
+        except:
+            pass
+    
+    # لم يتم التعرف على السؤال كسؤال بسيط
+    return None
 
 # Main routes
 @main_bp.route('/')
@@ -347,7 +420,14 @@ def dashboard():
         
     videos = Video.query.order_by(Video.created_at.desc()).all()
     posts = Post.query.order_by(Post.created_at.desc()).all()
-    return render_template('student/dashboard.html', videos=videos, posts=posts)
+    
+    # تحديد الفيديوهات التي شاهدها الطالب بالفعل
+    viewed_videos = set()
+    user_views = VideoView.query.filter_by(user_id=current_user.id).all()
+    for view in user_views:
+        viewed_videos.add(view.video_id)
+    
+    return render_template('student/dashboard.html', videos=videos, posts=posts, viewed_videos=viewed_videos)
 
 @student_bp.route('/video/<int:video_id>', methods=['GET', 'POST'])
 @login_required
@@ -575,22 +655,28 @@ def ai_chat():
     if form.validate_on_submit():
         message = form.message.data
         
-        try:
-            # استخدام OpenAI API للحصول على إجابة (الإصدار 0.28)
-            chat_response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "أنت مساعد تعليمي متخصص في مساعدة الطلاب. قدم إجابات موجزة ومفيدة باللغة العربية."},
-                    {"role": "user", "content": message}
-                ],
-                max_tokens=300,
-                temperature=0.7
-            )
-            response = chat_response.choices[0].message['content']
-        except Exception as e:
-            # في حالة حدوث خطأ مع API
-            print(f"خطأ في OpenAI API: {str(e)}")
-            response = "عذراً، حدث خطأ أثناء معالجة سؤالك. يرجى المحاولة مرة أخرى لاحقاً."
+        # معالجة الأسئلة البسيطة بدون الحاجة إلى OpenAI API
+        simple_response = handle_simple_queries(message)
+        
+        if simple_response:
+            response = simple_response
+        else:
+            try:
+                # استخدام OpenAI API للحصول على إجابة (الإصدار 0.28)
+                chat_response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "أنت مساعد تعليمي متخصص في مساعدة الطلاب. قدم إجابات موجزة ومفيدة باللغة العربية. أنت تمثل المساعد الذكي لمنصة الأستاذ أحمد حلي التعليمية."},
+                        {"role": "user", "content": message}
+                    ],
+                    max_tokens=300,
+                    temperature=0.7
+                )
+                response = chat_response.choices[0].message['content']
+            except Exception as e:
+                # في حالة حدوث خطأ مع API
+                print(f"خطأ في OpenAI API: {str(e)}")
+                response = "عذراً، حدث خطأ أثناء معالجة سؤالك. يرجى المحاولة مرة أخرى لاحقاً."
         
         # حفظ المحادثة في قاعدة البيانات
         chat_message = AIChatMessage(
