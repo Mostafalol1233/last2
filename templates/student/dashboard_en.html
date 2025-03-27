@@ -3,52 +3,52 @@
 {% block title %}Student Dashboard - Educational Platform{% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row mb-4">
     <div class="col-12">
-        <div class="card bg-dark mb-4">
+        <div class="card bg-dark">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4><i class="fas fa-graduation-cap me-2"></i>مرحباً، {{ current_user.full_name or current_user.username }}!</h4>
-                <a href="{{ url_for('student.dashboard_en') }}" class="btn btn-outline-primary">
-                    <i class="fas fa-language me-1"></i>English
+                <h4><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h4>
+                <a href="{{ url_for('student.dashboard') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-language me-1"></i>العربية
                 </a>
             </div>
             <div class="card-body">
                 <p class="lead">
-                    مرحباً بك في لوحة التحكم الخاصة بك. يمكنك هنا الوصول إلى جميع الفيديوهات والمنشورات والميزات التعليمية.
+                    Welcome to your dashboard. Here you can access all videos, posts, and educational features.
                 </p>
                 
                 <div class="row mt-3">
                     <div class="col-md-4 mb-3">
                         <a href="{{ url_for('student.view_notes') }}" class="btn btn-info btn-lg w-100">
-                            <i class="fas fa-sticky-note me-2"></i>ملاحظاتي الشخصية
+                            <i class="fas fa-sticky-note me-2"></i>My Notes
                         </a>
                     </div>
                     <div class="col-md-4 mb-3">
                         <a href="{{ url_for('student.ai_chat') }}" class="btn btn-success btn-lg w-100">
-                            <i class="fas fa-robot me-2"></i>الدردشة الذكية
+                            <i class="fas fa-robot me-2"></i>AI Chat
                         </a>
                     </div>
                     <div class="col-md-4 mb-3">
                         <a href="#videos-section" class="btn btn-primary btn-lg w-100">
-                            <i class="fas fa-video me-2"></i>الفيديوهات التعليمية
+                            <i class="fas fa-video me-2"></i>Educational Videos
                         </a>
                     </div>
                 </div>
                 
                 <div class="row mt-2">
                     <div class="col-md-4 mb-3">
-                        <a href="{{ url_for('student.math_formulas') }}" class="btn btn-warning btn-lg w-100">
-                            <i class="fas fa-square-root-alt me-2"></i>القوانين الرياضية العامة
+                        <a href="{{ url_for('student.math_formulas_en') }}" class="btn btn-warning btn-lg w-100">
+                            <i class="fas fa-square-root-alt me-2"></i>General Math Formulas
                         </a>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <a href="{{ url_for('student.algebra_formulas') }}" class="btn btn-warning btn-lg w-100">
-                            <i class="fas fa-superscript me-2"></i>قوانين الجبر - ثانوي
+                        <a href="{{ url_for('student.algebra_formulas_en') }}" class="btn btn-warning btn-lg w-100">
+                            <i class="fas fa-superscript me-2"></i>Algebra Formulas
                         </a>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <a href="{{ url_for('student.advanced_calculator') }}" class="btn btn-warning btn-lg w-100">
-                            <i class="fas fa-calculator me-2"></i>الآلة الحاسبة المتقدمة
+                        <a href="{{ url_for('student.advanced_calculator_en') }}" class="btn btn-warning btn-lg w-100">
+                            <i class="fas fa-calculator me-2"></i>Advanced Calculator
                         </a>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
     <div class="col-lg-8">
         <div class="card bg-dark mb-4">
             <div class="card-header">
-                <h5 id="videos-section"><i class="fas fa-video me-2"></i>الفيديوهات المتاحة</h5>
+                <h5 id="videos-section"><i class="fas fa-video me-2"></i>Available Videos</h5>
             </div>
             <div class="card-body">
                 {% if videos %}
@@ -82,16 +82,16 @@
                                         
                                         <div class="d-flex justify-content-between align-items-center">
                                             <a href="{{ url_for('student.view_video', video_id=video.id) }}" class="btn btn-primary">
-                                                <i class="fas fa-play me-1"></i>مشاهدة
+                                                <i class="fas fa-play me-1"></i>Watch
                                             </a>
                                             
                                             {% if video.requires_code and video.id not in viewed_videos %}
                                                 <span class="badge bg-warning">
-                                                    <i class="fas fa-key me-1"></i>يتطلب كود
+                                                    <i class="fas fa-key me-1"></i>Requires Code
                                                 </span>
                                             {% elif video.requires_code and video.id in viewed_videos %}
                                                 <span class="badge bg-success">
-                                                    <i class="fas fa-unlock me-1"></i>مفتوح الآن - تم شراء الكود
+                                                    <i class="fas fa-unlock me-1"></i>Open Now - Code Purchased
                                                 </span>
                                             {% endif %}
                                         </div>
@@ -102,7 +102,7 @@
                     </div>
                 {% else %}
                     <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>لا توجد فيديوهات متاحة حالياً.
+                        <i class="fas fa-info-circle me-2"></i>No videos available at the moment.
                     </div>
                 {% endif %}
             </div>
@@ -112,7 +112,7 @@
     <div class="col-lg-4">
         <div class="card bg-dark mb-4">
             <div class="card-header">
-                <h5><i class="fas fa-file-alt me-2"></i>أحدث المنشورات</h5>
+                <h5><i class="fas fa-file-alt me-2"></i>Latest Posts</h5>
             </div>
             <div class="card-body">
                 {% if posts %}
@@ -131,7 +131,7 @@
                     </div>
                 {% else %}
                     <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>لا توجد منشورات متاحة حالياً.
+                        <i class="fas fa-info-circle me-2"></i>No posts available at the moment.
                     </div>
                 {% endif %}
             </div>
@@ -139,14 +139,14 @@
         
         <div class="card bg-dark">
             <div class="card-header">
-                <h5><i class="fas fa-lightbulb me-2"></i>نصائح تعليمية</h5>
+                <h5><i class="fas fa-lightbulb me-2"></i>Educational Tips</h5>
             </div>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item bg-dark">حدد جدولاً منتظماً للدراسة</li>
-                    <li class="list-group-item bg-dark">دوّن ملاحظات أثناء مشاهدة الفيديوهات</li>
-                    <li class="list-group-item bg-dark">شارك بفاعلية من خلال التعليقات</li>
-                    <li class="list-group-item bg-dark">طبق ما تتعلمه في الواقع العملي</li>
+                    <li class="list-group-item bg-dark">Set a regular study schedule</li>
+                    <li class="list-group-item bg-dark">Take notes while watching videos</li>
+                    <li class="list-group-item bg-dark">Participate actively through comments</li>
+                    <li class="list-group-item bg-dark">Apply what you learn in practical situations</li>
                 </ul>
             </div>
         </div>

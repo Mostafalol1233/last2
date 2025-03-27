@@ -1,24 +1,24 @@
 {% extends 'base.html' %}
 
-{% block title %}الآلة الحاسبة المتقدمة - المنصة التعليمية{% endblock %}
+{% block title %}Advanced Calculator - Educational Platform{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
         <div class="card bg-dark mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4><i class="fas fa-calculator me-2"></i>الآلة الحاسبة المتقدمة</h4>
-                <a href="{{ url_for('student.advanced_calculator_en') }}" class="btn btn-outline-primary">
-                    <i class="fas fa-language me-1"></i>English
+                <h4><i class="fas fa-calculator me-2"></i>Advanced Calculator</h4>
+                <a href="{{ url_for('student.advanced_calculator') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-language me-1"></i>العربية
                 </a>
             </div>
             <div class="card-body">
                 <p class="lead">
-                    آلة حاسبة متقدمة تدعم العمليات الرياضية المعقدة والرسم البياني للدوال والمعادلات.
+                    Advanced calculator with support for complex mathematical operations, graphing functions, and solving equations.
                 </p>
                 <div class="d-flex justify-content-end">
-                    <a href="{{ url_for('student.algebra_formulas') }}" class="btn btn-primary">
-                        <i class="fas fa-book me-2"></i>قوانين الجبر
+                    <a href="{{ url_for('student.algebra_formulas_en') }}" class="btn btn-primary">
+                        <i class="fas fa-book me-2"></i>Algebra Formulas
                     </a>
                 </div>
             </div>
@@ -30,7 +30,7 @@
     <div class="col-md-6 mb-4">
         <div class="card bg-dark">
             <div class="card-header">
-                <h5><i class="fas fa-calculator me-2"></i>الآلة الحاسبة العلمية</h5>
+                <h5><i class="fas fa-calculator me-2"></i>Scientific Calculator</h5>
             </div>
             <div class="card-body">
                 <div class="calculator-container">
@@ -148,7 +148,7 @@
                     </div>
                     
                     <div class="calculator-history mt-4">
-                        <h6>سجل العمليات</h6>
+                        <h6>History</h6>
                         <div id="history" class="p-2 bg-dark border" style="height: 100px; overflow-y: auto;"></div>
                     </div>
                 </div>
@@ -159,29 +159,29 @@
     <div class="col-md-6 mb-4">
         <div class="card bg-dark">
             <div class="card-header">
-                <h5><i class="fas fa-chart-line me-2"></i>الرسم البياني</h5>
+                <h5><i class="fas fa-chart-line me-2"></i>Function Graph</h5>
             </div>
             <div class="card-body">
                 <div class="form-group mb-3">
-                    <label for="function-input">معادلة الدالة</label>
+                    <label for="function-input">Function Equation</label>
                     <div class="input-group">
                         <span class="input-group-text">f(x) =</span>
-                        <input type="text" id="function-input" class="form-control" placeholder="مثال: 2*x^2 + 3*x - 4">
-                        <button class="btn btn-primary" onclick="plotFunction()">رسم</button>
+                        <input type="text" id="function-input" class="form-control" placeholder="Example: 2*x^2 + 3*x - 4">
+                        <button class="btn btn-primary" onclick="plotFunction()">Plot</button>
                     </div>
-                    <small class="form-text text-muted">استخدم x كمتغير، مثال: sin(x), x^2, 2*x+1</small>
+                    <small class="form-text text-muted">Use x as variable, examples: sin(x), x^2, 2*x+1</small>
                 </div>
                 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="x-min">قيمة X الصغرى</label>
+                            <label for="x-min">X Min Value</label>
                             <input type="number" id="x-min" class="form-control" value="-10">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="x-max">قيمة X العظمى</label>
+                            <label for="x-max">X Max Value</label>
                             <input type="number" id="x-max" class="form-control" value="10">
                         </div>
                     </div>
@@ -190,24 +190,24 @@
                 <div id="function-graph" style="width: 100%; height: 300px;" class="border mb-3"></div>
                 
                 <div class="function-tools mt-3">
-                    <h6>معلومات الدالة</h6>
+                    <h6>Function Information</h6>
                     <div id="function-info" class="alert alert-info"></div>
                     
                     <div class="row">
                         <div class="col-md-6">
-                            <button class="btn btn-sm btn-info w-100 mb-2" onclick="findZeros()">إيجاد الأصفار</button>
+                            <button class="btn btn-sm btn-info w-100 mb-2" onclick="findZeros()">Find Zeros</button>
                         </div>
                         <div class="col-md-6">
-                            <button class="btn btn-sm btn-info w-100 mb-2" onclick="findExtremum()">إيجاد القيم القصوى</button>
+                            <button class="btn btn-sm btn-info w-100 mb-2" onclick="findExtremum()">Find Extrema</button>
                         </div>
                     </div>
                     
                     <div class="row">
                         <div class="col-md-6">
-                            <button class="btn btn-sm btn-info w-100 mb-2" onclick="findDerivative()">إيجاد المشتقة</button>
+                            <button class="btn btn-sm btn-info w-100 mb-2" onclick="findDerivative()">Find Derivative</button>
                         </div>
                         <div class="col-md-6">
-                            <button class="btn btn-sm btn-info w-100 mb-2" onclick="findIntegral()">إيجاد التكامل</button>
+                            <button class="btn btn-sm btn-info w-100 mb-2" onclick="findIntegral()">Find Integral</button>
                         </div>
                     </div>
                 </div>
@@ -220,28 +220,28 @@
     <div class="col-12">
         <div class="card bg-dark">
             <div class="card-header">
-                <h5><i class="fas fa-square-root-alt me-2"></i>حل المعادلات</h5>
+                <h5><i class="fas fa-square-root-alt me-2"></i>Equation Solver</h5>
             </div>
             <div class="card-body">
                 <ul class="nav nav-tabs" id="equationTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="linear-tab" data-bs-toggle="tab" data-bs-target="#linear-eq" type="button" role="tab">معادلة خطية</button>
+                        <button class="nav-link active" id="linear-tab" data-bs-toggle="tab" data-bs-target="#linear-eq" type="button" role="tab">Linear Equation</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="quadratic-tab" data-bs-toggle="tab" data-bs-target="#quadratic-eq" type="button" role="tab">معادلة تربيعية</button>
+                        <button class="nav-link" id="quadratic-tab" data-bs-toggle="tab" data-bs-target="#quadratic-eq" type="button" role="tab">Quadratic Equation</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="system-tab" data-bs-toggle="tab" data-bs-target="#system-eq" type="button" role="tab">نظام معادلات</button>
+                        <button class="nav-link" id="system-tab" data-bs-toggle="tab" data-bs-target="#system-eq" type="button" role="tab">System of Equations</button>
                     </li>
                 </ul>
                 
                 <div class="tab-content py-3" id="equationTabsContent">
-                    <!-- معادلة خطية -->
+                    <!-- Linear Equation -->
                     <div class="tab-pane fade show active" id="linear-eq" role="tabpanel">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label>المعادلة الخطية: ax + b = 0</label>
+                                    <label>Linear Equation: ax + b = 0</label>
                                     <div class="row">
                                         <div class="col">
                                             <div class="input-group mb-2">
@@ -256,23 +256,23 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button class="btn btn-primary" onclick="solveLinear()">حل المعادلة</button>
+                                    <button class="btn btn-primary" onclick="solveLinear()">Solve Equation</button>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div id="linear-result" class="alert alert-info" style="min-height: 100px;">
-                                    النتيجة ستظهر هنا
+                                    Results will appear here
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- معادلة تربيعية -->
+                    <!-- Quadratic Equation -->
                     <div class="tab-pane fade" id="quadratic-eq" role="tabpanel">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label>المعادلة التربيعية: ax² + bx + c = 0</label>
+                                    <label>Quadratic Equation: ax² + bx + c = 0</label>
                                     <div class="row">
                                         <div class="col">
                                             <div class="input-group mb-2">
@@ -293,23 +293,23 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button class="btn btn-primary" onclick="solveQuadratic()">حل المعادلة</button>
+                                    <button class="btn btn-primary" onclick="solveQuadratic()">Solve Equation</button>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div id="quadratic-result" class="alert alert-info" style="min-height: 100px;">
-                                    النتيجة ستظهر هنا
+                                    Results will appear here
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- نظام معادلات -->
+                    <!-- System of Equations -->
                     <div class="tab-pane fade" id="system-eq" role="tabpanel">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label>نظام معادلات خطية:</label>
+                                    <label>System of Linear Equations:</label>
                                     <div class="mb-2">
                                         <div class="input-group mb-2">
                                             <input type="number" id="system-a11" class="form-control" value="1">
@@ -326,12 +326,12 @@
                                             <input type="number" id="system-b2" class="form-control" value="11">
                                         </div>
                                     </div>
-                                    <button class="btn btn-primary" onclick="solveSystem()">حل النظام</button>
+                                    <button class="btn btn-primary" onclick="solveSystem()">Solve System</button>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div id="system-result" class="alert alert-info" style="min-height: 100px;">
-                                    النتيجة ستظهر هنا
+                                    Results will appear here
                                 </div>
                             </div>
                         </div>
@@ -346,15 +346,15 @@
     <div class="col-md-6 mb-4">
         <div class="card bg-dark h-100">
             <div class="card-header">
-                <h5><i class="fas fa-percent me-2"></i>حسابات إضافية</h5>
+                <h5><i class="fas fa-percent me-2"></i>Additional Calculations</h5>
             </div>
             <div class="card-body">
                 <div class="accordion" id="calculationsAccordion">
-                    <!-- محول الوحدات -->
+                    <!-- Unit Converter -->
                     <div class="accordion-item bg-dark">
                         <h2 class="accordion-header" id="headingOne">
                             <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
-                                محول الوحدات
+                                Unit Converter
                             </button>
                         </h2>
                         <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#calculationsAccordion">
@@ -362,33 +362,33 @@
                                 <div class="row mb-3">
                                     <div class="col-md-4">
                                         <select id="unit-type" class="form-select mb-2">
-                                            <option value="length">الطول</option>
-                                            <option value="weight">الوزن</option>
-                                            <option value="area">المساحة</option>
-                                            <option value="volume">الحجم</option>
-                                            <option value="temperature">درجة الحرارة</option>
+                                            <option value="length">Length</option>
+                                            <option value="weight">Weight</option>
+                                            <option value="area">Area</option>
+                                            <option value="volume">Volume</option>
+                                            <option value="temperature">Temperature</option>
                                         </select>
                                     </div>
                                     <div class="col-md-8">
                                         <div class="input-group mb-2">
                                             <input type="number" id="unit-value" class="form-control" value="1">
                                             <select id="unit-from" class="form-select"></select>
-                                            <span class="input-group-text">إلى</span>
+                                            <span class="input-group-text">to</span>
                                             <select id="unit-to" class="form-select"></select>
-                                            <button class="btn btn-primary" onclick="convertUnit()">تحويل</button>
+                                            <button class="btn btn-primary" onclick="convertUnit()">Convert</button>
                                         </div>
                                     </div>
                                 </div>
-                                <div id="unit-result" class="alert alert-info">النتيجة ستظهر هنا</div>
+                                <div id="unit-result" class="alert alert-info">Results will appear here</div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- حاسبة التفاضل والتكامل -->
+                    <!-- Calculus -->
                     <div class="accordion-item bg-dark">
                         <h2 class="accordion-header" id="headingTwo">
                             <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
-                                التفاضل والتكامل
+                                Calculus
                             </button>
                         </h2>
                         <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#calculationsAccordion">
@@ -397,56 +397,56 @@
                                     <div class="col-md-8">
                                         <div class="input-group mb-2">
                                             <span class="input-group-text">f(x) =</span>
-                                            <input type="text" id="calculus-function" class="form-control" placeholder="مثال: x^2 + 3*x">
+                                            <input type="text" id="calculus-function" class="form-control" placeholder="Example: x^2 + 3*x">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <select id="calculus-operation" class="form-select">
-                                            <option value="derivative">المشتقة d/dx</option>
-                                            <option value="integral">التكامل ∫dx</option>
+                                            <option value="derivative">Derivative d/dx</option>
+                                            <option value="integral">Integral ∫dx</option>
                                         </select>
                                     </div>
                                 </div>
-                                <button class="btn btn-primary" onclick="calculateCalculus()">حساب</button>
-                                <div id="calculus-result" class="alert alert-info mt-3">النتيجة ستظهر هنا</div>
+                                <button class="btn btn-primary" onclick="calculateCalculus()">Calculate</button>
+                                <div id="calculus-result" class="alert alert-info mt-3">Results will appear here</div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- حاسبة المصفوفات -->
+                    <!-- Matrix Calculator -->
                     <div class="accordion-item bg-dark">
                         <h2 class="accordion-header" id="headingThree">
                             <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
-                                المصفوفات
+                                Matrix Calculator
                             </button>
                         </h2>
                         <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#calculationsAccordion">
                             <div class="accordion-body">
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label>المصفوفة A</label>
-                                        <textarea id="matrix-a" class="form-control" rows="3" placeholder="أدخل المصفوفة مثال:&#10;1 2 3&#10;4 5 6&#10;7 8 9"></textarea>
+                                        <label>Matrix A</label>
+                                        <textarea id="matrix-a" class="form-control" rows="3" placeholder="Enter matrix, example:&#10;1 2 3&#10;4 5 6&#10;7 8 9"></textarea>
                                     </div>
                                     <div class="col-md-6">
-                                        <label>المصفوفة B (اختياري)</label>
-                                        <textarea id="matrix-b" class="form-control" rows="3" placeholder="أدخل المصفوفة مثال:&#10;9 8 7&#10;6 5 4&#10;3 2 1"></textarea>
+                                        <label>Matrix B (optional)</label>
+                                        <textarea id="matrix-b" class="form-control" rows="3" placeholder="Enter matrix, example:&#10;9 8 7&#10;6 5 4&#10;3 2 1"></textarea>
                                     </div>
                                 </div>
                                 <div class="row mb-2">
                                     <div class="col">
                                         <select id="matrix-operation" class="form-select">
-                                            <option value="det">المحدد (det A)</option>
-                                            <option value="inverse">العكس (A^-1)</option>
-                                            <option value="transpose">المنقول (A^T)</option>
-                                            <option value="add">الجمع (A + B)</option>
-                                            <option value="multiply">الضرب (A × B)</option>
+                                            <option value="det">Determinant (det A)</option>
+                                            <option value="inverse">Inverse (A^-1)</option>
+                                            <option value="transpose">Transpose (A^T)</option>
+                                            <option value="add">Addition (A + B)</option>
+                                            <option value="multiply">Multiplication (A × B)</option>
                                         </select>
                                     </div>
                                     <div class="col">
-                                        <button class="btn btn-primary w-100" onclick="calculateMatrix()">حساب</button>
+                                        <button class="btn btn-primary w-100" onclick="calculateMatrix()">Calculate</button>
                                     </div>
                                 </div>
-                                <div id="matrix-result" class="alert alert-info">النتيجة ستظهر هنا</div>
+                                <div id="matrix-result" class="alert alert-info">Results will appear here</div>
                             </div>
                         </div>
                     </div>
@@ -458,33 +458,33 @@
     <div class="col-md-6 mb-4">
         <div class="card bg-dark h-100">
             <div class="card-header">
-                <h5><i class="fas fa-info-circle me-2"></i>اختصارات وتلميحات</h5>
+                <h5><i class="fas fa-info-circle me-2"></i>Shortcuts & Tips</h5>
             </div>
             <div class="card-body">
-                <h6>اختصارات الحاسبة</h6>
+                <h6>Calculator Shortcuts</h6>
                 <ul>
-                    <li><strong>sin(), cos(), tan()</strong> - الدوال المثلثية</li>
-                    <li><strong>√()</strong> - الجذر التربيعي</li>
-                    <li><strong>^</strong> - الأس (مثال: 2^3 = 8)</li>
-                    <li><strong>log()</strong> - اللوغاريتم العشري (الأساس 10)</li>
-                    <li><strong>ln()</strong> - اللوغاريتم الطبيعي (الأساس e)</li>
-                    <li><strong>π</strong> - ثابت باي (3.14159...)</li>
-                    <li><strong>e</strong> - ثابت أويلر (2.71828...)</li>
+                    <li><strong>sin(), cos(), tan()</strong> - Trigonometric functions</li>
+                    <li><strong>√()</strong> - Square root</li>
+                    <li><strong>^</strong> - Power (example: 2^3 = 8)</li>
+                    <li><strong>log()</strong> - Logarithm base 10</li>
+                    <li><strong>ln()</strong> - Natural logarithm (base e)</li>
+                    <li><strong>π</strong> - Pi constant (3.14159...)</li>
+                    <li><strong>e</strong> - Euler's constant (2.71828...)</li>
                 </ul>
                 
-                <h6>تلميحات للرسم البياني</h6>
+                <h6>Graph Plotting Tips</h6>
                 <ul>
-                    <li>استخدم السحب والإفلات للتنقل في الرسم البياني</li>
-                    <li>استخدم عجلة الفأرة للتكبير والتصغير</li>
-                    <li>يمكنك رسم عدة دوال معًا بالفصل بينها بفاصلة (,)</li>
-                    <li>الصيغة: <code>2*x^2+3*x-4, sin(x), x^2-4</code></li>
+                    <li>Drag and drop to navigate the graph</li>
+                    <li>Use the mouse wheel to zoom in and out</li>
+                    <li>You can plot multiple functions separated by commas</li>
+                    <li>Format: <code>2*x^2+3*x-4, sin(x), x^2-4</code></li>
                 </ul>
                 
-                <h6>معلومات إضافية</h6>
+                <h6>Additional Information</h6>
                 <ul>
-                    <li>تستخدم الآلة الحاسبة JavaScript لإجراء الحسابات بدقة عالية</li>
-                    <li>الرسم البياني يستخدم مكتبة math.js وplotly.js</li>
-                    <li>جميع العمليات تُجرى على جهازك ولا يتم إرسال أي بيانات للخادم</li>
+                    <li>The calculator uses JavaScript for high-precision calculations</li>
+                    <li>The graphing function uses math.js and plotly.js libraries</li>
+                    <li>All operations are performed locally on your device; no data is sent to the server</li>
                 </ul>
             </div>
         </div>
@@ -492,24 +492,24 @@
 </div>
 
 <div class="d-flex justify-content-center mt-4 mb-5">
-    <a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary me-2">
-        <i class="fas fa-home me-1"></i>العودة للوحة التحكم
+    <a href="{{ url_for('student.dashboard_en') }}" class="btn btn-secondary me-2">
+        <i class="fas fa-home me-1"></i>Return to Dashboard
     </a>
-    <a href="{{ url_for('student.math_formulas') }}" class="btn btn-primary">
-        <i class="fas fa-book me-1"></i>عرض قوانين الرياضيات
+    <a href="{{ url_for('student.math_formulas_en') }}" class="btn btn-primary">
+        <i class="fas fa-book me-1"></i>View Math Formulas
     </a>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<!-- إضافة مكتبة math.js للحسابات الرياضية -->
+<!-- Add math.js library for mathematical calculations -->
 <script src="https://cdn.jsdelivr.net/npm/mathjs@11.5.0/lib/browser/math.min.js"></script>
 
-<!-- إضافة مكتبة plotly.js للرسم البياني -->
+<!-- Add plotly.js library for graphing -->
 <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
 
 <script>
-    // ===== الآلة الحاسبة =====
+    // ===== Calculator =====
     let displayValue = '';
     const display = document.getElementById('display');
     const result = document.getElementById('result');
@@ -533,58 +533,58 @@
     
     function calculate() {
         try {
-            // استبدال بعض الرموز والتعبيرات لتتوافق مع math.js
+            // Replace some symbols and expressions to be compatible with math.js
             let expression = displayValue
                 .replace(/π/g, 'pi')
                 .replace(/√\(/g, 'sqrt(')
                 .replace(/\^/g, '**');
             
-            // حساب النتيجة
+            // Calculate the result
             const answer = math.evaluate(expression);
-            result.innerHTML = `<strong>النتيجة:</strong> ${answer}`;
+            result.innerHTML = `<strong>Result:</strong> ${answer}`;
             
-            // إضافة العملية للسجل
+            // Add operation to history
             history.innerHTML += `<div>${displayValue} = ${answer}</div>`;
             
-            // جعل النتيجة هي القيمة الجديدة
+            // Make the result the new value
             displayValue = answer.toString();
             display.value = displayValue;
         } catch (error) {
-            result.innerHTML = `<span class="text-danger">خطأ: ${error.message}</span>`;
+            result.innerHTML = `<span class="text-danger">Error: ${error.message}</span>`;
         }
     }
     
-    // ===== الرسم البياني =====
-    // إعداد الرسم البياني
+    // ===== Function Graph =====
+    // Setup the graph
     const graphDiv = document.getElementById('function-graph');
     let currentPlot = null;
     
-    // دالة الرسم البياني
+    // Graph plotting function
     function plotFunction() {
         try {
             const functionText = document.getElementById('function-input').value;
             const xMin = parseFloat(document.getElementById('x-min').value);
             const xMax = parseFloat(document.getElementById('x-max').value);
             
-            // التحقق من صحة المدخلات
+            // Verify inputs
             if (!functionText) {
-                alert('يرجى إدخال معادلة الدالة');
+                alert('Please enter a function equation');
                 return;
             }
             
             if (xMin >= xMax) {
-                alert('يجب أن تكون قيمة X الصغرى أقل من قيمة X العظمى');
+                alert('X min must be less than X max');
                 return;
             }
             
-            // إنشاء مصفوفة القيم السينية
+            // Create array of x values
             const xValues = [];
             const step = (xMax - xMin) / 1000;
             for (let x = xMin; x <= xMax; x += step) {
                 xValues.push(x);
             }
             
-            // تحويل معادلة الدالة لتتوافق مع math.js
+            // Convert function equation to be compatible with math.js
             const functionExpr = functionText
                 .replace(/\^/g, '**')
                 .replace(/sin\(/g, 'Math.sin(')
@@ -597,17 +597,17 @@
                 .replace(/pi/g, 'Math.PI')
                 .replace(/e(?!\w)/g, 'Math.E');
             
-            // حساب قيم الدالة
+            // Calculate function values
             const yValues = xValues.map(x => {
                 try {
-                    // استخدام eval لتقييم التعبير (مع حذر)
+                    // Use eval to evaluate the expression (with caution)
                     return eval(functionExpr.replace(/x/g, `(${x})`));
                 } catch (e) {
-                    return null; // إرجاع null للقيم غير المعرفة
+                    return null; // Return null for undefined values
                 }
             });
             
-            // إنشاء البيانات للرسم
+            // Create data for plotting
             const trace = {
                 x: xValues,
                 y: yValues,
@@ -616,7 +616,7 @@
                 line: { color: '#1f77b4', width: 2 }
             };
             
-            // إعداد الرسم
+            // Setup plot layout
             const layout = {
                 paper_bgcolor: 'rgba(0,0,0,0)',
                 plot_bgcolor: 'rgba(0,0,0,0)',
@@ -634,7 +634,7 @@
                 margin: { t: 10, b: 40, l: 60, r: 10 }
             };
             
-            // إنشاء الرسم أو تحديثه
+            // Create or update the plot
             if (currentPlot) {
                 Plotly.react(graphDiv, [trace], layout);
             } else {
@@ -642,17 +642,17 @@
                 currentPlot = true;
             }
             
-            // عرض معلومات أساسية عن الدالة
+            // Show basic information about the function
             const functionInfo = document.getElementById('function-info');
-            functionInfo.innerHTML = `<strong>الدالة:</strong> f(x) = ${functionText}<br>
-                                      <strong>المجال:</strong> [${xMin}, ${xMax}]`;
+            functionInfo.innerHTML = `<strong>Function:</strong> f(x) = ${functionText}<br>
+                                      <strong>Domain:</strong> [${xMin}, ${xMax}]`;
         } catch (error) {
             console.error('Error plotting function:', error);
-            alert('حدث خطأ أثناء رسم الدالة. يرجى التأكد من صيغة المعادلة.');
+            alert('Error plotting function. Please check your equation format.');
         }
     }
     
-    // دوال حل المعادلات
+    // Equation solving functions
     function solveLinear() {
         try {
             const a = parseFloat(document.getElementById('linear-a').value);
@@ -660,16 +660,16 @@
             
             if (a === 0) {
                 if (b === 0) {
-                    document.getElementById('linear-result').innerHTML = 'المعادلة لها عدد لا نهائي من الحلول.';
+                    document.getElementById('linear-result').innerHTML = 'The equation has infinitely many solutions.';
                 } else {
-                    document.getElementById('linear-result').innerHTML = 'المعادلة ليس لها حل.';
+                    document.getElementById('linear-result').innerHTML = 'The equation has no solution.';
                 }
             } else {
                 const x = -b / a;
-                document.getElementById('linear-result').innerHTML = `<strong>الحل:</strong> x = ${x}`;
+                document.getElementById('linear-result').innerHTML = `<strong>Solution:</strong> x = ${x}`;
             }
         } catch (error) {
-            document.getElementById('linear-result').innerHTML = `<span class="text-danger">خطأ: ${error.message}</span>`;
+            document.getElementById('linear-result').innerHTML = `<span class="text-danger">Error: ${error.message}</span>`;
         }
     }
     
@@ -680,7 +680,7 @@
             const c = parseFloat(document.getElementById('quadratic-c').value);
             
             if (a === 0) {
-                // المعادلة خطية
+                // Linear equation
                 solveLinear(b, c);
                 return;
             }
@@ -689,32 +689,32 @@
             let result = '';
             
             if (discriminant > 0) {
-                // جذران حقيقيان مختلفان
+                // Two distinct real roots
                 const x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
                 const x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-                result = `<strong>المميز:</strong> Δ = ${discriminant} > 0<br>
-                          <strong>الجذران الحقيقيان:</strong><br>
+                result = `<strong>Discriminant:</strong> Δ = ${discriminant} > 0<br>
+                          <strong>Two real roots:</strong><br>
                           x₁ = ${x1}<br>
                           x₂ = ${x2}`;
             } else if (discriminant === 0) {
-                // جذر حقيقي مكرر
+                // One repeated real root
                 const x = -b / (2 * a);
-                result = `<strong>المميز:</strong> Δ = 0<br>
-                          <strong>الجذر الحقيقي المكرر:</strong><br>
+                result = `<strong>Discriminant:</strong> Δ = 0<br>
+                          <strong>One repeated real root:</strong><br>
                           x = ${x}`;
             } else {
-                // جذران مركبان
+                // Complex conjugate roots
                 const realPart = -b / (2 * a);
                 const imagPart = Math.sqrt(-discriminant) / (2 * a);
-                result = `<strong>المميز:</strong> Δ = ${discriminant} < 0<br>
-                          <strong>الجذران المركبان:</strong><br>
+                result = `<strong>Discriminant:</strong> Δ = ${discriminant} < 0<br>
+                          <strong>Complex conjugate roots:</strong><br>
                           x₁ = ${realPart} + ${imagPart}i<br>
                           x₂ = ${realPart} - ${imagPart}i`;
             }
             
             document.getElementById('quadratic-result').innerHTML = result;
         } catch (error) {
-            document.getElementById('quadratic-result').innerHTML = `<span class="text-danger">خطأ: ${error.message}</span>`;
+            document.getElementById('quadratic-result').innerHTML = `<span class="text-danger">Error: ${error.message}</span>`;
         }
     }
     
@@ -727,125 +727,125 @@
             const a22 = parseFloat(document.getElementById('system-a22').value);
             const b2 = parseFloat(document.getElementById('system-b2').value);
             
-            // حساب المحدد
+            // Calculate determinant
             const determinant = a11 * a22 - a12 * a21;
             
             if (determinant === 0) {
-                // المحدد صفر، نظام المعادلات إما متناقض أو له لانهائية من الحلول
-                // نتحقق من حالات خاصة
+                // Zero determinant, system is either inconsistent or has infinitely many solutions
+                // Check special cases
                 const det1 = b1 * a22 - b2 * a12;
                 const det2 = a11 * b2 - a21 * b1;
                 
                 if (det1 === 0 && det2 === 0) {
-                    document.getElementById('system-result').innerHTML = 'النظام له عدد لا نهائي من الحلول.';
+                    document.getElementById('system-result').innerHTML = 'The system has infinitely many solutions.';
                 } else {
-                    document.getElementById('system-result').innerHTML = 'النظام ليس له حل (متناقض).';
+                    document.getElementById('system-result').innerHTML = 'The system has no solution (inconsistent).';
                 }
             } else {
-                // حساب x و y باستخدام قاعدة كرامر
+                // Calculate x and y using Cramer's rule
                 const x = (b1 * a22 - b2 * a12) / determinant;
                 const y = (a11 * b2 - a21 * b1) / determinant;
                 
-                document.getElementById('system-result').innerHTML = `<strong>الحل:</strong><br>
+                document.getElementById('system-result').innerHTML = `<strong>Solution:</strong><br>
                                                                     x = ${x}<br>
                                                                     y = ${y}`;
             }
         } catch (error) {
-            document.getElementById('system-result').innerHTML = `<span class="text-danger">خطأ: ${error.message}</span>`;
+            document.getElementById('system-result').innerHTML = `<span class="text-danger">Error: ${error.message}</span>`;
         }
     }
     
-    // دوال إضافية للرسم البياني
+    // Additional graph functions
     function findZeros() {
         const functionText = document.getElementById('function-input').value;
         if (!functionText) {
-            alert('يرجى إدخال معادلة الدالة أولاً');
+            alert('Please enter a function equation first');
             return;
         }
         
         const functionInfo = document.getElementById('function-info');
-        functionInfo.innerHTML += '<br><strong>الأصفار:</strong> يرجى استخدام الحاسبة لإيجاد الأصفار بدقة.';
+        functionInfo.innerHTML += '<br><strong>Zeros:</strong> Please use the calculator to find zeros accurately.';
     }
     
     function findExtremum() {
         const functionText = document.getElementById('function-input').value;
         if (!functionText) {
-            alert('يرجى إدخال معادلة الدالة أولاً');
+            alert('Please enter a function equation first');
             return;
         }
         
         const functionInfo = document.getElementById('function-info');
-        functionInfo.innerHTML += '<br><strong>القيم القصوى:</strong> يمكن إيجادها من خلال المشتقة الأولى والثانية.';
+        functionInfo.innerHTML += '<br><strong>Extrema:</strong> Can be found using the first and second derivatives.';
     }
     
     function findDerivative() {
         const functionText = document.getElementById('function-input').value;
         if (!functionText) {
-            alert('يرجى إدخال معادلة الدالة أولاً');
+            alert('Please enter a function equation first');
             return;
         }
         
         const functionInfo = document.getElementById('function-info');
-        functionInfo.innerHTML += '<br><strong>المشتقة:</strong> استخدم قوانين الاشتقاق المناسبة.';
+        functionInfo.innerHTML += '<br><strong>Derivative:</strong> Use appropriate differentiation rules.';
     }
     
     function findIntegral() {
         const functionText = document.getElementById('function-input').value;
         if (!functionText) {
-            alert('يرجى إدخال معادلة الدالة أولاً');
+            alert('Please enter a function equation first');
             return;
         }
         
         const functionInfo = document.getElementById('function-info');
-        functionInfo.innerHTML += '<br><strong>التكامل:</strong> استخدم قوانين التكامل المناسبة.';
+        functionInfo.innerHTML += '<br><strong>Integral:</strong> Use appropriate integration rules.';
     }
     
-    // تهيئة الصفحة عند التحميل
+    // Initialize page on load
     document.addEventListener('DOMContentLoaded', function() {
-        // تهيئة محول الوحدات
+        // Initialize unit converter
         const unitTypes = {
             length: [
-                { value: 'mm', label: 'مليمتر (mm)' },
-                { value: 'cm', label: 'سنتيمتر (cm)' },
-                { value: 'm', label: 'متر (m)' },
-                { value: 'km', label: 'كيلومتر (km)' },
-                { value: 'in', label: 'إنش (in)' },
-                { value: 'ft', label: 'قدم (ft)' },
-                { value: 'yd', label: 'ياردة (yd)' },
-                { value: 'mi', label: 'ميل (mi)' }
+                { value: 'mm', label: 'Millimeter (mm)' },
+                { value: 'cm', label: 'Centimeter (cm)' },
+                { value: 'm', label: 'Meter (m)' },
+                { value: 'km', label: 'Kilometer (km)' },
+                { value: 'in', label: 'Inch (in)' },
+                { value: 'ft', label: 'Foot (ft)' },
+                { value: 'yd', label: 'Yard (yd)' },
+                { value: 'mi', label: 'Mile (mi)' }
             ],
             weight: [
-                { value: 'mg', label: 'مليجرام (mg)' },
-                { value: 'g', label: 'جرام (g)' },
-                { value: 'kg', label: 'كيلوجرام (kg)' },
-                { value: 't', label: 'طن (t)' },
-                { value: 'oz', label: 'أونصة (oz)' },
-                { value: 'lb', label: 'رطل (lb)' }
+                { value: 'mg', label: 'Milligram (mg)' },
+                { value: 'g', label: 'Gram (g)' },
+                { value: 'kg', label: 'Kilogram (kg)' },
+                { value: 't', label: 'Ton (t)' },
+                { value: 'oz', label: 'Ounce (oz)' },
+                { value: 'lb', label: 'Pound (lb)' }
             ],
             area: [
-                { value: 'mm2', label: 'مليمتر مربع (mm²)' },
-                { value: 'cm2', label: 'سنتيمتر مربع (cm²)' },
-                { value: 'm2', label: 'متر مربع (m²)' },
-                { value: 'ha', label: 'هكتار (ha)' },
-                { value: 'km2', label: 'كيلومتر مربع (km²)' },
-                { value: 'in2', label: 'إنش مربع (in²)' },
-                { value: 'ft2', label: 'قدم مربع (ft²)' },
-                { value: 'ac', label: 'فدان (ac)' },
-                { value: 'mi2', label: 'ميل مربع (mi²)' }
+                { value: 'mm2', label: 'Square millimeter (mm²)' },
+                { value: 'cm2', label: 'Square centimeter (cm²)' },
+                { value: 'm2', label: 'Square meter (m²)' },
+                { value: 'ha', label: 'Hectare (ha)' },
+                { value: 'km2', label: 'Square kilometer (km²)' },
+                { value: 'in2', label: 'Square inch (in²)' },
+                { value: 'ft2', label: 'Square foot (ft²)' },
+                { value: 'ac', label: 'Acre (ac)' },
+                { value: 'mi2', label: 'Square mile (mi²)' }
             ],
             volume: [
-                { value: 'ml', label: 'مليلتر (ml)' },
-                { value: 'l', label: 'لتر (l)' },
-                { value: 'm3', label: 'متر مكعب (m³)' },
-                { value: 'floz', label: 'أونصة سائلة (fl oz)' },
-                { value: 'gal', label: 'جالون (gal)' },
-                { value: 'in3', label: 'إنش مكعب (in³)' },
-                { value: 'ft3', label: 'قدم مكعب (ft³)' }
+                { value: 'ml', label: 'Milliliter (ml)' },
+                { value: 'l', label: 'Liter (l)' },
+                { value: 'm3', label: 'Cubic meter (m³)' },
+                { value: 'floz', label: 'Fluid ounce (fl oz)' },
+                { value: 'gal', label: 'Gallon (gal)' },
+                { value: 'in3', label: 'Cubic inch (in³)' },
+                { value: 'ft3', label: 'Cubic foot (ft³)' }
             ],
             temperature: [
-                { value: 'c', label: 'سيلسيوس (°C)' },
-                { value: 'f', label: 'فهرنهايت (°F)' },
-                { value: 'k', label: 'كلفن (K)' }
+                { value: 'c', label: 'Celsius (°C)' },
+                { value: 'f', label: 'Fahrenheit (°F)' },
+                { value: 'k', label: 'Kelvin (K)' }
             ]
         };
         
@@ -856,23 +856,23 @@
             const fromSelect = document.getElementById('unit-from');
             const toSelect = document.getElementById('unit-to');
             
-            // مسح الاختيارات الحالية
+            // Clear current options
             fromSelect.innerHTML = '';
             toSelect.innerHTML = '';
             
-            // إضافة الوحدات الجديدة
+            // Add new units
             units.forEach(unit => {
                 fromSelect.add(new Option(unit.label, unit.value));
                 toSelect.add(new Option(unit.label, unit.value));
             });
             
-            // اختيار الوحدة الثانية افتراضياً
+            // Select second option by default
             if (toSelect.options.length > 1) {
                 toSelect.selectedIndex = 1;
             }
         }
         
-        // تهيئة محول الوحدات
+        // Initialize unit converter
         document.getElementById('unit-type').addEventListener('change', updateUnitOptions);
         updateUnitOptions();
     });
@@ -894,13 +894,13 @@
         font-weight: bold;
     }
     
-    /* تنسيق الرسم البياني */
+    /* Graph styles */
     #function-graph {
         background-color: #222;
         border-radius: 5px;
     }
     
-    /* تنسيق المصفوفات */
+    /* Matrix styles */
     #matrix-a, #matrix-b {
         font-family: 'Courier New', monospace;
     }

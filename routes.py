@@ -640,6 +640,23 @@ def dashboard():
         viewed_videos.add(view.video_id)
     
     return render_template('student/dashboard.html', videos=videos, posts=posts, viewed_videos=viewed_videos)
+    
+@student_bp.route('/dashboard/en')
+@login_required
+def dashboard_en():
+    if current_user.is_admin():
+        return redirect(url_for('admin.dashboard'))
+        
+    videos = Video.query.order_by(Video.created_at.desc()).all()
+    posts = Post.query.order_by(Post.created_at.desc()).all()
+    
+    # Get list of videos that the student has already watched
+    viewed_videos = set()
+    user_views = VideoView.query.filter_by(user_id=current_user.id).all()
+    for view in user_views:
+        viewed_videos.add(view.video_id)
+    
+    return render_template('student/dashboard_en.html', videos=videos, posts=posts, viewed_videos=viewed_videos)
 
 @student_bp.route('/video/<int:video_id>', methods=['GET', 'POST'])
 @login_required
@@ -806,23 +823,41 @@ def view_notes():
     form = StudentNoteForm()
     return render_template('student/notes.html', notes=notes, form=form)
     
-# صفحة القوانين الرياضية العامة
+# صفحة القوانين الرياضية العامة (عربي)
 @student_bp.route('/formulas')
 @login_required
 def math_formulas():
     return render_template('student/formulas.html')
     
-# صفحة قوانين الجبر للمرحلة الثانوية
+# صفحة قوانين الجبر للمرحلة الثانوية (عربي)
 @student_bp.route('/algebra_formulas')
 @login_required
 def algebra_formulas():
     return render_template('student/algebra_formulas.html')
     
-# صفحة الآلة الحاسبة المتقدمة
+# صفحة القوانين الرياضية العامة (إنجليزي)
+@student_bp.route('/formulas/en')
+@login_required
+def math_formulas_en():
+    return render_template('student/formulas_en.html')
+    
+# صفحة قوانين الجبر للمرحلة الثانوية (إنجليزي)
+@student_bp.route('/algebra_formulas/en')
+@login_required
+def algebra_formulas_en():
+    return render_template('student/algebra_formulas_en.html')
+    
+# صفحة الآلة الحاسبة المتقدمة (عربي)
 @student_bp.route('/calculator')
 @login_required
 def advanced_calculator():
     return render_template('student/advanced_calculator.html')
+    
+# صفحة الآلة الحاسبة المتقدمة (إنجليزي)
+@student_bp.route('/calculator/en')
+@login_required
+def advanced_calculator_en():
+    return render_template('student/advanced_calculator_en.html')
 
 @student_bp.route('/notes/add', methods=['POST'])
 @login_required
