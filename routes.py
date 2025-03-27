@@ -621,20 +621,16 @@ def forgot_password():
         user = User.query.filter_by(username=form.username.data).first()
         
         if user:
-            # التحقق من وجود بيانات للاتصال
-            if not user.email and not user.phone:
-                flash('لا يمكن استعادة كلمة المرور لهذا الحساب لأنه لا يوجد بيانات للاتصال. يرجى التواصل مع المشرف.', 'danger')
-                return redirect(url_for('main.forgot_password'))
-            
-            # توليد رمز استعادة وحفظه
-            token = user.generate_reset_token()
-            db.session.commit()
-            
-            # في التطبيق الحقيقي، يتم إرسال رسالة إلى البريد الإلكتروني أو رسالة نصية
-            reset_link = url_for('main.reset_password', token=token, username=user.username, _external=True)
-            
-            flash(f'تم إرسال رمز الاستعادة. رابط الاستعادة هو: {reset_link}', 'info')
-            return redirect(url_for('main.login'))
+            # التحقق من تطابق البريد الإلكتروني ورقم الهاتف مع المعلومات المسجلة بالفعل
+            if (user.email and user.email == form.email.data) or (user.phone and user.phone == form.phone.data):
+                # توليد رمز استعادة وحفظه
+                token = user.generate_reset_token()
+                db.session.commit()
+                
+                # إعادة توجيه المستخدم مباشرة إلى صفحة إعادة تعيين كلمة المرور
+                return redirect(url_for('main.reset_password', token=token, username=user.username))
+            else:
+                flash('المعلومات المدخلة غير متطابقة مع معلومات الحساب. يرجى التأكد من صحة البريد الإلكتروني ورقم الهاتف.', 'danger')
         else:
             flash('لم يتم العثور على حساب بهذا الاسم.', 'danger')
             

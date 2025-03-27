@@ -97,7 +97,13 @@ class ForgotPasswordForm(FlaskForm):
         DataRequired(message='يجب إدخال اسم المستخدم'),
         Length(min=3, max=64, message='يجب أن يكون اسم المستخدم بين 3 و 64 حرفاً')
     ])
-    submit = SubmitField('إرسال رمز الاستعادة')
+    email = StringField('البريد الإلكتروني', validators=[
+        DataRequired(message='يجب إدخال البريد الإلكتروني')
+    ])
+    phone = StringField('رقم الهاتف', validators=[
+        DataRequired(message='يجب إدخال رقم الهاتف')
+    ])
+    submit = SubmitField('استعادة كلمة المرور')
     
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('كلمة المرور الجديدة', validators=[
