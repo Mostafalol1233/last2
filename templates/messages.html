@@ -20,17 +20,17 @@
                 <div class="card-body">
                     <form method="POST" action="{{ url_for('main.messages') }}">
                         {{ form.csrf_token }}
-
+                        
                         <div class="mb-3">
                             <label class="form-label">{{ form.recipient_id.label }}</label>
                             {{ form.recipient_id(class="form-select") }}
                         </div>
-
+                        
                         <div class="mb-3">
                             <label class="form-label">{{ form.message.label }}</label>
                             {{ form.message(class="form-control", rows="5") }}
                         </div>
-
+                        
                         <div class="mb-3 d-grid">
                             {{ form.submit(class="btn btn-primary") }}
                         </div>
@@ -38,7 +38,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div class="col-md-8">
             <div class="card bg-dark mb-4">
                 <div class="card-header">

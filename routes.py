@@ -565,16 +565,6 @@ def create_lecture_code(video_id):
                     )
                     db.session.add(lecture_code)
                     student = User.query.get(student_id)
-                    
-                    # إرسال رسالة تلقائية للطالب
-                    message = DirectMessage(
-                        sender_id=current_user.id,
-                        recipient_id=student_id,
-                        message=f'تم تخصيص كود جديد لك للمحاضرة "{video.title}". الكود هو: {code}',
-                        is_system=True
-                    )
-                    db.session.add(message)
-                    
                     generated_codes.append({
                         'code': code,
                         'student': student.full_name if student else None,
