@@ -59,6 +59,24 @@
                     
                     <div class="row mb-2">
                         <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('asin(')">sin⁻¹</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('acos(')">cos⁻¹</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('atan(')">tan⁻¹</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('abs(')">|x|</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('!')">&excl;</button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col">
                             <button class="btn btn-secondary w-100" onclick="addToDisplay('√(')">√</button>
                         </div>
                         <div class="col">
@@ -537,7 +555,12 @@
             let expression = displayValue
                 .replace(/π/g, 'pi')
                 .replace(/√\(/g, 'sqrt(')
-                .replace(/\^/g, '**');
+                .replace(/\^/g, '**')
+                .replace(/asin\(/g, 'asin(')  // Inverse trigonometric functions
+                .replace(/acos\(/g, 'acos(')
+                .replace(/atan\(/g, 'atan(')
+                .replace(/abs\(/g, 'abs(')    // Absolute value
+                .replace(/(\d+)!/g, 'factorial($1)'); // Factorial
             
             // Calculate the result
             const answer = math.evaluate(expression);
