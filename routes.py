@@ -834,6 +834,12 @@ def math_formulas():
 @login_required
 def algebra_formulas():
     return render_template('student/algebra_formulas.html')
+
+# صفحة قوانين متقدمة (تفاضل وتكامل، ميكانيكا، ديناميكا) (عربي)
+@student_bp.route('/advanced_formulas')
+@login_required
+def advanced_formulas():
+    return render_template('student/advanced_formulas.html')
     
 # صفحة القوانين الرياضية العامة (إنجليزي)
 @student_bp.route('/formulas/en')
@@ -846,6 +852,12 @@ def math_formulas_en():
 @login_required
 def algebra_formulas_en():
     return render_template('student/algebra_formulas_en.html')
+    
+# صفحة قوانين متقدمة (تفاضل وتكامل، ميكانيكا، ديناميكا) (إنجليزي)
+@student_bp.route('/advanced_formulas/en')
+@login_required
+def advanced_formulas_en():
+    return render_template('student/advanced_formulas_en.html')
     
 # صفحة الآلة الحاسبة المتقدمة (عربي)
 @student_bp.route('/calculator')
