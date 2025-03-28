@@ -4,7 +4,7 @@ import secrets
 import string
 import openai
 from datetime import datetime
-from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app, send_file
 from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse
 from werkzeug.utils import secure_filename
@@ -541,33 +541,117 @@ def create_lecture_code(video_id):
     form.student_id.choices = [(0, 'بدون تعيين لطالب محدد')] + [(s.id, s.full_name + ' (' + s.username + ')') for s in students]
     
     if form.validate_on_submit():
-        # توليد كود جديد
-        code = generate_random_code()
-        lecture_code = LectureCode(
-            video_id=video.id,
-            code=code,
-            is_active=True,
-            is_used=False
-        )
-        
-        # في حالة إذا تم تحديد طالب معين
+        generated_codes = []
         student_id = form.student_id.data
-        if student_id != 0:
-            lecture_code.assigned_to = student_id
-            student = User.query.get(student_id)
-            success_message = f'تم إنشاء كود جديد للمحاضرة وتعيينه للطالب {student.full_name}: {code}'
-        else:
-            success_message = f'تم إنشاء كود جديد للمحاضرة: {code}'
+        multiple_students = form.multiple_students.data
+        num_codes = form.num_codes.data
+        generate_pdf = form.generate_pdf.data
+
+        # إذا كان التوليد لعدة أكواد
+        if multiple_students:
+            for _ in range(num_codes):
+                code = generate_random_code()
+                lecture_code = LectureCode(
+                    video_id=video.id,
+                    code=code,
+                    is_active=True,
+                    is_used=False
+                )
+                db.session.add(lecture_code)
+                generated_codes.append(code)
             
-        db.session.add(lecture_code)
-        db.session.commit()
-        
-        flash(success_message, 'success')
-        return redirect(url_for('admin.lecture_codes'))
+            db.session.commit()
+            
+            # إنشاء ملف PDF إذا طلب المستخدم ذلك
+            if generate_pdf:
+                pdf_path = generate_codes_pdf(generated_codes, video.title)
+                flash(f'تم إنشاء {num_codes} كود بنجاح!', 'success')
+                return send_file(pdf_path, as_attachment=True, download_name=f'lecture_codes_{video.id}.pdf')
+            else:
+                flash(f'تم إنشاء {num_codes} كود بنجاح!', 'success')
+                return redirect(url_for('admin.lecture_codes'))
+        else:
+            # إنشاء كود واحد (السلوك القديم)
+            code = generate_random_code()
+            lecture_code = LectureCode(
+                video_id=video.id,
+                code=code,
+                is_active=True,
+                is_used=False
+            )
+            
+            # في حالة إذا تم تحديد طالب معين
+            if student_id != 0:
+                lecture_code.assigned_to = student_id
+                student = User.query.get(student_id)
+                success_message = f'تم إنشاء كود جديد للمحاضرة وتعيينه للطالب {student.full_name}: {code}'
+            else:
+                success_message = f'تم إنشاء كود جديد للمحاضرة: {code}'
+                
+            db.session.add(lecture_code)
+            db.session.commit()
+            
+            flash(success_message, 'success')
+            return redirect(url_for('admin.lecture_codes'))
     
     # في حالة GET
     form.video_id.data = video_id
     return render_template('admin/generate_code.html', form=form, video=video)
+
+def generate_codes_pdf(codes, video_title):
+    """إنشاء ملف PDF يحتوي على أكواد المحاضرات"""
+    import os
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib import colors
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+    from reportlab.lib.styles import getSampleStyleSheet
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    
+    # تحديد مسار الملف في مجلد مؤقت
+    pdf_path = 'static/temp/lecture_codes.pdf'
+    
+    # إعداد مستند PDF
+    doc = SimpleDocTemplate(pdf_path, pagesize=A4)
+    styles = getSampleStyleSheet()
+    
+    # إنشاء العناصر التي ستظهر في PDF
+    elements = []
+    
+    # إضافة عنوان
+    title_style = styles['Heading1']
+    title = Paragraph(f"أكواد المحاضرة: {video_title}", title_style)
+    elements.append(title)
+    elements.append(Spacer(1, 20))
+    
+    # إنشاء بيانات الجدول
+    data = [['رقم', 'كود المحاضرة']]
+    for i, code in enumerate(codes, 1):
+        data.append([str(i), code])
+    
+    # إنشاء جدول مع تنسيق
+    table = Table(data, colWidths=[60, 200])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+    
+    elements.append(table)
+    
+    # إضافة معلومات إضافية
+    elements.append(Spacer(1, 30))
+    notes = Paragraph("ملاحظة: هذه الأكواد للاستخدام لمرة واحدة فقط، الرجاء الاحتفاظ بها بعناية.", styles["Normal"])
+    elements.append(notes)
+    
+    # بناء المستند
+    doc.build(elements)
+    
+    return pdf_path
 
 @admin_bp.route('/deactivate_code/<int:code_id>')
 @login_required

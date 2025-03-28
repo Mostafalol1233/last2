@@ -22,11 +22,36 @@
                         {{ form.csrf_token }}
                         {{ form.video_id }}
                         
-                        <div class="mb-3">
-                            <label class="form-label">{{ form.student_id.label }}</label>
-                            {{ form.student_id(class="form-select") }}
-                            <div class="form-text text-muted">
-                                إذا تم تخصيص الكود لطالب محدد، فلن يتمكن الطلاب الآخرين من استخدامه
+                        <div class="mb-3 form-check">
+                            {{ form.multiple_students(class="form-check-input") }}
+                            <label class="form-check-label" for="multiple_students">{{ form.multiple_students.label }}</label>
+                        </div>
+
+                        <div id="single-student-options">
+                            <div class="mb-3">
+                                <label class="form-label">{{ form.student_id.label }}</label>
+                                {{ form.student_id(class="form-select") }}
+                                <div class="form-text text-muted">
+                                    إذا تم تخصيص الكود لطالب محدد، فلن يتمكن الطلاب الآخرين من استخدامه
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="multiple-students-options" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label">{{ form.num_codes.label }}</label>
+                                {{ form.num_codes(class="form-control", type="number", min="1", max="50") }}
+                                <div class="form-text text-muted">
+                                    عدد أكواد المحاضرة التي تريد إنشاءها دفعة واحدة
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                {{ form.generate_pdf(class="form-check-input") }}
+                                <label class="form-check-label" for="generate_pdf">{{ form.generate_pdf.label }}</label>
+                                <div class="form-text text-muted">
+                                    إنشاء ملف PDF يحتوي على جميع الأكواد للطباعة
+                                </div>
                             </div>
                         </div>
                         
@@ -35,6 +60,30 @@
                         </div>
                     </form>
                 </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const multipleStudentsCheckbox = document.querySelector('#multiple_students');
+                        const singleStudentOptions = document.querySelector('#single-student-options');
+                        const multipleStudentsOptions = document.querySelector('#multiple-students-options');
+                        
+                        function toggleOptions() {
+                            if (multipleStudentsCheckbox.checked) {
+                                singleStudentOptions.style.display = 'none';
+                                multipleStudentsOptions.style.display = 'block';
+                            } else {
+                                singleStudentOptions.style.display = 'block';
+                                multipleStudentsOptions.style.display = 'none';
+                            }
+                        }
+                        
+                        // Set initial state
+                        toggleOptions();
+                        
+                        // Listen for changes
+                        multipleStudentsCheckbox.addEventListener('change', toggleOptions);
+                    });
+                </script>
                 <div class="card-footer">
                     <a href="{{ url_for('admin.lecture_codes') }}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left me-1"></i>العودة إلى قائمة الأكواد

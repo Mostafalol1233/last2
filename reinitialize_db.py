@@ -1,5 +1,5 @@
 from app import app, db
-from models import User, Video, Comment, Post, VideoView, LectureCode, VideoLike, StudentNote, AIChatMessage
+from models import User, Video, Comment, Post, VideoView, LectureCode, VideoLike, StudentNote, AIChatMessage, DirectMessage
 from werkzeug.security import generate_password_hash
 
 # إعادة تهيئة قاعدة البيانات

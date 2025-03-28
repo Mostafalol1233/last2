@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, HiddenField, BooleanField
-from wtforms.validators import DataRequired, Length, URL, Optional, EqualTo, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, HiddenField, BooleanField, IntegerField
+from wtforms.validators import DataRequired, Length, URL, Optional, EqualTo, ValidationError, NumberRange
 from models import User
 
 class LoginForm(FlaskForm):
@@ -45,6 +45,9 @@ class LectureCodeForm(FlaskForm):
 class GenerateCodeForm(FlaskForm):
     video_id = HiddenField('معرف الفيديو', validators=[DataRequired()])
     student_id = SelectField('إرسال الكود للطالب (اختياري)', coerce=int, validators=[Optional()])
+    multiple_students = BooleanField('إرسال أكواد لأكثر من طالب', default=False)
+    num_codes = IntegerField('عدد الأكواد للإنشاء', default=1, validators=[NumberRange(min=1, max=50, message='يجب أن يكون العدد بين 1 و 50')])
+    generate_pdf = BooleanField('إنشاء ملف PDF للأكواد', default=False)
     submit = SubmitField('توليد كود جديد')
 
 class StudentNoteForm(FlaskForm):
