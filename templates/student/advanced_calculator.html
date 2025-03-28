@@ -238,6 +238,151 @@
     <div class="col-12">
         <div class="card bg-dark">
             <div class="card-header">
+                <h5><i class="fas fa-tools me-2"></i>حسابات إضافية</h5>
+            </div>
+            <div class="card-body">
+                <!-- Accordion for different calculation tools -->
+                <div class="accordion" id="calculationsAccordion">
+                    <!-- Unit Converter -->
+                    <div class="accordion-item bg-dark">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                محول الوحدات
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#calculationsAccordion">
+                            <div class="accordion-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <select id="unit-type" class="form-select mb-2">
+                                            <option value="length">الطول</option>
+                                            <option value="weight">الوزن</option>
+                                            <option value="area">المساحة</option>
+                                            <option value="volume">الحجم</option>
+                                            <option value="temperature">درجة الحرارة</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="input-group mb-2">
+                                            <input type="number" id="unit-value" class="form-control" placeholder="أدخل القيمة">
+                                            <select id="from-unit" class="form-select"></select>
+                                            <span class="input-group-text">إلى</span>
+                                            <select id="to-unit" class="form-select"></select>
+                                            <button class="btn btn-primary" onclick="convertUnit()">تحويل</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="unit-result" class="alert alert-info">النتائج ستظهر هنا</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Calculus Tools -->
+                    <div class="accordion-item bg-dark">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                أدوات التفاضل والتكامل
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#calculationsAccordion">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card bg-dark h-100">
+                                            <div class="card-header">حساب المشتقة</div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label for="derivative-function" class="form-label">المعادلة (مثال: 2x^3 + 4x)</label>
+                                                    <input type="text" id="derivative-function" class="form-control mb-2" placeholder="أدخل المعادلة">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="derivative-variable" class="form-label">المتغير</label>
+                                                    <input type="text" id="derivative-variable" class="form-control mb-2" placeholder="x" value="x">
+                                                </div>
+                                                <button class="btn btn-primary" onclick="solveDerivative()">حساب المشتقة</button>
+                                                <div id="derivative-result" class="alert alert-info mt-3">النتائج ستظهر هنا</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card bg-dark h-100">
+                                            <div class="card-header">حساب التكامل</div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label for="integral-function" class="form-label">المعادلة (مثال: 2x + 5)</label>
+                                                    <input type="text" id="integral-function" class="form-control mb-2" placeholder="أدخل المعادلة">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="integral-variable" class="form-label">المتغير</label>
+                                                    <input type="text" id="integral-variable" class="form-control mb-2" placeholder="x" value="x">
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col">
+                                                        <label for="integral-lower" class="form-label">الحد الأدنى (اختياري)</label>
+                                                        <input type="number" id="integral-lower" class="form-control">
+                                                    </div>
+                                                    <div class="col">
+                                                        <label for="integral-upper" class="form-label">الحد الأعلى (اختياري)</label>
+                                                        <input type="number" id="integral-upper" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-primary" onclick="solveIntegral()">حساب التكامل</button>
+                                                <div id="integral-result" class="alert alert-info mt-3">النتائج ستظهر هنا</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Matrix Calculator -->
+                    <div class="accordion-item bg-dark">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                                حاسبة المصفوفات
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#calculationsAccordion">
+                            <div class="accordion-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="matrix-a" class="form-label">المصفوفة A</label>
+                                        <textarea id="matrix-a" class="form-control" rows="3" placeholder="أدخل المصفوفة، مثال:&#10;1 2 3&#10;4 5 6&#10;7 8 9"></textarea>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="matrix-b" class="form-label">المصفوفة B (اختياري)</label>
+                                        <textarea id="matrix-b" class="form-control" rows="3" placeholder="أدخل المصفوفة، مثال:&#10;9 8 7&#10;6 5 4&#10;3 2 1"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col">
+                                        <select id="matrix-operation" class="form-select">
+                                            <option value="det">المحدد (det A)</option>
+                                            <option value="inverse">المعكوس (A^-1)</option>
+                                            <option value="transpose">المنقول (A^T)</option>
+                                            <option value="add">الجمع (A + B)</option>
+                                            <option value="multiply">الضرب (A × B)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <button class="btn btn-primary w-100" onclick="calculateMatrix()">حساب</button>
+                                    </div>
+                                </div>
+                                <div id="matrix-result" class="alert alert-info">النتائج ستظهر هنا</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-dark">
+            <div class="card-header">
                 <h5><i class="fas fa-square-root-alt me-2"></i>حل المعادلات</h5>
             </div>
             <div class="card-body">
@@ -904,6 +1049,32 @@
         updateUnitOptions();
     });
 </script>
+
+<!-- Add styles for matrix result display -->
+<style>
+    .matrix-result-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .matrix-row {
+        display: flex;
+        justify-content: center;
+        margin: 2px 0;
+    }
+    .matrix-cell {
+        display: inline-block;
+        width: 50px;
+        text-align: center;
+        padding: 5px;
+        background-color: #f8f9fa;
+        color: #000;
+        margin: 0 2px;
+        border-radius: 3px;
+    }
+</style>
+
+<script src="{{ url_for('static', filename='js/advanced-calculator.js') }}"></script>
 {% endblock %}
 
 {% block styles %}

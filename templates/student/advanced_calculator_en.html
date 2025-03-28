@@ -900,6 +900,32 @@
         updateUnitOptions();
     });
 </script>
+
+<!-- Matrix result display styles -->
+<style>
+    .matrix-result-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .matrix-row {
+        display: flex;
+        justify-content: center;
+        margin: 2px 0;
+    }
+    .matrix-cell {
+        display: inline-block;
+        width: 50px;
+        text-align: center;
+        padding: 5px;
+        background-color: #f8f9fa;
+        color: #000;
+        margin: 0 2px;
+        border-radius: 3px;
+    }
+</style>
+
+<script src="{{ url_for('static', filename='js/advanced-calculator.js') }}"></script>
 {% endblock %}
 
 {% block styles %}
