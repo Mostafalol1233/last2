@@ -1,4 +1,77 @@
 /* Custom styles to complement Bootstrap */
+/* Enhanced animations and effects */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(0, 123, 255, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); }
+}
+
+/* Apply animations to elements */
+.card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #2b5be6, #4e6ee8);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #1c49c0, #3a5acf);
+}
+
+.btn-success {
+    background: linear-gradient(45deg, #28a745, #34ce57);
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(45deg, #218838, #2eba4e);
+}
+
+.btn-danger {
+    background: linear-gradient(45deg, #dc3545, #ef5462);
+    border: none;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(45deg, #c82333, #e04150);
+}
+
+.btn-warning {
+    background: linear-gradient(45deg, #ffc107, #ffcd39);
+    border: none;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(45deg, #e0a800, #efc241);
+}
+
 .theme-toggle {
     width: 45px;
     height: 45px;
@@ -8,11 +81,17 @@
     align-items: center;
     justify-content: center;
     font-size: 1.2em;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    transform: rotate(180deg);
 }
 
 .navbar-brand {
     display: flex;
     align-items: center;
+    animation: slideInRight 0.5s ease-out;
 }
 
 .navbar-brand span {
@@ -116,19 +195,62 @@ body {
     border: 0;
 }
 
-/* Card hover effect */
+/* Card hover effect - Enhanced */
+.card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+}
+
 .card-hover:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    transform: translateY(-10px);
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #ff7e5f, #feb47b);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.card:hover::before {
+    transform: scaleX(1);
+}
+
+/* Add pulse animation to new badges */
+.badge {
     transition: all 0.3s ease;
 }
 
-/* Comment section styling */
+.badge-new {
+    animation: pulse 1.5s infinite;
+}
+
+.badge:hover {
+    transform: scale(1.1);
+}
+
+/* Comment section styling - Enhanced */
 .comment {
-    margin-bottom: 1rem;
-    padding: 1rem;
-    border-radius: 0.25rem;
+    margin-bottom: 1.5rem;
+    padding: 1.2rem;
+    border-radius: 0.8rem;
     background-color: var(--bs-dark);
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.comment:hover {
+    border-left: 4px solid #4e6ee8;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateX(5px);
 }
 
 .comment-header {
@@ -138,7 +260,20 @@ body {
 }
 
 .comment-body {
-    margin-top: 0.5rem;
+    margin-top: 0.8rem;
+    line-height: 1.6;
+}
+
+/* Animation for form inputs */
+input.form-control, select.form-select, textarea.form-control {
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+input.form-control:focus, select.form-select:focus, textarea.form-control:focus {
+    border-left: 4px solid #4e6ee8;
+    box-shadow: 0 0 15px rgba(78, 110, 232, 0.3);
+    transform: translateX(5px);
 }
 
 /* Login form styles */
@@ -160,20 +295,157 @@ body {
     background-color: var(--bs-dark);
 }
 
-/* Custom spacing */
+/* Custom spacing with enhanced animations */
 .content-section {
     padding: 2rem 0;
+    animation: fadeIn 0.8s ease-out;
 }
 
-/* Video and post list */
+/* Video and post list with staggered animations */
 .video-list, .post-list {
     margin-top: 1.5rem;
 }
 
-/* Responsive adjustments */
+.video-list .card:nth-child(1) { animation-delay: 0.1s; }
+.video-list .card:nth-child(2) { animation-delay: 0.2s; }
+.video-list .card:nth-child(3) { animation-delay: 0.3s; }
+.video-list .card:nth-child(4) { animation-delay: 0.4s; }
+.video-list .card:nth-child(5) { animation-delay: 0.5s; }
+
+/* Enhanced dashboard design */
+.dashboard-stats {
+    background: linear-gradient(135deg, #2c3034 0%, #1e2328 100%);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    margin-bottom: 25px;
+}
+
+.dashboard-stats:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #4e6ee8, #2b5be6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Floating labels for form inputs */
+.form-floating {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.form-floating label {
+    position: absolute;
+    top: 0;
+    left: 15px;
+    height: 100%;
+    padding: 1rem 0.75rem;
+    pointer-events: none;
+    transform-origin: 0 0;
+    transition: opacity .1s ease-in-out,transform .1s ease-in-out;
+    color: #6c757d;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    opacity: .65;
+    transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+}
+
+/* Enhanced alert messages */
+.alert {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    animation: slideInRight 0.5s ease-out;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #28a745, #34ce57);
+    color: white;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #dc3545, #ef5462);
+    color: white;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #17a2b8, #1fc8e3);
+    color: white;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #ffc107, #ffcd39);
+    color: #212529;
+}
+
+/* Glass morphism effect for modal dialogs */
+.modal-content {
+    background: rgba(33, 37, 41, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive adjustments with advanced techniques */
 @media (max-width: 768px) {
     .sidebar {
         position: static;
         height: auto;
     }
+    
+    /* Improved mobile navigation */
+    .navbar-collapse {
+        background: rgba(33, 37, 41, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1rem;
+        border-radius: 10px;
+        margin-top: 10px;
+    }
+    
+    /* Better card layouts on mobile */
+    .card {
+        margin-bottom: 25px;
+    }
+}
+
+/* Preloader animation for page transitions */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #212529;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+}
+
+.preloader.fade-out {
+    opacity: 0;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #4e6ee8;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

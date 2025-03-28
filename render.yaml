@@ -4,9 +4,18 @@ services:
     name: educational-platform
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn main:app
+    startCommand: gunicorn --bind 0.0.0.0:$PORT main:app
     envVars:
-      - key: FLASK_SECRET_KEY
+      - key: SESSION_SECRET
         generateValue: true
       - key: DATABASE_URL
-        value: sqlite:///instance/app.db
+        fromDatabase:
+          name: educational-platform-db
+          property: connectionString
+      - key: OPENAI_API_KEY
+        sync: false
+
+databases:
+  - name: educational-platform-db
+    databaseName: educational_platform
+    user: ahmed_helly
