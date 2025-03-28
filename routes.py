@@ -539,6 +539,7 @@ def create_lecture_code(video_id):
     # إحضار قائمة بالطلاب لعرضها في القائمة المنسدلة
     students = User.query.filter_by(role='student').all()
     form.student_id.choices = [(0, 'بدون تعيين لطالب محدد')] + [(s.id, s.full_name + ' (' + s.username + ')') for s in students]
+    form.selected_students.choices = [(s.id, s.full_name + ' (' + s.username + ')') for s in students]
     
     if form.validate_on_submit():
         generated_codes = []
@@ -546,30 +547,63 @@ def create_lecture_code(video_id):
         multiple_students = form.multiple_students.data
         num_codes = form.num_codes.data
         generate_pdf = form.generate_pdf.data
+        selected_students = form.selected_students.data
 
         # إذا كان التوليد لعدة أكواد
         if multiple_students:
-            for _ in range(num_codes):
-                code = generate_random_code()
-                lecture_code = LectureCode(
-                    video_id=video.id,
-                    code=code,
-                    is_active=True,
-                    is_used=False
-                )
-                db.session.add(lecture_code)
-                generated_codes.append(code)
-            
-            db.session.commit()
-            
-            # إنشاء ملف PDF إذا طلب المستخدم ذلك
-            if generate_pdf:
-                pdf_path = generate_codes_pdf(generated_codes, video.title)
-                flash(f'تم إنشاء {num_codes} كود بنجاح!', 'success')
-                return send_file(pdf_path, as_attachment=True, download_name=f'lecture_codes_{video.id}.pdf')
+            # التحقق مما إذا كان المستخدم قد حدد طلابًا محددين
+            if selected_students:
+                # إنشاء كود لكل طالب محدد
+                for student_id in selected_students:
+                    code = generate_random_code()
+                    lecture_code = LectureCode(
+                        video_id=video.id,
+                        code=code,
+                        is_active=True,
+                        is_used=False,
+                        assigned_to=student_id
+                    )
+                    db.session.add(lecture_code)
+                    student = User.query.get(student_id)
+                    generated_codes.append({
+                        'code': code,
+                        'student': student.full_name if student else None,
+                        'student_username': student.username if student else None
+                    })
+                
+                db.session.commit()
+                
+                # إنشاء ملف PDF إذا طلب المستخدم ذلك
+                if generate_pdf:
+                    pdf_path = generate_codes_pdf(generated_codes, video.title, with_students=True)
+                    flash(f'تم إنشاء {len(selected_students)} كود وتعيينهم للطلاب المحددين بنجاح!', 'success')
+                    return send_file(pdf_path, as_attachment=True, download_name=f'lecture_codes_{video.id}.pdf')
+                else:
+                    flash(f'تم إنشاء {len(selected_students)} كود وتعيينهم للطلاب المحددين بنجاح!', 'success')
+                    return redirect(url_for('admin.lecture_codes'))
             else:
-                flash(f'تم إنشاء {num_codes} كود بنجاح!', 'success')
-                return redirect(url_for('admin.lecture_codes'))
+                # إنشاء أكواد بدون تعيين لطلاب محددين
+                for _ in range(num_codes):
+                    code = generate_random_code()
+                    lecture_code = LectureCode(
+                        video_id=video.id,
+                        code=code,
+                        is_active=True,
+                        is_used=False
+                    )
+                    db.session.add(lecture_code)
+                    generated_codes.append({'code': code})
+                
+                db.session.commit()
+                
+                # إنشاء ملف PDF إذا طلب المستخدم ذلك
+                if generate_pdf:
+                    pdf_path = generate_codes_pdf(generated_codes, video.title, with_students=False)
+                    flash(f'تم إنشاء {num_codes} كود بنجاح!', 'success')
+                    return send_file(pdf_path, as_attachment=True, download_name=f'lecture_codes_{video.id}.pdf')
+                else:
+                    flash(f'تم إنشاء {num_codes} كود بنجاح!', 'success')
+                    return redirect(url_for('admin.lecture_codes'))
         else:
             # إنشاء كود واحد (السلوك القديم)
             code = generate_random_code()
@@ -598,8 +632,8 @@ def create_lecture_code(video_id):
     form.video_id.data = video_id
     return render_template('admin/generate_code.html', form=form, video=video)
 
-def generate_codes_pdf(codes, video_title):
-    """إنشاء ملف PDF يحتوي على أكواد المحاضرات"""
+def generate_codes_pdf(codes, video_title, with_students=False):
+    """إنشاء ملف PDF يحتوي على أكواد المحاضرات، مع إمكانية عرض أسماء الطلاب المعينين للأكواد"""
     import os
     from reportlab.lib.pagesizes import A4
     from reportlab.lib import colors
@@ -625,12 +659,24 @@ def generate_codes_pdf(codes, video_title):
     elements.append(Spacer(1, 20))
     
     # إنشاء بيانات الجدول
-    data = [['رقم', 'كود المحاضرة']]
-    for i, code in enumerate(codes, 1):
-        data.append([str(i), code])
+    if with_students:
+        data = [['رقم', 'كود المحاضرة', 'اسم الطالب']]
+        for i, code_info in enumerate(codes, 1):
+            student_name = code_info.get('student', '')
+            data.append([str(i), code_info['code'], student_name])
+        # تعديل عرض الجدول ليتناسب مع وجود عمود إضافي
+        col_widths = [40, 150, 200]
+    else:
+        data = [['رقم', 'كود المحاضرة']]
+        for i, code_info in enumerate(codes, 1):
+            if isinstance(code_info, dict):
+                data.append([str(i), code_info['code']])
+            else:
+                data.append([str(i), code_info])
+        col_widths = [60, 200]
     
     # إنشاء جدول مع تنسيق
-    table = Table(data, colWidths=[60, 200])
+    table = Table(data, colWidths=col_widths)
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -647,6 +693,13 @@ def generate_codes_pdf(codes, video_title):
     elements.append(Spacer(1, 30))
     notes = Paragraph("ملاحظة: هذه الأكواد للاستخدام لمرة واحدة فقط، الرجاء الاحتفاظ بها بعناية.", styles["Normal"])
     elements.append(notes)
+    
+    # إضافة تاريخ إنشاء الأكواد
+    elements.append(Spacer(1, 10))
+    import datetime
+    creation_date = datetime.datetime.now().strftime("%Y/%m/%d %H:%M")
+    date_note = Paragraph(f"تم إنشاء هذه الأكواد بتاريخ: {creation_date}", styles["Normal"])
+    elements.append(date_note)
     
     # بناء المستند
     doc.build(elements)

@@ -40,9 +40,9 @@
                         <div id="multiple-students-options" style="display: none;">
                             <div class="mb-3">
                                 <label class="form-label">{{ form.num_codes.label }}</label>
-                                {{ form.num_codes(class="form-control", type="number", min="1", max="50") }}
+                                {{ form.num_codes(class="form-control", type="number", min="1", max="100") }}
                                 <div class="form-text text-muted">
-                                    عدد أكواد المحاضرة التي تريد إنشاءها دفعة واحدة
+                                    عدد أكواد المحاضرة التي تريد إنشاءها دفعة واحدة (يمكن إنشاء حتى 100 كود)
                                 </div>
                             </div>
                             
@@ -51,6 +51,14 @@
                                 <label class="form-check-label" for="generate_pdf">{{ form.generate_pdf.label }}</label>
                                 <div class="form-text text-muted">
                                     إنشاء ملف PDF يحتوي على جميع الأكواد للطباعة
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">{{ form.selected_students.label }}</label>
+                                {{ form.selected_students(class="form-select", multiple="multiple", style="height: 120px;") }}
+                                <div class="form-text text-muted">
+                                    حدد الطلاب الذين ترغب في إرسال الأكواد لهم (يمكن تحديد أكثر من طالب باستخدام Ctrl+النقر)
                                 </div>
                             </div>
                         </div>

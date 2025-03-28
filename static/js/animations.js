@@ -1,30 +1,11 @@
 /**
- * Advanced animations and effects
+ * Subtle animations and effects
  * 
- * This script enhances the user experience with smooth animations,
- * transitions, and interactive elements.
+ * This script adds minimal animations to improve user experience
+ * without being distracting or flashy.
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Preloader animation
-    const preloader = document.createElement('div');
-    preloader.className = 'preloader';
-    preloader.innerHTML = '<div class="spinner"></div>';
-    document.body.appendChild(preloader);
-    
-    // Hide preloader after page loads
-    window.addEventListener('load', function() {
-        preloader.classList.add('fade-out');
-        setTimeout(function() {
-            preloader.style.display = 'none';
-        }, 500);
-    });
-    
-    // Add 'loaded' class to body for entrance animations
-    setTimeout(function() {
-        document.body.classList.add('loaded');
-    }, 300);
-    
     // Add badge-new class to new items
     const currentDate = new Date();
     const newItemThreshold = 3; // days
@@ -34,70 +15,57 @@ document.addEventListener('DOMContentLoaded', function() {
         const daysDifference = Math.floor((currentDate - createdDate) / (1000 * 60 * 60 * 24));
         
         if (daysDifference <= newItemThreshold) {
-            const badge = document.createElement('span');
-            badge.className = 'badge bg-danger badge-new ms-2';
-            badge.textContent = 'جديد';
-            item.querySelector('.card-title, h5, h4, h3').appendChild(badge);
-        }
-    });
-    
-    // Button click effects
-    document.querySelectorAll('.btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            // Create ripple effect
-            const ripple = document.createElement('span');
-            ripple.className = 'ripple';
-            
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
-            ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
-            
-            this.appendChild(ripple);
-            
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
-        });
-    });
-    
-    // Enhance form inputs
-    document.querySelectorAll('.form-control, .form-select').forEach(input => {
-        const formGroup = input.closest('.form-group');
-        if (formGroup && !formGroup.classList.contains('form-floating')) {
-            formGroup.classList.add('form-input-animated');
-            
-            input.addEventListener('focus', () => {
-                formGroup.classList.add('focused');
-            });
-            
-            input.addEventListener('blur', () => {
-                if (!input.value) {
-                    formGroup.classList.remove('focused');
-                }
-            });
-            
-            // Initialize with correct state
-            if (input.value) {
-                formGroup.classList.add('focused');
+            const titleEl = item.querySelector('.card-title, h5, h4, h3');
+            if (titleEl) {
+                const badge = document.createElement('span');
+                badge.className = 'badge bg-secondary badge-new ms-2';
+                badge.textContent = 'جديد';
+                titleEl.appendChild(badge);
             }
         }
     });
     
-    // Enhance card interactions
+    // Simple button hover effect (no ripple)
+    document.querySelectorAll('.btn-primary').forEach(button => {
+        // Replace bright colors with more subtle ones
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-outline-primary');
+    });
+    
+    document.querySelectorAll('.btn-danger').forEach(button => {
+        button.classList.remove('btn-danger');
+        button.classList.add('btn-outline-danger');
+    });
+    
+    document.querySelectorAll('.btn-success').forEach(button => {
+        button.classList.remove('btn-success');
+        button.classList.add('btn-outline-success');
+    });
+    
+    // Improve initialization of form inputs
+    document.querySelectorAll('.form-control, .form-select').forEach(input => {
+        // Initialize with correct state for filled inputs
+        if (input.value) {
+            const label = input.previousElementSibling;
+            if (label && label.tagName === 'LABEL') {
+                label.classList.add('active');
+            }
+        }
+    });
+    
+    // Simple card hover effect
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('mouseenter', function() {
-            this.classList.add('card-hover');
+            this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+            this.style.transition = 'box-shadow 0.2s ease';
         });
         
         card.addEventListener('mouseleave', function() {
-            this.classList.remove('card-hover');
+            this.style.boxShadow = '';
         });
     });
     
-    // Smooth scroll for anchors
+    // Smooth scroll for anchors - keep this useful feature
     document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -113,41 +81,47 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Add custom ripple effect styles
+    // Add subtle styles without overwhelming animations
     const style = document.createElement('style');
     style.textContent = `
-        .ripple {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: rippleEffect 0.6s linear;
-            pointer-events: none;
+        /* Use more subdued colors for interactive elements */
+        .btn-outline-primary {
+            color: #3d6bb3;
+            border-color: #3d6bb3;
+        }
+        .btn-outline-primary:hover {
+            background-color: #3d6bb3;
+            color: white;
         }
         
-        @keyframes rippleEffect {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
+        .btn-outline-danger {
+            color: #b45252;
+            border-color: #b45252;
+        }
+        .btn-outline-danger:hover {
+            background-color: #b45252;
+            color: white;
         }
         
-        .form-input-animated label {
-            position: absolute;
-            top: 0;
-            left: 15px;
-            height: 100%;
-            padding: 1rem 0.75rem;
-            pointer-events: none;
-            border: 1px solid transparent;
-            transform-origin: 0 0;
-            transition: opacity .1s ease-in-out,transform .1s ease-in-out;
+        .btn-outline-success {
+            color: #4e8d7c;
+            border-color: #4e8d7c;
+        }
+        .btn-outline-success:hover {
+            background-color: #4e8d7c;
+            color: white;
+        }
+        
+        /* Subtle transition for all buttons */
+        .btn {
+            transition: all 0.2s ease;
+        }
+        
+        /* Add active label styling */
+        label.active {
+            transform: translateY(-20px);
+            font-size: 0.85em;
             color: #6c757d;
-        }
-        
-        .form-input-animated.focused label {
-            opacity: .65;
-            transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
         }
     `;
     document.head.appendChild(style);
