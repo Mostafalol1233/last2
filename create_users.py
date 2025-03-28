@@ -1,3 +1,4 @@
+
 from app import app, db
 from models import User
 
@@ -24,17 +25,11 @@ def create_default_users():
         db.session.add(security)
         print("Security admin user created")
 
-        # Create first student
-        student1 = User(username='student1', role='student', full_name='طالب رقم 1')
-        student1.set_password('Student123')
-        db.session.add(student1)
-        print("First student user created")
-
-        # Create second student
-        student2 = User(username='student2', role='student', full_name='طالب رقم 2')
-        student2.set_password('Student123')
-        db.session.add(student2)
-        print("Second student user created")
+        # Create student user
+        student = User(username='student', role='student', full_name='طالب تجريبي')
+        student.set_password('student12345')
+        db.session.add(student)
+        print("Student user created")
 
         db.session.commit()
         print("Users updated successfully!")
