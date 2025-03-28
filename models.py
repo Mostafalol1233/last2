@@ -186,6 +186,7 @@ class DirectMessage(db.Model):
     recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     message = db.Column(db.Text, nullable=False)
     is_read = db.Column(db.Boolean, default=False)
+    is_system = db.Column(db.Boolean, default=False)  # لتمييز الرسائل التلقائية من النظام
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # العلاقات للوصول للمرسل والمستلم بسهولة
