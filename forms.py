@@ -44,6 +44,7 @@ class LectureCodeForm(FlaskForm):
 
 class GenerateCodeForm(FlaskForm):
     video_id = HiddenField('معرف الفيديو', validators=[DataRequired()])
+    student_id = SelectField('إرسال الكود للطالب (اختياري)', coerce=int, validators=[Optional()])
     submit = SubmitField('توليد كود جديد')
 
 class StudentNoteForm(FlaskForm):
@@ -130,3 +131,11 @@ class ProfileForm(FlaskForm):
         Length(max=20, message='يجب أن لا يتجاوز رقم الهاتف 20 رقماً')
     ])
     submit = SubmitField('تحديث البيانات')
+    
+class DirectMessageForm(FlaskForm):
+    recipient_id = SelectField('إرسال إلى', coerce=int, validators=[DataRequired(message='يجب اختيار المستلم')])
+    message = TextAreaField('الرسالة', validators=[
+        DataRequired(message='يجب كتابة نص الرسالة'),
+        Length(min=1, max=1000, message='يجب أن تكون الرسالة بين 1 و 1000 حرف')
+    ])
+    submit = SubmitField('إرسال')

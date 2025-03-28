@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}الرسائل الخاصة - المنصة التعليمية{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="fas fa-envelope me-2"></i>الرسائل الخاصة</h2>
+            <p class="text-muted">يمكنك مراسلة {% if current_user.is_admin() %}الطلاب{% else %}المدرسين والمشرفين{% endif %} من خلال هذه الصفحة</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card bg-dark mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-paper-plane me-2"></i>إرسال رسالة جديدة</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('main.messages') }}">
+                        {{ form.csrf_token }}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.recipient_id.label }}</label>
+                            {{ form.recipient_id(class="form-select") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.message.label }}</label>
+                            {{ form.message(class="form-control", rows="5") }}
+                        </div>
+                        
+                        <div class="mb-3 d-grid">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card bg-dark mb-4">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="messagesTabs" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="received-tab" data-bs-toggle="tab" data-bs-target="#received" type="button" role="tab" aria-controls="received" aria-selected="true">
+                                الرسائل الواردة
+                                {% set unread_count = received_messages|selectattr('is_read', 'equalto', false)|list|length %}
+                                {% if unread_count > 0 %}
+                                    <span class="badge bg-danger">{{ unread_count }}</span>
+                                {% endif %}
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="sent-tab" data-bs-toggle="tab" data-bs-target="#sent" type="button" role="tab" aria-controls="sent" aria-selected="false">
+                                الرسائل المرسلة
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="messagesTabsContent">
+                        <div class="tab-pane fade show active" id="received" role="tabpanel" aria-labelledby="received-tab">
+                            {% if received_messages %}
+                                <div class="list-group">
+                                    {% for message in received_messages %}
+                                        <div class="list-group-item bg-dark {% if not message.is_read %}bg-dark-50{% endif %}">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6>
+                                                    {% if not message.is_read %}
+                                                        <span class="badge bg-primary me-1">جديد</span>
+                                                    {% endif %}
+                                                    من: {{ message.sender.full_name }} ({{ message.sender.username }})
+                                                </h6>
+                                                <small class="text-muted">{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                            </div>
+                                            <div class="mt-2">{{ message.message }}</div>
+                                            <div class="mt-2">
+                                                <form method="POST" action="{{ url_for('main.delete_message', message_id=message.id) }}" onsubmit="return confirm('هل أنت متأكد من حذف هذه الرسالة؟');">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                        <i class="fas fa-trash me-1"></i>حذف
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>ليس لديك رسائل واردة.
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane fade" id="sent" role="tabpanel" aria-labelledby="sent-tab">
+                            {% if sent_messages %}
+                                <div class="list-group">
+                                    {% for message in sent_messages %}
+                                        <div class="list-group-item bg-dark">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6>
+                                                    إلى: {{ message.recipient.full_name }} ({{ message.recipient.username }})
+                                                    {% if message.is_read %}
+                                                        <span class="badge bg-success me-1">تمت القراءة</span>
+                                                    {% else %}
+                                                        <span class="badge bg-warning me-1">لم تتم القراءة</span>
+                                                    {% endif %}
+                                                </h6>
+                                                <small class="text-muted">{{ message.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                            </div>
+                                            <div class="mt-2">{{ message.message }}</div>
+                                            <div class="mt-2">
+                                                <form method="POST" action="{{ url_for('main.delete_message', message_id=message.id) }}" onsubmit="return confirm('هل أنت متأكد من حذف هذه الرسالة؟');">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                        <i class="fas fa-trash me-1"></i>حذف
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>ليس لديك رسائل مرسلة.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

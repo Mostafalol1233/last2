@@ -115,9 +115,12 @@ class LectureCode(db.Model):
     code = db.Column(db.String(20), nullable=False, unique=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
+    assigned_to = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # يمكن تعيين رمز لطالب محدد
+    is_used = db.Column(db.Boolean, default=False)  # تم استخدام الرمز ام لا
     
-    # Relationship to the video
+    # العلاقات
     video = db.relationship('Video', backref=db.backref('access_codes', lazy='dynamic'))
+    student = db.relationship('User', backref=db.backref('assigned_codes', lazy='dynamic'), foreign_keys=[assigned_to])
     
     def __repr__(self):
         return f'<LectureCode {self.code} for Video {self.video_id}>'
@@ -173,3 +176,21 @@ class AIChatMessage(db.Model):
     
     def __repr__(self):
         return f'<AIChatMessage {self.id} by User {self.user_id}>'
+
+# إضافة نموذج الرسائل المباشرة بين المستخدمين
+class DirectMessage(db.Model):
+    __tablename__ = 'direct_messages'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    recipient_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    is_read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # العلاقات للوصول للمرسل والمستلم بسهولة
+    sender = db.relationship('User', foreign_keys=[sender_id], backref=db.backref('sent_messages', lazy='dynamic'))
+    recipient = db.relationship('User', foreign_keys=[recipient_id], backref=db.backref('received_messages', lazy='dynamic'))
+
+    def __repr__(self):
+        return f'<DirectMessage {self.id} from {self.sender_id} to {self.recipient_id}>'

@@ -78,6 +78,15 @@
                                 </li>
                             {% endif %}
                             <li class="nav-item">
+                                <a class="nav-link {% if request.path.startswith('/messages') %}active{% endif %}" href="{{ url_for('main.messages') }}">
+                                    <i class="fas fa-envelope me-1"></i>الرسائل
+                                    {% set unread_count = current_user.received_messages.filter_by(is_read=False).count() %}
+                                    {% if unread_count > 0 %}
+                                        <span class="badge rounded-pill bg-danger">{{ unread_count }}</span>
+                                    {% endif %}
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link {% if request.path.startswith('/profile') %}active{% endif %}" href="{{ url_for('main.profile') }}">
                                     <i class="fas fa-user me-1"></i>{{ current_user.username }}
                                 </a>

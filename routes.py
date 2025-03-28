@@ -9,11 +9,11 @@ from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse
 from werkzeug.utils import secure_filename
 from app import db
-from models import User, Video, Comment, Post, VideoView, LectureCode, VideoLike, StudentNote, AIChatMessage
+from models import User, Video, Comment, Post, VideoView, LectureCode, VideoLike, StudentNote, AIChatMessage, DirectMessage
 from forms import (
     LoginForm, VideoUploadForm, VideoEditForm, PostForm, CommentForm, RegistrationForm,
     LectureCodeForm, GenerateCodeForm, StudentNoteForm, AIChatForm, ForgotPasswordForm,
-    ResetPasswordForm, ProfileForm
+    ResetPasswordForm, ProfileForm, DirectMessageForm
 )
 
 # إعداد OpenAI API
@@ -527,7 +527,7 @@ def delete_post(post_id):
     flash('تم حذف المنشور بنجاح!', 'success')
     return redirect(url_for('admin.dashboard'))
 
-@admin_bp.route('/generate_lecture_code/<int:video_id>', methods=['POST'])
+@admin_bp.route('/generate_lecture_code/<int:video_id>', methods=['GET', 'POST'])
 @login_required
 def create_lecture_code(video_id):
     if not current_user.is_admin():
@@ -535,18 +535,39 @@ def create_lecture_code(video_id):
         
     video = Video.query.get_or_404(video_id)
     
-    # توليد كود جديد
-    code = generate_random_code()
-    lecture_code = LectureCode(
-        video_id=video.id,
-        code=code,
-        is_active=True
-    )
-    db.session.add(lecture_code)
-    db.session.commit()
+    form = GenerateCodeForm()
+    # إحضار قائمة بالطلاب لعرضها في القائمة المنسدلة
+    students = User.query.filter_by(role='student').all()
+    form.student_id.choices = [(0, 'بدون تعيين لطالب محدد')] + [(s.id, s.full_name + ' (' + s.username + ')') for s in students]
     
-    flash(f'تم إنشاء كود جديد للمحاضرة: {code}', 'success')
-    return redirect(url_for('admin.dashboard'))
+    if form.validate_on_submit():
+        # توليد كود جديد
+        code = generate_random_code()
+        lecture_code = LectureCode(
+            video_id=video.id,
+            code=code,
+            is_active=True,
+            is_used=False
+        )
+        
+        # في حالة إذا تم تحديد طالب معين
+        student_id = form.student_id.data
+        if student_id != 0:
+            lecture_code.assigned_to = student_id
+            student = User.query.get(student_id)
+            success_message = f'تم إنشاء كود جديد للمحاضرة وتعيينه للطالب {student.full_name}: {code}'
+        else:
+            success_message = f'تم إنشاء كود جديد للمحاضرة: {code}'
+            
+        db.session.add(lecture_code)
+        db.session.commit()
+        
+        flash(success_message, 'success')
+        return redirect(url_for('admin.lecture_codes'))
+    
+    # في حالة GET
+    form.video_id.data = video_id
+    return render_template('admin/generate_code.html', form=form, video=video)
 
 @admin_bp.route('/deactivate_code/<int:code_id>')
 @login_required
@@ -720,6 +741,7 @@ def enter_lecture_code(video_id):
         lecture_code = None
         if code:
             code = code.strip().upper()
+            # التحقق من كود عام أو كود مخصص للطالب
             lecture_code = LectureCode.query.filter_by(
                 video_id=video_id, 
                 code=code, 
@@ -727,6 +749,11 @@ def enter_lecture_code(video_id):
             ).first()
             
             if lecture_code:
+                # التحقق إذا كان الكود مخصص لطالب محدد
+                if lecture_code.assigned_to is not None and lecture_code.assigned_to != current_user.id:
+                    flash('عذراً، هذا الكود مخصص لطالب آخر ولا يمكنك استخدامه.', 'danger')
+                    return render_template('student/enter_lecture_code.html', video=video, form=form)
+                
                 # الكود صحيح، تسجيل المشاهدة
                 view = VideoView(
                     video_id=video_id,
@@ -734,8 +761,9 @@ def enter_lecture_code(video_id):
                 )
                 db.session.add(view)
                 
-                # جعل الكود غير فعال بعد الاستخدام
+                # جعل الكود غير فعال بعد الاستخدام (استخدام مرة واحدة)
                 lecture_code.is_active = False
+                lecture_code.is_used = True
                 
                 db.session.commit()
                 flash('تم التحقق من الكود بنجاح! يمكنك مشاهدة المحاضرة الآن.', 'success')
@@ -1049,3 +1077,63 @@ def profile():
         return redirect(url_for('main.profile'))
         
     return render_template('profile.html', form=form)
+
+# نظام الرسائل المباشرة
+@main_bp.route('/messages', methods=['GET', 'POST'])
+@login_required
+def messages():
+    # إنشاء نموذج إرسال رسالة جديدة
+    form = DirectMessageForm()
+    
+    # تعبئة قائمة المستخدمين للاختيار منها (المشرفين للطلاب، والطلاب للمشرفين)
+    if current_user.is_admin():
+        # المشرف يمكنه الإرسال للطلاب فقط
+        recipients = User.query.filter_by(role='student').all()
+    else:
+        # الطالب يمكنه الإرسال للمشرفين فقط
+        recipients = User.query.filter_by(role='admin').all()
+    
+    form.recipient_id.choices = [(user.id, user.full_name + ' (' + user.username + ')') for user in recipients]
+    
+    if form.validate_on_submit():
+        message = DirectMessage(
+            sender_id=current_user.id,
+            recipient_id=form.recipient_id.data,
+            message=form.message.data,
+            is_read=False
+        )
+        db.session.add(message)
+        db.session.commit()
+        flash('تم إرسال الرسالة بنجاح', 'success')
+        return redirect(url_for('main.messages'))
+    
+    # جلب الرسائل المستلمة والمرسلة
+    received_messages = DirectMessage.query.filter_by(recipient_id=current_user.id).order_by(DirectMessage.created_at.desc()).all()
+    sent_messages = DirectMessage.query.filter_by(sender_id=current_user.id).order_by(DirectMessage.created_at.desc()).all()
+    
+    # تعليم الرسائل المستلمة كمقروءة
+    for msg in received_messages:
+        if not msg.is_read:
+            msg.is_read = True
+    
+    db.session.commit()
+    
+    return render_template('messages.html', 
+                          form=form, 
+                          received_messages=received_messages, 
+                          sent_messages=sent_messages)
+
+@main_bp.route('/messages/delete/<int:message_id>', methods=['POST'])
+@login_required
+def delete_message(message_id):
+    message = DirectMessage.query.get_or_404(message_id)
+    
+    # التأكد من أن المستخدم هو المرسل أو المستلم للرسالة
+    if message.sender_id != current_user.id and message.recipient_id != current_user.id:
+        abort(403)
+    
+    db.session.delete(message)
+    db.session.commit()
+    flash('تم حذف الرسالة بنجاح', 'success')
+    
+    return redirect(url_for('main.messages'))
