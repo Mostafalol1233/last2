@@ -821,8 +821,8 @@ def dashboard_en():
 def view_video(video_id):
     video = Video.query.get_or_404(video_id)
     
-    # التحقق مما إذا كان الفيديو يتطلب كود للوصول
-    if video.requires_code:
+    # التحقق مما إذا كان الفيديو يتطلب كود للوصول (للطلاب فقط)
+    if video.requires_code and not current_user.is_admin():
         # البحث عن محاولة مشاهدة سابقة
         view = VideoView.query.filter_by(video_id=video_id, user_id=current_user.id).first()
         if not view:
