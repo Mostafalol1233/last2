@@ -865,9 +865,24 @@ def view_video(video_id):
 @login_required
 def enter_lecture_code(video_id):
     video = Video.query.get_or_404(video_id)
+    wallet = current_user.wallet
     
     if not video.requires_code:
         return redirect(url_for('student.view_video', video_id=video_id))
+        
+    # التحقق من إمكانية الشراء بالنقاط
+    if request.method == 'POST' and 'purchase_with_points' in request.form:
+        if wallet and wallet.points >= video.points_cost:
+            # خصم النقاط
+            wallet.points -= video.points_cost
+            # تسجيل المشاهدة
+            view = VideoView(video_id=video_id, user_id=current_user.id)
+            db.session.add(view)
+            db.session.commit()
+            flash('تم شراء المحاضرة بنجاح باستخدام النقاط!', 'success')
+            return redirect(url_for('student.view_video', video_id=video_id))
+        else:
+            flash('عذراً، لا تملك نقاط كافية لشراء هذه المحاضرة', 'danger')
     
     form = LectureCodeForm()
     form.video_id.data = video_id
@@ -929,6 +944,31 @@ def users_list():
     if not current_user.is_admin():
         abort(403)
     users = User.query.all()
+    
+    # التأكد من وجود محفظة لكل طالب
+    for user in users:
+        if user.role == 'student' and not user.wallet:
+            wallet = StudentWallet(user_id=user.id)
+            db.session.add(wallet)
+    db.session.commit()
+
+@admin_bp.route('/add_points/<int:user_id>', methods=['POST'])
+@login_required
+def add_points(user_id):
+    if not current_user.is_admin():
+        abort(403)
+    
+    points = request.form.get('points', type=int)
+    if points:
+        user = User.query.get_or_404(user_id)
+        if not user.wallet:
+            wallet = StudentWallet(user_id=user.id)
+            db.session.add(wallet)
+        user.wallet.points += points
+        db.session.commit()
+        flash(f'تم إضافة {points} نقطة للطالب {user.full_name} بنجاح', 'success')
+    
+    return redirect(url_for('admin.users_list'))
     print("\nقائمة المستخدمين:")
     print("================")
     for user in users:

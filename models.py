@@ -56,6 +56,7 @@ class Video(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
+    points_cost = db.Column(db.Integer, default=0)  # تكلفة المشاهدة بالنقاط
     url = db.Column(db.String(200), nullable=True)  # يمكن أن يكون فارغًا في حالة رفع ملف
     file_path = db.Column(db.String(200), nullable=True)  # مسار الملف المرفوع
     description = db.Column(db.Text)
@@ -178,6 +179,17 @@ class AIChatMessage(db.Model):
         return f'<AIChatMessage {self.id} by User {self.user_id}>'
 
 # إضافة نموذج الرسائل المباشرة بين المستخدمين
+class StudentWallet(db.Model):
+    __tablename__ = 'student_wallets'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    points = db.Column(db.Integer, default=0)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # العلاقة مع المستخدم
+    user = db.relationship('User', backref=db.backref('wallet', uselist=False))
+
 class DirectMessage(db.Model):
     __tablename__ = 'direct_messages'
 
