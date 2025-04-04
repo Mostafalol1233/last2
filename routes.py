@@ -983,8 +983,17 @@ def transfer_points():
     if form.validate_on_submit():
         student = User.query.get(form.student_id.data)
         if student:
+            # إضافة النقاط للطالب
             student.points += form.points.data
+            
+            # تسجيل عملية التحويل
+            transfer = PointTransfer(
+                student_id=student.id,
+                points=form.points.data
+            )
+            db.session.add(transfer)
             db.session.commit()
+            
             flash(f'تم تحويل {form.points.data} نقطة إلى الطالب {student.full_name} بنجاح', 'success')
             return redirect(url_for('admin.transfer_points'))
             

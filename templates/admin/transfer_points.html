@@ -30,24 +30,30 @@
             <h4>سجل التحويلات</h4>
         </div>
         <div class="card-body">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>الطالب</th>
-                        <th>عدد النقاط</th>
-                        <th>التاريخ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for transfer in transfers %}
-                    <tr>
-                        <td>{{ transfer.student.full_name }}</td>
-                        <td>{{ transfer.points }}</td>
-                        <td>{{ transfer.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            {% if transfers %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>الطالب</th>
+                            <th>عدد النقاط</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transfer in transfers %}
+                        <tr>
+                            <td>{{ transfer.student.full_name }}</td>
+                            <td>{{ transfer.points }}</td>
+                            <td>{{ transfer.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">لا توجد تحويلات حتى الآن</p>
+            {% endif %}
         </div>
     </div>
 </div>

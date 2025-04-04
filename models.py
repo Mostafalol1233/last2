@@ -196,3 +196,17 @@ class DirectMessage(db.Model):
 
     def __repr__(self):
         return f'<DirectMessage {self.id} from {self.sender_id} to {self.recipient_id}>'
+
+class PointTransfer(db.Model):
+    __tablename__ = 'point_transfers'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    points = db.Column(db.Integer, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # العلاقة مع الطالب
+    student = db.relationship('User', backref=db.backref('point_transfers', lazy='dynamic'))
+    
+    def __repr__(self):
+        return f'<PointTransfer {self.points} points to student {self.student_id}>'
