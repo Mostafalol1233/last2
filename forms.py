@@ -21,6 +21,14 @@ class VideoUploadForm(FlaskForm):
     points_cost = IntegerField('سعر الفيديو بالنقاط', default=0, validators=[NumberRange(min=0)])
     submit = SubmitField('رفع الفيديو')
 
+class TransferPointsForm(FlaskForm):
+    student_id = SelectField('الطالب', coerce=int, validators=[DataRequired(message='يجب اختيار الطالب')])
+    points = IntegerField('عدد النقاط', validators=[
+        DataRequired(message='يجب إدخال عدد النقاط'),
+        NumberRange(min=1, message='يجب أن يكون عدد النقاط أكبر من صفر')
+    ])
+    submit = SubmitField('تحويل النقاط')
+
 class AddPointsForm(FlaskForm):
     points = IntegerField('عدد النقاط', validators=[DataRequired(), NumberRange(min=1)])
     submit = SubmitField('إضافة النقاط')

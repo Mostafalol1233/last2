@@ -60,6 +60,11 @@
                                         <i class="fas fa-key me-1"></i>أكواد المحاضرات
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if request.path.startswith('/admin/transfer_points') %}active{% endif %}" href="{{ url_for('admin.transfer_points') }}">
+                                        <i class="fas fa-exchange-alt me-1"></i>تحويل النقاط
+                                    </a>
+                                </li>
                             {% else %}
                                 <li class="nav-item">
                                     <a class="nav-link {% if request.path.startswith('/student/dashboard') %}active{% endif %}" href="{{ url_for('student.dashboard') }}">
