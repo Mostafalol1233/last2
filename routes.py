@@ -969,6 +969,27 @@ def view_post(post_id):
     recent_videos = Video.query.order_by(Video.created_at.desc()).limit(5).all()
     
     return render_template('student/post.html', post=post, other_posts=other_posts, recent_videos=recent_videos)
+@admin_bp.route('/transfer_points', methods=['GET', 'POST'])
+@login_required
+def transfer_points():
+    if not current_user.is_admin():
+        abort(403)
+        
+    form = TransferPointsForm()
+    form.student_id.choices = [(user.id, f"{user.full_name} ({user.username})") 
+                              for user in User.query.filter_by(role='student').all()]
+    
+    if form.validate_on_submit():
+        student = User.query.get(form.student_id.data)
+        if student:
+            student.points += form.points.data
+            db.session.commit()
+            flash(f'تم تحويل {form.points.data} نقطة إلى الطالب {student.full_name} بنجاح', 'success')
+            return redirect(url_for('admin.transfer_points'))
+            
+    transfers = PointTransfer.query.order_by(PointTransfer.created_at.desc()).all()
+    return render_template('admin/transfer_points.html', form=form, transfers=transfers)
+
 @admin_bp.route('/users_list')
 @login_required
 def users_list():
