@@ -9,11 +9,11 @@ from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse
 from werkzeug.utils import secure_filename
 from app import db
-from models import User, Video, Comment, Post, VideoView, LectureCode, VideoLike, StudentNote, AIChatMessage, DirectMessage
+from models import User, Video, Comment, Post, VideoView, LectureCode, VideoLike, StudentNote, AIChatMessage, DirectMessage, PointTransfer
 from forms import (
     LoginForm, VideoUploadForm, VideoEditForm, PostForm, CommentForm, RegistrationForm,
     LectureCodeForm, GenerateCodeForm, StudentNoteForm, AIChatForm, ForgotPasswordForm,
-    ResetPasswordForm, ProfileForm, DirectMessageForm
+    ResetPasswordForm, ProfileForm, DirectMessageForm, TransferPointsForm
 )
 
 # إعداد OpenAI API
