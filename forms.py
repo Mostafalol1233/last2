@@ -18,7 +18,12 @@ class VideoUploadForm(FlaskForm):
     ])
     description = TextAreaField('الوصف', validators=[Optional(), Length(max=2000)])
     requires_code = BooleanField('يتطلب كود للمشاهدة', default=True)
+    points_cost = IntegerField('تكلفة النقاط', default=0, validators=[NumberRange(min=0)])
     submit = SubmitField('رفع الفيديو')
+
+class AddPointsForm(FlaskForm):
+    points = IntegerField('عدد النقاط', validators=[DataRequired(), NumberRange(min=1)])
+    submit = SubmitField('إضافة النقاط')
 
 class VideoEditForm(FlaskForm):
     title = StringField('عنوان الفيديو', validators=[DataRequired(), Length(min=3, max=100)])

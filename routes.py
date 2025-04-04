@@ -861,6 +861,52 @@ def view_video(video_id):
     
     return render_template('student/video.html', video=video, form=form, comments=comments, other_videos=other_videos)
 
+@admin_bp.route('/add_points/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def add_points(user_id):
+    if not current_user.is_admin():
+        abort(403)
+        
+    student = User.query.get_or_404(user_id)
+    if student.role != 'student':
+        abort(404)
+        
+    form = AddPointsForm()
+    if form.validate_on_submit():
+        student.points += form.points.data
+        db.session.commit()
+        flash(f'تم إضافة {form.points.data} نقطة لحساب الطالب {student.full_name}', 'success')
+        return redirect(url_for('admin.users_list'))
+        
+    return render_template('admin/add_points.html', form=form, student=student)
+
+@student_bp.route('/buy_video/<int:video_id>')
+@login_required
+def buy_video(video_id):
+    video = Video.query.get_or_404(video_id)
+    
+    if not video.requires_code:
+        return redirect(url_for('student.view_video', video_id=video_id))
+        
+    # التحقق من عدم شراء الفيديو مسبقاً
+    existing_view = VideoView.query.filter_by(video_id=video_id, user_id=current_user.id).first()
+    if existing_view:
+        return redirect(url_for('student.view_video', video_id=video_id))
+    
+    # التحقق من امتلاك نقاط كافية
+    if current_user.points < video.points_cost:
+        flash('عذراً، لا تملك نقاط كافية لشراء هذا الفيديو', 'danger')
+        return redirect(url_for('student.dashboard'))
+    
+    # خصم النقاط وتسجيل المشاهدة
+    current_user.points -= video.points_cost
+    view = VideoView(video_id=video_id, user_id=current_user.id)
+    db.session.add(view)
+    db.session.commit()
+    
+    flash('تم شراء الفيديو بنجاح!', 'success')
+    return redirect(url_for('student.view_video', video_id=video_id))
+
 @student_bp.route('/enter_lecture_code/<int:video_id>', methods=['GET', 'POST'])
 @login_required
 def enter_lecture_code(video_id):

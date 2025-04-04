@@ -13,6 +13,7 @@ class User(UserMixin, db.Model):
     phone = db.Column(db.String(20), nullable=True)   # رقم الهاتف للاستعادة
     password_hash = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(20), nullable=False)  # 'admin' or 'student'
+    points = db.Column(db.Integer, default=0)  # نقاط المحفظة
     reset_token = db.Column(db.String(100), nullable=True)  # رمز استعادة كلمة المرور
     reset_token_expiry = db.Column(db.DateTime, nullable=True)  # تاريخ انتهاء صلاحية الرمز
     
@@ -62,6 +63,7 @@ class Video(db.Model):
     uploaded_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     requires_code = db.Column(db.Boolean, default=True)  # هل تتطلب المحاضرة كود للوصول
+    points_cost = db.Column(db.Integer, default=0)  # تكلفة الفيديو بالنقاط
     
     # Relationships
     comments = db.relationship('Comment', backref='video', lazy='dynamic', cascade='all, delete-orphan')
