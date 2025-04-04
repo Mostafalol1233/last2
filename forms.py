@@ -30,6 +30,7 @@ class VideoEditForm(FlaskForm):
     url = StringField('رابط الفيديو', validators=[Optional(), URL()])
     description = TextAreaField('الوصف', validators=[Optional(), Length(max=2000)])
     requires_code = BooleanField('يتطلب كود للمشاهدة')
+    points_cost = IntegerField('سعر الفيديو بالنقاط', default=0, validators=[NumberRange(min=0)])
     submit = SubmitField('تحديث الفيديو')
 
 class PostForm(FlaskForm):

@@ -774,6 +774,7 @@ def edit_video(video_id):
         else:
             # تحديث عادي
             video.requires_code = form.requires_code.data
+            video.points_cost = form.points_cost.data
             db.session.commit()
             flash('تم تحديث بيانات الفيديو بنجاح!', 'success')
         
