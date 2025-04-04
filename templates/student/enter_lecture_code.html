@@ -12,8 +12,13 @@
                 </div>
                 <div class="card-body">
                     <div class="alert alert-info" role="alert">
-                        <p>هذه المحاضرة تتطلب كود للمشاهدة.</p>
-                        <p>الرجاء إدخال الكود الذي تلقيته من المدرس لمشاهدة المحاضرة "{{ video.title }}".</p>
+                        <p>هذه المحاضرة تتطلب كود للمشاهدة أو يمكنك شراؤها بالنقاط.</p>
+                        <p>سعر المحاضرة: {{ video.points_cost }} نقطة</p>
+                        <p>رصيدك الحالي: {{ current_user.points }} نقطة</p>
+                        {% if current_user.points >= video.points_cost %}
+                            <a href="{{ url_for('student.buy_video', video_id=video.id) }}" class="btn btn-success mb-3">شراء المحاضرة بالنقاط</a>
+                        {% endif %}
+                        <p>أو يمكنك إدخال الكود الذي تلقيته من المدرس لمشاهدة المحاضرة "{{ video.title }}".</p>
                     </div>
                     
                     <form method="POST" action="{{ url_for('student.enter_lecture_code', video_id=video.id) }}">
