@@ -11,7 +11,6 @@ class LoginForm(FlaskForm):
 
 class VideoUploadForm(FlaskForm):
     title = StringField('عنوان الفيديو', validators=[DataRequired(), Length(min=3, max=100)])
-    points_cost = IntegerField('تكلفة المشاهدة بالنقاط', default=0)
     url = StringField('رابط الفيديو', validators=[Optional(), URL()])
     video_file = FileField('ملف الفيديو', validators=[
         Optional(),
