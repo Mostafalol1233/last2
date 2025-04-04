@@ -142,6 +142,14 @@ class ProfileForm(FlaskForm):
     ])
     submit = SubmitField('تحديث البيانات')
     
+class TransferPointsForm(FlaskForm):
+    student_id = SelectField('الطالب', coerce=int, validators=[DataRequired(message='يجب اختيار الطالب')])
+    points = IntegerField('عدد النقاط', validators=[
+        DataRequired(message='يجب إدخال عدد النقاط'),
+        NumberRange(min=1, message='يجب أن يكون عدد النقاط أكبر من صفر')
+    ])
+    submit = SubmitField('تحويل النقاط')
+
 class DirectMessageForm(FlaskForm):
     recipient_id = SelectField('إرسال إلى', coerce=int, validators=[DataRequired(message='يجب اختيار المستلم')])
     message = TextAreaField('الرسالة', validators=[
