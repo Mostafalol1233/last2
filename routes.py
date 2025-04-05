@@ -1341,11 +1341,15 @@ def transfer_points():
 def reset_all_points():
     if not current_user.is_admin():
         abort(403)
-    
-    # Reset points for all students
-    User.query.filter_by(role='student').update({User.points: 0})
-    db.session.commit()
-    flash('تم تصفير نقاط جميع الطلاب بنجاح', 'success')
+    try:
+        # Reset points for all students
+        User.query.filter_by(role='student').update({User.points: 0})
+        db.session.commit()
+        flash('تم تصفير نقاط جميع الطلاب بنجاح', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('حدث خطأ أثناء تصفير النقاط', 'danger')
+        print(f"Error resetting points: {str(e)}")
     return redirect(url_for('admin.users_list'))
 
 @admin_bp.route('/users_list')
