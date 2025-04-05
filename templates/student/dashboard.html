@@ -146,17 +146,17 @@
             <div class="card-header bg-dark text-white">
                 <h5 class="section-title"><i class="fas fa-file-alt me-2"></i>أحدث المنشورات</h5>
             </div>
-            <div class="card-body posts-list">
+            <div class="card-body" style="background-color: #111; border-radius: 5px;">
                 {% if posts %}
                     <ul class="list-unstyled">
                         {% for post in posts %}
-                            <li class="mb-3">
+                            <li class="mb-3 pb-2" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
                                 <a href="{{ url_for('student.view_post', post_id=post.id) }}" class="text-white text-decoration-none">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-1 fw-bold">{{ post.title }}</h5>
+                                        <h6 class="mb-1 fw-bold">{{ post.title }}</h6>
                                         <small class="text-light"><i class="fas fa-calendar me-1"></i>{{ post.created_at.strftime('%Y-%m-%d') }}</small>
                                     </div>
-                                    <p class="mb-1 text-light">
+                                    <p class="mb-1 text-light small">
                                         {{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}
                                     </p>
                                 </a>
@@ -164,7 +164,7 @@
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <div class="alert alert-dark text-white border-light">
+                    <div class="alert bg-dark text-white border border-secondary">
                         <i class="fas fa-info-circle me-2"></i>لا توجد منشورات متاحة حالياً.
                     </div>
                 {% endif %}
@@ -176,48 +176,48 @@
             <div class="card-header bg-dark text-white">
                 <h5 class="section-title"><i class="fas fa-lightbulb me-2"></i>نصائح تعليمية</h5>
             </div>
-            <div class="card-body tips-list">
+            <div class="card-body" style="background-color: #111; border-radius: 5px;">
                 <ul class="list-unstyled">
-                    <li>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="me-3 fs-3 text-warning">
+                    <li class="mb-3 pb-2" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3 fs-4 text-warning">
                                 <i class="fas fa-calendar-check"></i>
                             </div>
                             <div>
-                                <h6 class="mb-1 fw-bold">حدد جدولاً منتظماً للدراسة</h6>
+                                <h6 class="mb-1 fw-bold text-white">حدد جدولاً منتظماً للدراسة</h6>
                                 <p class="mb-0 small text-light">خصص وقتًا ثابتًا يوميًا للدراسة للحصول على أفضل النتائج</p>
                             </div>
                         </div>
                     </li>
-                    <li>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="me-3 fs-3 text-info">
+                    <li class="mb-3 pb-2" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3 fs-4 text-info">
                                 <i class="fas fa-pencil-alt"></i>
                             </div>
                             <div>
-                                <h6 class="mb-1 fw-bold">دوّن ملاحظات أثناء المشاهدة</h6>
+                                <h6 class="mb-1 fw-bold text-white">دوّن ملاحظات أثناء المشاهدة</h6>
                                 <p class="mb-0 small text-light">تدوين الملاحظات يساعد على تثبيت المعلومات بشكل أفضل</p>
                             </div>
                         </div>
                     </li>
-                    <li>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="me-3 fs-3 text-success">
+                    <li class="mb-3 pb-2" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3 fs-4 text-success">
                                 <i class="fas fa-comments"></i>
                             </div>
                             <div>
-                                <h6 class="mb-1 fw-bold">شارك بفاعلية في التعليقات</h6>
+                                <h6 class="mb-1 fw-bold text-white">شارك بفاعلية في التعليقات</h6>
                                 <p class="mb-0 small text-light">التفاعل مع الطلاب الآخرين يثري تجربة التعلم</p>
                             </div>
                         </div>
                     </li>
                     <li>
                         <div class="d-flex align-items-center">
-                            <div class="me-3 fs-3 text-primary">
+                            <div class="me-3 fs-4 text-primary">
                                 <i class="fas fa-puzzle-piece"></i>
                             </div>
                             <div>
-                                <h6 class="mb-1 fw-bold">طبق ما تتعلمه عمليًا</h6>
+                                <h6 class="mb-1 fw-bold text-white">طبق ما تتعلمه عمليًا</h6>
                                 <p class="mb-0 small text-light">التطبيق العملي يساعد على ترسيخ المفاهيم بشكل أعمق</p>
                             </div>
                         </div>
