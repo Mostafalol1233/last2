@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // إزالة رسالة "جاري المعالجة" عند تحميل الصفحة
+    const loadingElement = document.querySelector('.loading-message');
+    if (loadingElement) {
+        loadingElement.style.display = 'none';
+    }
+
     // منع النسخ في صفحة الاختبار
     if (window.location.href.includes('/student/tests/take/') || window.location.href.includes('/attempt/')) {
         // منع النسخ
