@@ -240,6 +240,10 @@ class TestCreateForm(FlaskForm):
         Optional(),
         Length(max=500, message='يجب أن لا يتجاوز الوصف 500 حرف')
     ])
+    test_file = FileField('ملف الاختبار (PDF/Word)', validators=[
+        Optional(),
+        FileAllowed(['pdf', 'doc', 'docx'], 'يرجى رفع ملف بصيغة PDF أو Word فقط')
+    ])
     time_limit_minutes = IntegerField('الوقت المحدد (بالدقائق)', validators=[
         DataRequired(message='يجب تحديد المدة الزمنية للاختبار'),
         NumberRange(min=5, max=180, message='يجب أن تكون المدة بين 5 و 180 دقيقة')

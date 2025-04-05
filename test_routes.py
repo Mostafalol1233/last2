@@ -2,10 +2,19 @@
 هذا الملف يحتوي على routes الخاصة بالاختبارات سواء للمسؤول أو للطلاب
 """
 
+import os
+import re
+import tempfile
+import io
 from datetime import datetime, timedelta
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, abort
 from flask_login import login_required, current_user
 from sqlalchemy import func
+from werkzeug.utils import secure_filename
+
+# استيراد مكتبات معالجة الملفات
+from pypdf import PdfReader
+import docx
 
 from app import db
 from models import Test, TestQuestion, QuestionChoice, TestAttempt, TestAnswer
@@ -17,6 +26,219 @@ from forms import (
     TestAttemptForm, 
     TestTakingForm
 )
+
+# تحديد الأنماط للإجابات المحتملة
+CHOICE_PATTERNS = [
+    r'\b([A-Dأ-د])[\.:\-\)\s]\s*(.*)', # نمط للإجابات المحتملة (A, ب، الخ)
+    r'(\d+)[\.:\-\)\s]\s*(.*)'         # نمط للإجابات الرقمية (1, 2, 3, الخ)
+]
+
+# أنماط للأسئلة
+QUESTION_PATTERNS = [
+    r'(?:السؤال|سؤال).*?(\d+).*?[:.\-]\s*(.*)', # صيغة "السؤال 1: ..."
+    r'(\d+)\s*[\.:\-\)\(\]]\s*(.*)',             # صيغة "1. ..."
+    r'[^\n]+\?'                                  # أي سطر ينتهي بعلامة استفهام
+]
+
+# أنماط للإجابات الصحيحة
+CORRECT_ANSWER_PATTERNS = [
+    r'الإجابة\s*(?:الصحيحة|الصحيحه).*?[:.\-]\s*([A-Dأ-د\d])',
+    r'إجابة\s*(?:صحيحة|صحيحه).*?[:.\-]\s*([A-Dأ-د\d])',
+    r'(?:الإجابة|الاجابة).*?[:.\-]\s*([A-Dأ-د\d])'
+]
+
+def extract_text_from_pdf(pdf_file):
+    """استخراج النص من ملف PDF"""
+    pdf_reader = PdfReader(pdf_file)
+    text = ""
+    for page in pdf_reader.pages:
+        text += page.extract_text() + "\n\n"
+    return text
+
+def extract_text_from_docx(docx_file):
+    """استخراج النص من ملف Word"""
+    doc = docx.Document(docx_file)
+    text = ""
+    for para in doc.paragraphs:
+        text += para.text + "\n"
+    return text
+
+def find_questions_and_choices(text):
+    """
+    البحث عن الأسئلة والخيارات في النص
+    تعيد قائمة من الأسئلة حيث كل سؤال هو قاموس يحتوي على:
+    - question_text: نص السؤال
+    - choices: قائمة من الخيارات (كل خيار هو قاموس يحتوي على النص والحالة)
+    - question_type: نوع السؤال (multiple_choice, true_false, short_answer)
+    """
+    questions = []
+    lines = text.split('\n')
+    current_question = None
+    in_choices = False
+    choices = []
+    
+    for i, line in enumerate(lines):
+        line = line.strip()
+        if not line:
+            continue
+        
+        # التحقق من وجود سؤال جديد
+        is_question = False
+        for pattern in QUESTION_PATTERNS:
+            match = re.search(pattern, line)
+            if match:
+                # إذا كان هناك سؤال حالي، أضفه مع خياراته
+                if current_question:
+                    # تحديد نوع السؤال
+                    question_type = 'multiple_choice'
+                    if len(choices) == 2 and any('صح' in c['text'].lower() for c in choices) and any('خطأ' in c['text'].lower() for c in choices):
+                        question_type = 'true_false'
+                    elif not choices:
+                        question_type = 'short_answer'
+                    
+                    questions.append({
+                        'question_text': current_question,
+                        'choices': choices,
+                        'question_type': question_type
+                    })
+                
+                # استخراج نص السؤال
+                if len(match.groups()) > 1:
+                    q_num, q_text = match.groups()
+                    current_question = f"{q_text}"
+                else:
+                    current_question = line
+                
+                choices = []
+                in_choices = True
+                is_question = True
+                break
+        
+        if is_question:
+            continue
+        
+        # التحقق من وجود خيارات إذا كنا في سياق سؤال
+        if in_choices and current_question:
+            for pattern in CHOICE_PATTERNS:
+                match = re.search(pattern, line)
+                if match:
+                    choice_marker, choice_text = match.groups()
+                    choices.append({
+                        'text': choice_text.strip(),
+                        'is_correct': False  # سيتم تحديده لاحقًا
+                    })
+                    break
+            
+            # التحقق من وجود إشارة للإجابة الصحيحة
+            for pattern in CORRECT_ANSWER_PATTERNS:
+                match = re.search(pattern, line)
+                if match and choices:
+                    correct_marker = match.group(1)
+                    # تحديد أي من الخيارات هو الصحيح بناءً على العلامة
+                    for j, choice in enumerate(choices):
+                        if correct_marker.isdigit() and j + 1 == int(correct_marker):
+                            choice['is_correct'] = True
+                        elif not correct_marker.isdigit() and choice.get('marker') == correct_marker:
+                            choice['is_correct'] = True
+    
+    # إضافة آخر سؤال إذا وجد
+    if current_question:
+        question_type = 'multiple_choice'
+        if len(choices) == 2 and any('صح' in c['text'].lower() for c in choices) and any('خطأ' in c['text'].lower() for c in choices):
+            question_type = 'true_false'
+        elif not choices:
+            question_type = 'short_answer'
+        
+        questions.append({
+            'question_text': current_question,
+            'choices': choices,
+            'question_type': question_type
+        })
+    
+    return questions
+
+def process_test_file(file, test_id):
+    """
+    معالجة ملف الاختبار وإنشاء الأسئلة والخيارات
+    """
+    # تحديد نوع الملف والتعامل معه
+    filename = secure_filename(file.filename)
+    file_extension = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+    
+    # استخراج النص من الملف
+    text = ""
+    if file_extension == 'pdf':
+        # حفظ الملف مؤقتًا على القرص ثم قراءته
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp:
+            file.save(temp.name)
+            temp_name = temp.name
+        
+        text = extract_text_from_pdf(temp_name)
+        os.unlink(temp_name)  # حذف الملف المؤقت
+        
+    elif file_extension in ['doc', 'docx']:
+        # حفظ الملف مؤقتًا على القرص ثم قراءته
+        with tempfile.NamedTemporaryFile(delete=False, suffix=f'.{file_extension}') as temp:
+            file.save(temp.name)
+            temp_name = temp.name
+        
+        text = extract_text_from_docx(temp_name)
+        os.unlink(temp_name)  # حذف الملف المؤقت
+    
+    else:
+        raise ValueError(f'نوع الملف غير مدعوم: {file_extension}. يرجى استخدام ملفات PDF أو Word.')
+    
+    # استخراج الأسئلة والخيارات من النص
+    questions_data = find_questions_and_choices(text)
+    
+    # إذا لم يتم العثور على أي أسئلة
+    if not questions_data:
+        raise ValueError('لم يتم العثور على أي أسئلة في الملف. تأكد من تنسيق الملف بشكل صحيح.')
+    
+    # إنشاء الأسئلة في قاعدة البيانات
+    for i, q_data in enumerate(questions_data, 1):
+        question = TestQuestion(
+            test_id=test_id,
+            question_text=q_data['question_text'],
+            question_type=q_data['question_type'],
+            points=1,  # يمكن تعديله لاحقًا
+            order=i
+        )
+        db.session.add(question)
+        db.session.flush()  # للحصول على معرف السؤال
+        
+        # إنشاء الخيارات للسؤال
+        for j, choice_data in enumerate(q_data['choices'], 1):
+            choice = QuestionChoice(
+                question_id=question.id,
+                choice_text=choice_data['text'],
+                is_correct=choice_data['is_correct'],
+                order=j
+            )
+            db.session.add(choice)
+        
+        # إذا كان السؤال من نوع صح/خطأ ولم يتم العثور على خيارات، إنشاء خيارات افتراضية
+        if q_data['question_type'] == 'true_false' and not q_data['choices']:
+            # خيار "صح"
+            choice_true = QuestionChoice(
+                question_id=question.id,
+                choice_text='صح',
+                is_correct=True,  # افتراضي، يمكن تعديله
+                order=1
+            )
+            db.session.add(choice_true)
+            
+            # خيار "خطأ"
+            choice_false = QuestionChoice(
+                question_id=question.id,
+                choice_text='خطأ',
+                is_correct=False,
+                order=2
+            )
+            db.session.add(choice_false)
+    
+    db.session.commit()
+    return len(questions_data)  # إرجاع عدد الأسئلة التي تم إنشاؤها
 
 # إنشاء Blueprints للطلاب والمسؤولين
 admin_tests = Blueprint('admin_tests', __name__)
@@ -59,7 +281,19 @@ def create_test():
         db.session.add(test)
         db.session.commit()
         
-        flash('تم إنشاء الاختبار بنجاح. يمكنك الآن إضافة الأسئلة.', 'success')
+        # معالجة الملف المرفوع
+        if form.test_file.data:
+            test_file = form.test_file.data
+            
+            # استدعاء الوظيفة التي تقوم باستخراج الأسئلة من الملف
+            try:
+                process_test_file(test_file, test.id)
+                flash('تم إنشاء الاختبار واستخراج الأسئلة من الملف بنجاح.', 'success')
+            except Exception as e:
+                flash(f'تم إنشاء الاختبار ولكن حدث خطأ في معالجة الملف: {str(e)}', 'warning')
+        else:
+            flash('تم إنشاء الاختبار بنجاح. يمكنك الآن إضافة الأسئلة.', 'success')
+            
         return redirect(url_for('admin_tests.edit_test', test_id=test.id))
     
     return render_template('admin/create_test.html', form=form)
@@ -79,13 +313,27 @@ def edit_test(test_id):
         flash('ليس لديك صلاحية لتحرير هذا الاختبار', 'danger')
         return redirect(url_for('admin_tests.manage_tests'))
     
+    # نستخدم TestCreateForm لضمان وجود حقل رفع الملف
     form = TestForm(obj=test)
     question_form = TestQuestionForm()
     
     if form.validate_on_submit():
         form.populate_obj(test)
         db.session.commit()
-        flash('تم تحديث تفاصيل الاختبار بنجاح.', 'success')
+        
+        # معالجة الملف المرفوع إذا وجد
+        if form.test_file.data:
+            test_file = form.test_file.data
+            
+            # استدعاء الوظيفة التي تقوم باستخراج الأسئلة من الملف
+            try:
+                num_questions = process_test_file(test_file, test.id)
+                flash(f'تم تحديث تفاصيل الاختبار واستخراج {num_questions} أسئلة من الملف بنجاح.', 'success')
+            except Exception as e:
+                flash(f'تم تحديث تفاصيل الاختبار ولكن حدث خطأ في معالجة الملف: {str(e)}', 'warning')
+        else:
+            flash('تم تحديث تفاصيل الاختبار بنجاح.', 'success')
+            
         return redirect(url_for('admin_tests.edit_test', test_id=test.id))
     
     return render_template('admin/edit_test.html', test=test, form=form, question_form=question_form)

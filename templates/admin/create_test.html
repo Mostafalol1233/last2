@@ -11,7 +11,7 @@
                     <h3 class="card-title mb-0">إنشاء اختبار جديد</h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('admin.create_test') }}">
+                    <form method="POST" action="{{ url_for('admin_tests.create_test') }}" enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
                         
                         <div class="mb-3">
@@ -32,6 +32,17 @@
                                     <div class="text-danger">{{ error }}</div>
                                 {% endfor %}
                             {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.test_file.label(class="form-label") }}
+                            {{ form.test_file(class="form-control") }}
+                            {% if form.test_file.errors %}
+                                {% for error in form.test_file.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            <div class="form-text">رفع ملف اختبار بتنسيق PDF أو Word لاستخراج الأسئلة تلقائياً</div>
                         </div>
                         
                         <div class="row">
@@ -70,7 +81,7 @@
                         
                         <div class="d-grid gap-2">
                             {{ form.submit(class="btn btn-primary") }}
-                            <a href="{{ url_for('admin.manage_tests') }}" class="btn btn-secondary">إلغاء</a>
+                            <a href="{{ url_for('admin_tests.manage_tests') }}" class="btn btn-secondary">إلغاء</a>
                         </div>
                     </form>
                 </div>

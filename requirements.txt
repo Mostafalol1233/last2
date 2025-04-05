@@ -21,3 +21,5 @@ twilio
 python-dotenv
 stripe
 twilio
+pypdf
+python-docx
