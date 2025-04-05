@@ -64,14 +64,14 @@
                                     <td>{{ video_stats[video.id]['views_count'] }} مشاهدة</td>
                                     <td>
                                         {% if video.requires_code %}
-                                            <span class="badge badge-warning">يتطلب كود</span>
+                                            <span class="badge bg-dark">يتطلب كود</span>
                                             {% if video_stats[video.id]['active_codes'] %}
-                                                <span class="badge badge-success">{{ video_stats[video.id]['active_codes']|length }} أكواد نشطة</span>
+                                                <span class="badge bg-dark">{{ video_stats[video.id]['active_codes']|length }} أكواد نشطة</span>
                                             {% else %}
-                                                <span class="badge badge-danger">لا توجد أكواد نشطة</span>
+                                                <span class="badge bg-dark">لا توجد أكواد نشطة</span>
                                             {% endif %}
                                         {% else %}
-                                            <span class="badge badge-success">متاح للجميع</span>
+                                            <span class="badge bg-dark">متاح للجميع</span>
                                         {% endif %}
                                     </td>
                                     <td>
