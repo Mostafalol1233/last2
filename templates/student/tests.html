@@ -144,7 +144,7 @@
                                             {% if test_attempts %}
                                                 <div class="attempts-list">
                                                     <h6>محاولاتك السابقة:</h6>
-                                                    {% for attempt in attempts_by_test.get(test.id, [])|sort(attribute='started_at', reverse=True)[:3] %}
+                                                    {% for attempt in (attempts_by_test.get(test.id, [])|sort(attribute='started_at', reverse=True))[:3] %}
                                                         <div class="attempt-item {% if attempt.passed %}bg-success-subtle{% else %}bg-danger-subtle{% endif %}">
                                                             <div class="d-flex justify-content-between align-items-center">
                                                                 <div>
