@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+  <!-- مثلث قائم الزاوية -->
+  <polygon points="50,150 50,50 250,150" fill="none" stroke="black" stroke-width="2"/>
+  
+  <!-- الأضلاع والقياسات -->
+  <line x1="50" y1="150" x2="250" y2="150" stroke="blue" stroke-width="2"/>
+  <text x="130" y="170" font-family="Arial" font-size="18">a = 3</text>
+  
+  <line x1="50" y1="50" x2="50" y2="150" stroke="red" stroke-width="2"/>
+  <text x="30" y="100" font-family="Arial" font-size="18">b = 4</text>
+  
+  <line x1="50" y1="50" x2="250" y2="150" stroke="green" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="140" y="90" font-family="Arial" font-size="18">c = ?</text>
+  
+  <!-- الزاوية القائمة -->
+  <path d="M 70,150 A 20,20 0 0 1 50,130" fill="none" stroke="black" stroke-width="1"/>
+</svg>

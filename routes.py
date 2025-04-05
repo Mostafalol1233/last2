@@ -1735,9 +1735,15 @@ def available_tests():
     
     # إذا لم تكن هناك اختبارات، أنشئ اختبارًا تجريبيًا للاختبار
     if not tests:
+        # حذف أي اختبارات سابقة
+        old_tests = Test.query.all()
+        for old_test in old_tests:
+            db.session.delete(old_test)
+        db.session.commit()
+        
         test = Test(
-            title="اختبار الرياضيات الأساسية",
-            description="اختبار أساسيات الرياضيات للصف الأول",
+            title="اختبار الرياضيات البسيط",
+            description="اختبار بسيط للعمليات الحسابية والمثلثات",
             created_by=1,  # افتراض أن المعرف 1 هو للمسؤول
             is_active=True,
             time_limit_minutes=30,
@@ -1749,34 +1755,56 @@ def available_tests():
         # إضافة بعض الأسئلة للاختبار
         questions = [
             {
-                'text': 'كم يساوي 5 + 7؟',
+                'text': 'كم يساوي 1 + 1؟',
                 'type': 'multiple_choice',
                 'points': 1,
                 'choices': [
-                    {'text': '10', 'is_correct': False},
-                    {'text': '12', 'is_correct': True},
-                    {'text': '13', 'is_correct': False},
-                    {'text': '15', 'is_correct': False}
+                    {'text': '1', 'is_correct': False},
+                    {'text': '2', 'is_correct': True},
+                    {'text': '3', 'is_correct': False},
+                    {'text': '4', 'is_correct': False}
                 ]
             },
             {
-                'text': 'كم يساوي 9 × 8؟',
+                'text': 'كم يساوي 2 × 3؟',
                 'type': 'multiple_choice',
                 'points': 1,
                 'choices': [
-                    {'text': '64', 'is_correct': False},
-                    {'text': '72', 'is_correct': True},
-                    {'text': '81', 'is_correct': False},
-                    {'text': '56', 'is_correct': False}
+                    {'text': '5', 'is_correct': False},
+                    {'text': '6', 'is_correct': True},
+                    {'text': '7', 'is_correct': False},
+                    {'text': '8', 'is_correct': False}
                 ]
             },
             {
-                'text': 'هل 25 أكبر من 52؟',
+                'text': 'في مثلث قائم الزاوية طول ضلعيه 3 سم و 4 سم، ما هو طول الوتر (الضلع الثالث)؟',
+                'type': 'multiple_choice',
+                'points': 1,
+                'choices': [
+                    {'text': '5 سم', 'is_correct': True},
+                    {'text': '6 سم', 'is_correct': False},
+                    {'text': '7 سم', 'is_correct': False},
+                    {'text': '8 سم', 'is_correct': False}
+                ]
+            },
+            {
+                'text': 'هل 10 أكبر من 5؟',
                 'type': 'true_false',
                 'points': 1,
                 'choices': [
-                    {'text': 'صحيح', 'is_correct': False},
-                    {'text': 'خطأ', 'is_correct': True}
+                    {'text': 'صحيح', 'is_correct': True},
+                    {'text': 'خطأ', 'is_correct': False}
+                ]
+            },
+            {
+                'text': 'الصورة التالية تمثل مثلث بأطوال أضلاع a=3, b=4. استخدم نظرية فيثاغورس لإيجاد طول الضلع c:\n<img src="/static/img/triangle.svg" alt="مثلث قائم الزاوية" width="200">',
+                'type': 'multiple_choice',
+                'points': 1,
+                'choices': [
+                    {'text': '5', 'is_correct': True},
+                    {'text': '6', 'is_correct': False},
+                    {'text': '7', 'is_correct': False},
+                    {'text': '8', 'is_correct': False}
                 ]
             }
         ]
