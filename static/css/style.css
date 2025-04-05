@@ -24,9 +24,9 @@
 
 /* Eye-friendly color scheme with softer colors */
 :root {
-    --primary-color: #2c82c9;
-    --primary-light: #4a9ad8;
-    --primary-dark: #1c5b8e;
+    --primary-color: #1a4c78;
+    --primary-light: #2c6ca8;
+    --primary-dark: #0f3251;
     --secondary-color: #27ae60;
     --secondary-light: #4cc482;
     --secondary-dark: #208e4e;
