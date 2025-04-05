@@ -36,10 +36,10 @@
     --danger-color: #e74c3c;
     --text-light: #f8f9fa;
     --text-dark: #343a40;
-    --bg-light: #e6e8eb; /* Darker background */
-    --bg-dark: #2d3436;
-    --bg-card: #1c2833;
-    --bg-card-dark: #0f1a20;
+    --bg-light: #ffffff;
+    --bg-dark: #212529;
+    --bg-card: #2d3436;
+    --bg-card-dark: #222;
     --header-height: 80px;
 }
 
@@ -48,33 +48,40 @@ body {
     text-align: right;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
-    color: var(--text-light);
+    color: #333;
     background-color: var(--bg-light);
     transition: background-color 0.3s ease;
 }
 
-/* Dark mode styles */
-[data-bs-theme="dark"] {
-    --bs-body-color: var(--text-light);
-    --bs-body-bg: var(--bg-dark);
-    --bs-navbar-color: var(--text-light);
-    --bs-card-bg: var(--bg-card);
-    --bs-secondary-bg: var(--bg-card-dark);
+/* Dark mode styles for main content */
+main {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* Better contrast for text lines */
-.list-group-item {
-    color: var(--text-light);
-    color: var(--text-light);
-    border-color: rgba(0,0,0,0.1);
-    background-color: rgba(255,255,255,0.7);
+main a:not(.btn) {
+    color: var(--primary-light);
 }
 
-[data-bs-theme="dark"] .list-group-item {
-    color: var(--text-light);
-    color: var(--text-light);
-    border-color: rgba(255,255,255,0.1);
-    background-color: rgba(0,0,0,0.3);
+/* White style for header and footer */
+header, footer {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+}
+
+.navbar-custom .nav-link {
+    color: var(--text-dark) !important;
+    margin-right: 15px;
+    padding: 8px 15px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.navbar-custom .nav-link:hover {
+    background-color: #f8f9fa;
+    color: var(--primary-color) !important;
 }
 
 /* Apply animations to elements */
@@ -84,6 +91,14 @@ body {
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
+    background-color: var(--bg-card);
+    color: var(--text-light);
+}
+
+.card .card-header {
+    background-color: var(--bg-card-dark);
+    color: var(--text-light);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .btn {
@@ -135,182 +150,11 @@ body {
     color: var(--text-light);
 }
 
-/* Hamburger Menu Styles */
-.navbar {
-    padding: 0.5rem 1rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.navbar-brand {
-    display: flex;
-    align-items: center;
-    animation: slideInRight 0.5s ease-out;
-    padding: 0.5rem 0;
-}
-
-.navbar-brand span {
-    font-size: 1.3em;
+/* Better contrast for text lines */
+.list-group-item {
+    background-color: var(--bg-card);
     color: var(--text-light);
-    font-weight: 600;
-}
-
-.navbar-brand small {
-    font-size: 1em;
-    color: var(--text-light);
-    opacity: 0.9;
-}
-
-.navbar-toggler {
-    border: none;
-    padding: 0.5rem;
-    transition: all 0.3s ease;
-    outline: none !important;
-}
-
-.navbar-toggler:focus {
-    box-shadow: none;
-}
-
-.navbar-toggler-icon {
-    background-image: none !important;
-    display: block;
-    position: relative;
-    width: 24px;
-    height: 4px;
-    margin: 8px auto;
-    background-color: var(--text-light);
-    transition: all 0.3s ease;
-}
-
-.navbar-toggler-icon::before,
-.navbar-toggler-icon::after {
-    content: '';
-    position: absolute;
-    width: 24px;
-    height: 4px;
-    background-color: var(--text-light);
-    transition: all 0.3s ease;
-}
-
-.navbar-toggler-icon::before {
-    top: -8px;
-}
-
-.navbar-toggler-icon::after {
-    bottom: -8px;
-}
-
-.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
-    background-color: transparent;
-}
-
-.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
-    top: 0;
-    transform: rotate(45deg);
-}
-
-.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
-    bottom: 0;
-    transform: rotate(-45deg);
-}
-
-.navbar-nav .nav-link {
-    color: var(--text-light) !important;
-    font-weight: 500;
-    border-radius: 6px;
-    padding: 0.6rem 1rem;
-    margin: 0.2rem 0;
-    transition: all 0.3s ease;
-}
-
-.navbar-nav .nav-link:hover,
-.navbar-nav .nav-link.active {
-    background-color: rgba(0,0,0,0.05);
-    color: var(--primary-color) !important;
-    transform: translateX(-5px);
-}
-
-/* Adjust navigation for RTL */
-.navbar-nav {
-    padding-right: 0;
-}
-
-.me-1, .me-2, .me-3, .me-4 {
-    margin-left: 0.25rem !important;
-    margin-right: 0 !important;
-}
-
-.ms-auto {
-    margin-right: auto !important;
-    margin-left: 0 !important;
-}
-
-.text-md-end {
-    text-align: left !important;
-}
-
-/* Reset direction for specific elements */
-.navbar-brand img {
-    margin-left: 0.5rem;
-    margin-right: 0;
-}
-
-/* For video embedding */
-.video-container {
-    position: relative;
-    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-    height: 0;
-    overflow: hidden;
-}
-
-.video-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-}
-
-/* Card hover effect - Enhanced */
-.card {
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    overflow: hidden;
-}
-
-.card-hover:hover {
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-    transform: translateY(-5px);
-}
-
-.card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease;
-}
-
-.card:hover::before {
-    transform: scaleX(1);
-}
-
-/* Add pulse animation to new badges */
-.badge {
-    transition: all 0.3s ease;
-}
-
-.badge-new {
-    animation: pulse 1.5s infinite;
-}
-
-.badge:hover {
-    transform: scale(1.1);
+    border-color: rgba(255,255,255,0.1);
 }
 
 /* Dashboard Stats */
@@ -319,12 +163,8 @@ body {
     padding: 1.2rem;
     transition: all 0.3s ease;
     border-radius: 8px;
-    background-color: rgba(50, 50, 50, 0.8);
+    background-color: var(--bg-card);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-[data-bs-theme="dark"] .dashboard-stats {
-    background-color: rgba(44, 62, 80, 0.7);
 }
 
 .dashboard-stats .stat-icon {
@@ -338,24 +178,11 @@ body {
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 0.2rem;
-    color: var(--text-light);
-}
-
-[data-bs-theme="dark"] .dashboard-stats h3 {
-    color: var(--text-light);
-    color: var(--text-light);
 }
 
 .dashboard-stats p {
     color: var(--text-light);
     font-size: 1rem;
-    color: var(--text-light);
-    opacity: 0.8;
-}
-
-[data-bs-theme="dark"] .dashboard-stats p {
-    color: var(--text-light);
-    color: var(--text-light);
     opacity: 0.8;
 }
 
@@ -388,18 +215,9 @@ body {
     color: var(--text-light);
 }
 
-[data-bs-theme="dark"] .post-list h6 {
-    color: var(--text-light);
-}
-
 .post-list p {
     font-size: 0.85rem;
     margin-bottom: 0;
-    color: var(--text-light);
-    opacity: 0.8;
-}
-
-[data-bs-theme="dark"] .post-list p {
     color: var(--text-light);
     opacity: 0.8;
 }
@@ -426,12 +244,6 @@ body {
     color: var(--text-light);
     font-size: 1.1rem;
     font-weight: 400;
-    color: var(--text-light);
-}
-
-[data-bs-theme="dark"] .lead {
-    color: var(--text-light);
-    color: var(--text-light);
 }
 
 /* Mobile responsive adjustments */
@@ -445,7 +257,6 @@ body {
     }
     
     .dashboard-stats h3 {
-    color: var(--text-light);
         font-size: 1.5rem;
     }
     
@@ -460,164 +271,17 @@ body {
     .card-hover:hover {
         transform: translateY(-3px);
     }
+
+    .navbar-nav {
+        margin-top: 15px;
+    }
+
+    .navbar-nav .nav-item {
+        margin-bottom: 8px;
+    }
 }
 
-/* Menu backdrop for mobile */
-.menu-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1040;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-.menu-backdrop.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* Enhanced hover effect for buttons */
-.btn-light {
-    background-color: #4b5f73;
-    color: white;
-    background: rgba(80, 80, 80, 0.8);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    color: var(--text-light);
-}
-
-.btn-light:hover {
-    background: var(--primary-light);
-    color: white;
-}
-
-[data-bs-theme="dark"] .btn-light {
-    background-color: #4b5f73;
-    color: white;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    color: var(--text-light);
-}
-
-[data-bs-theme="dark"] .btn-light:hover {
-    background: var(--primary-light);
-    color: white;
-}
-
-/* Form styling */
-.form-control {
-    border-radius: 6px;
-    padding: 0.6rem 1rem;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.form-control:focus {
-    box-shadow: 0 0 0 3px rgba(44, 130, 201, 0.2);
-    border-color: var(--primary-color);
-}
-
-/* Footer styling */
-footer {
-    background-color: var(--bg-card-dark);
-    color: var(--text-light);
-    padding: 2rem 0;
-    margin-top: 3rem;
-}
-
-.footer-logo {
-    max-width: 120px;
-    margin-bottom: 1rem;
-}
-
-.footer-nav a {
-    color: var(--text-light);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    display: block;
-    padding: 0.5rem 0;
-}
-
-.footer-nav a:hover {
-    color: var(--primary-light);
-    transform: translateX(-5px);
-}
-
-.social-icons {
-    display: flex;
-    gap: 1rem;
-}
-
-.social-icons a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: var(--text-light);
-    transition: all 0.3s ease;
-}
-
-.social-icons a:hover {
-    background-color: var(--primary-color);
-    transform: translateY(-5px);
-}
-
-/* AI chat styling */
-.chat-container {
-    height: 500px;
-    overflow-y: auto;
-    padding: 1rem;
-    border-radius: 8px;
-    background-color: rgba(50, 50, 50, 0.7);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-[data-bs-theme="dark"] .chat-container {
-    background-color: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.message {
-    margin-bottom: 1rem;
-    padding: 0.8rem 1rem;
-    border-radius: 8px;
-    max-width: 80%;
-    position: relative;
-}
-
-.message-user {
-    background-color: var(--primary-light);
-    color: white;
-    margin-left: auto;
-    border-top-right-radius: 0;
-}
-
-.message-ai {
-    background-color: rgba(0, 0, 0, 0.05);
-    color: var(--text-light);
-    margin-right: auto;
-    border-top-left-radius: 0;
-}
-
-[data-bs-theme="dark"] .message-ai {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: var(--text-light);
-}
-
-/* Make sure images and other media are responsive */
-img, video, iframe {
-    max-width: 100%;
-    height: auto;
-}
-
-/* Customized scrollbar for webkit browsers */
+/* Customized scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -637,14 +301,37 @@ img, video, iframe {
     background: var(--primary-color);
 }
 
-[data-bs-theme="dark"] ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+/* Footer styling */
+footer {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    padding: 2rem 0;
+    margin-top: 3rem;
 }
 
-[data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
+.footer-logo {
+    max-width: 120px;
+    margin-bottom: 1rem;
 }
 
-[data-bs-theme="dark"] ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-color);
+footer a {
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+footer a:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+/* Card hover effect */
+.card-hover:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-5px);
+}
+
+/* Badge styling */
+.badge-new {
+    animation: pulse 1.5s infinite;
 }

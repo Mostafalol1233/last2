@@ -21,38 +21,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        /* قم بإضافة ستايل خاص */
-        .bg-white-custom {
-            background-color: white !important;
-            color: black !important;
-        }
-        .bg-dark-custom {
-            background-color: #212529 !important;
-            color: white !important;
-        }
-        .navbar-custom .nav-link {
-            color: #333 !important;
-            margin-left: 15px;
-            font-weight: bold;
-        }
-        .navbar-custom .nav-link:hover {
-            color: #0d6efd !important;
-        }
-    </style>
 </head>
 <body>
     <!-- Menu background overlay for mobile -->
     <div class="menu-backdrop" id="menuBackdrop"></div>
     
     <header>
-        <nav class="navbar navbar-expand-lg bg-white-custom">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container">
                 <a class="navbar-brand" href="{{ url_for('main.index') }}">
-                    <img src="{{ url_for('static', filename='img/ahmed-helly-logo.png') }}" alt="شعار الأستاذ أحمد حلي" height="60">
+                    <img src="{{ url_for('static', filename='img/ahmed-helly-logo.png') }}" alt="شعار الأستاذ أحمد حلي" height="60" class="me-2">
                     <div class="d-flex flex-column">
-                        <span>منصة الأستاذ أحمد حلي</span>
-                        <small class="d-none d-md-block">العلم على أصوله.. مع أحمد حلي يقولوا!</small>
+                        <span style="font-size: 1.2rem;">منصة الأستاذ أحمد حلي</span>
+                        <small class="d-none d-md-block" style="font-size: 0.9rem;">العلم على أصوله.. مع أحمد حلي يقولوا!</small>
                     </div>
                 </a>
                 
@@ -61,75 +42,75 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 
-                <div class="collapse navbar-collapse navbar-custom" id="navbarNav">
-                    <ul class="navbar-nav">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
                         {% if current_user.is_authenticated %}
                             {% if current_user.role == 'admin' %}
                                 <li class="nav-item">
                                     <a class="nav-link {% if request.path.startswith('/admin/dashboard') %}active{% endif %}" href="{{ url_for('admin.dashboard') }}">
-                                        <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+                                        <i class="fas fa-tachometer-alt me-1"></i>لوحة التحكم
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link {% if request.path.startswith('/admin/upload_video') %}active{% endif %}" href="{{ url_for('admin.upload_video') }}">
-                                        <i class="fas fa-video"></i> رفع فيديو
+                                        <i class="fas fa-video me-1"></i>رفع فيديو
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link {% if request.path.startswith('/admin/create_post') %}active{% endif %}" href="{{ url_for('admin.create_post') }}">
-                                        <i class="fas fa-edit"></i> إنشاء منشور
+                                        <i class="fas fa-edit me-1"></i>إنشاء منشور
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link {% if request.path.startswith('/admin/lecture_codes') %}active{% endif %}" href="{{ url_for('admin.lecture_codes') }}">
-                                        <i class="fas fa-key"></i> أكواد المحاضرات
+                                        <i class="fas fa-key me-1"></i>أكواد المحاضرات
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link {% if request.path.startswith('/admin/transfer_points') %}active{% endif %}" href="{{ url_for('admin.transfer_points') }}">
-                                        <i class="fas fa-exchange-alt"></i> تحويل النقاط
+                                        <i class="fas fa-exchange-alt me-1"></i>تحويل النقاط
                                     </a>
                                 </li>
                             {% else %}
                                 <li class="nav-item">
                                     <a class="nav-link {% if request.path.startswith('/student/dashboard') %}active{% endif %}" href="{{ url_for('student.dashboard') }}">
-                                        <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+                                        <i class="fas fa-tachometer-alt me-1"></i>لوحة التحكم
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link {% if request.path.startswith('/student/notes') %}active{% endif %}" href="{{ url_for('student.view_notes') }}">
-                                        <i class="fas fa-sticky-note"></i> ملاحظاتي
+                                        <i class="fas fa-sticky-note me-1"></i>ملاحظاتي
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link {% if request.path.startswith('/student/ai_chat') %}active{% endif %}" href="{{ url_for('student.ai_chat') }}">
-                                        <i class="fas fa-robot"></i> الدردشة الذكية
+                                        <i class="fas fa-robot me-1"></i>الدردشة الذكية
                                     </a>
                                 </li>
                                 <!-- Math Tools Dropdown -->
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle {% if request.path.startswith('/student/math') or request.path.startswith('/student/algebra') or request.path.startswith('/student/advanced') %}active{% endif %}" href="#" id="mathToolsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-calculator"></i> الأدوات الرياضية
+                                        <i class="fas fa-calculator me-1"></i>الأدوات الرياضية
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="mathToolsDropdown">
                                         <li>
                                             <a class="dropdown-item" href="{{ url_for('student.math_formulas') }}">
-                                                <i class="fas fa-square-root-alt"></i> القوانين العامة
+                                                <i class="fas fa-square-root-alt me-1"></i>القوانين العامة
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="{{ url_for('student.algebra_formulas') }}">
-                                                <i class="fas fa-superscript"></i> قوانين الجبر
+                                                <i class="fas fa-superscript me-1"></i>قوانين الجبر
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="{{ url_for('student.advanced_formulas') }}">
-                                                <i class="fas fa-integral"></i> قوانين التفاضل
+                                                <i class="fas fa-integral me-1"></i>قوانين التفاضل
                                             </a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="{{ url_for('student.advanced_calculator') }}">
-                                                <i class="fas fa-calculator"></i> الآلة الحاسبة
+                                                <i class="fas fa-calculator me-1"></i>الآلة الحاسبة
                                             </a>
                                         </li>
                                     </ul>
@@ -137,7 +118,7 @@
                             {% endif %}
                             <li class="nav-item">
                                 <a class="nav-link {% if request.path.startswith('/messages') %}active{% endif %}" href="{{ url_for('main.messages') }}">
-                                    <i class="fas fa-envelope"></i> الرسائل
+                                    <i class="fas fa-envelope me-1"></i>الرسائل
                                     {% set unread_count = current_user.received_messages.filter_by(is_read=False).count() %}
                                     {% if unread_count > 0 %}
                                         <span class="badge rounded-pill bg-danger">{{ unread_count }}</span>
@@ -146,23 +127,23 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {% if request.path.startswith('/profile') %}active{% endif %}" href="{{ url_for('main.profile') }}">
-                                    <i class="fas fa-user"></i> الملف الشخصي
+                                    <i class="fas fa-user me-1"></i>الملف الشخصي
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link btn btn-danger btn-sm" href="{{ url_for('main.logout') }}">
-                                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                                <a class="nav-link btn btn-danger btn-sm mt-1" href="{{ url_for('main.logout') }}">
+                                    <i class="fas fa-sign-out-alt me-1"></i>تسجيل الخروج
                                 </a>
                             </li>
                         {% else %}
                             <li class="nav-item">
                                 <a class="nav-link {% if request.path == '/login' %}active{% endif %}" href="{{ url_for('main.login') }}">
-                                    <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                                    <i class="fas fa-sign-in-alt me-1"></i>تسجيل الدخول
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {% if request.path == '/register' %}active{% endif %}" href="{{ url_for('main.register') }}">
-                                    <i class="fas fa-user-plus"></i> إنشاء حساب
+                                    <i class="fas fa-user-plus me-1"></i>إنشاء حساب
                                 </a>
                             </li>
                         {% endif %}
@@ -172,7 +153,7 @@
         </nav>
     </header>
 
-    <main class="container py-4 bg-dark-custom">
+    <main class="container py-4">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -187,28 +168,36 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="mt-auto py-3 bg-white-custom">
+    <footer class="mt-auto py-3 bg-dark text-white">
         <div class="container">
             <div class="row">
-                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    <img src="{{ url_for('static', filename='img/ahmed-helly-logo.png') }}" alt="شعار الأستاذ أحمد حلي" class="footer-logo" width="70">
+                <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                    <img src="{{ url_for('static', filename='img/ahmed-helly-logo.png') }}" alt="شعار الأستاذ أحمد حلي" class="footer-logo" width="100">
                     <h5 class="mt-3">حول المنصة</h5>
                     <p>منصة الأستاذ أحمد حلي التعليمية هي منصة متكاملة لتقديم المحتوى التعليمي بطريقة تفاعلية مبتكرة.</p>
                 </div>
-                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
                     <h5>روابط سريعة</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{{ url_for('main.index') }}" class="text-dark">الرئيسية</a></li>
+                        <li><a href="{{ url_for('main.index') }}" class="text-white">الرئيسية</a></li>
                         {% if current_user.is_authenticated %}
                             {% if current_user.role == 'admin' %}
-                                <li><a href="{{ url_for('admin.dashboard') }}" class="text-dark">لوحة التحكم</a></li>
+                                <li><a href="{{ url_for('admin.dashboard') }}" class="text-white">لوحة التحكم</a></li>
                             {% else %}
-                                <li><a href="{{ url_for('student.dashboard') }}" class="text-dark">لوحة التحكم</a></li>
+                                <li><a href="{{ url_for('student.dashboard') }}" class="text-white">لوحة التحكم</a></li>
                             {% endif %}
                         {% else %}
-                            <li><a href="{{ url_for('main.login') }}" class="text-dark">تسجيل الدخول</a></li>
-                            <li><a href="{{ url_for('main.register') }}" class="text-dark">إنشاء حساب</a></li>
+                            <li><a href="{{ url_for('main.login') }}" class="text-white">تسجيل الدخول</a></li>
+                            <li><a href="{{ url_for('main.register') }}" class="text-white">إنشاء حساب</a></li>
                         {% endif %}
+                    </ul>
+                </div>
+                <div class="col-md-4 text-center text-md-start">
+                    <h5>تواصل معنا</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@ahmed-helly.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +123-456-7890</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> القاهرة، مصر</li>
                     </ul>
                 </div>
             </div>
@@ -219,8 +208,8 @@
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <p class="mb-0">
-                        <i class="fas fa-code"></i> تطوير 
-                        <a href="https://www.linkedin.com/in/mustafa-ahmed/" target="_blank" class="text-dark fw-bold">
+                        <i class="fas fa-code me-1"></i> تطوير 
+                        <a href="https://www.linkedin.com/in/mustafa-ahmed/" target="_blank" class="text-white fw-bold">
                             مصطفى محمد
                         </a>
                     </p>
