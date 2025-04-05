@@ -76,20 +76,6 @@
                         </div>
 
                         <div class="form-group">
-                            {{ form.points_cost.label(class="form-control-label") }}
-                            {% if form.points_cost.errors %}
-                                {{ form.points_cost(class="form-control is-invalid") }}
-                                <div class="invalid-feedback">
-                                    {% for error in form.points_cost.errors %}
-                                        <span>{{ error }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                {{ form.points_cost(class="form-control") }}
-                            {% endif %}
-                        </div>
-
-                        <div class="form-group">
                             {{ form.submit(class="btn btn-primary") }}
                             <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">الرجوع للخلف</a>
                         </div>
