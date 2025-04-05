@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // منع النسخ في صفحة الاختبار
-    if (window.location.href.includes('/take_test/') || window.location.href.includes('/attempt/')) {
+    if (window.location.href.includes('/student/tests/take/') || window.location.href.includes('/attempt/')) {
         // منع النسخ
         document.addEventListener('copy', function(e) {
             e.preventDefault();
