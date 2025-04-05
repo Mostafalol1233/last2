@@ -28,7 +28,7 @@
             color: black !important;
         }
         .bg-dark-custom {
-            background-color: #212529 !important;
+            background-color: #000000 !important;
             color: white !important;
         }
         .navbar-custom .nav-link {
@@ -38,6 +38,23 @@
         }
         .navbar-custom .nav-link:hover {
             color: #0d6efd !important;
+        }
+        .section-title {
+            border-bottom: 2px solid #fff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .tips-list, .posts-list {
+            background-color: #111;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .tips-list li, .posts-list li {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
     </style>
 </head>
@@ -51,8 +68,8 @@
                 <a class="navbar-brand" href="{{ url_for('main.index') }}">
                     <img src="{{ url_for('static', filename='img/ahmed-helly-logo.png') }}" alt="شعار الأستاذ أحمد حلي" height="40">
                     <div class="d-flex flex-column">
-                        <span>منصة الأستاذ أحمد حلي</span>
-                        <small class="d-none d-md-block">العلم على أصوله.. مع أحمد حلي يقولوا!</small>
+                        <span style="font-size: 1rem; color: #000; font-weight: bold;">منصة الأستاذ أحمد حلي</span>
+                        <small class="d-none d-md-block" style="font-size: 0.8rem; color: #000;">العلم على أصوله.. مع أحمد حلي يقولوا!</small>
                     </div>
                 </a>
                 
@@ -190,35 +207,18 @@
     <footer class="mt-auto py-3 bg-white-custom">
         <div class="container">
             <div class="row">
-                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    <img src="{{ url_for('static', filename='img/ahmed-helly-logo.png') }}" alt="شعار الأستاذ أحمد حلي" class="footer-logo" width="70">
-                    <h5 class="mt-3">حول المنصة</h5>
+                <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                    <h5 class="fw-bold">منصة المستر</h5>
                     <p>منصة الأستاذ أحمد حلي التعليمية هي منصة متكاملة لتقديم المحتوى التعليمي بطريقة تفاعلية مبتكرة.</p>
                 </div>
-                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    <h5>روابط سريعة</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{{ url_for('main.index') }}" class="text-dark">الرئيسية</a></li>
-                        {% if current_user.is_authenticated %}
-                            {% if current_user.role == 'admin' %}
-                                <li><a href="{{ url_for('admin.dashboard') }}" class="text-dark">لوحة التحكم</a></li>
-                            {% else %}
-                                <li><a href="{{ url_for('student.dashboard') }}" class="text-dark">لوحة التحكم</a></li>
-                            {% endif %}
-                        {% else %}
-                            <li><a href="{{ url_for('main.login') }}" class="text-dark">تسجيل الدخول</a></li>
-                            <li><a href="{{ url_for('main.register') }}" class="text-dark">إنشاء حساب</a></li>
-                        {% endif %}
-                    </ul>
+                <div class="col-md-4 text-center mb-3 mb-md-0">
+                    <img src="{{ url_for('static', filename='img/mustafa-logo.png') }}" alt="شعار مصطفى محمد" class="footer-logo" width="100">
+                    <h5 class="mt-2 fw-bold">مصطفى محمد</h5>
                 </div>
-            </div>
-            <hr class="mt-4 mb-4">
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
-                    <p class="mb-0">&copy; {{ now.year }} منصة الأستاذ أحمد حلي التعليمية. جميع الحقوق محفوظة.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <p class="mb-0">
+                <div class="col-md-4 text-center text-md-end mb-3 mb-md-0">
+                    <h5 class="fw-bold">حقوق الملكية</h5>
+                    <p>&copy; {{ now.year }} جميع الحقوق محفوظة.</p>
+                    <p>
                         <i class="fas fa-code"></i> تطوير 
                         <a href="https://www.linkedin.com/in/mustafa-ahmed/" target="_blank" class="text-dark fw-bold">
                             مصطفى محمد

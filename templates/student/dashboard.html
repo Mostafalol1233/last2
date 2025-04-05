@@ -141,58 +141,88 @@
     </div>
 
     <div class="col-lg-4">
-        <!-- Latest Posts - Made more compact -->
+        <!-- Latest Posts - Better styling -->
         <div class="card mb-4 card-hover">
             <div class="card-header bg-dark text-white">
-                <h5><i class="fas fa-file-alt me-2"></i>أحدث المنشورات</h5>
+                <h5 class="section-title"><i class="fas fa-file-alt me-2"></i>أحدث المنشورات</h5>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body posts-list">
                 {% if posts %}
-                    <div class="list-group list-group-flush post-list">
+                    <ul class="list-unstyled">
                         {% for post in posts %}
-                            <a href="{{ url_for('student.view_post', post_id=post.id) }}" class="list-group-item list-group-item-action p-2">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-1">{{ post.title }}</h6>
-                                    <small><i class="fas fa-calendar me-1"></i>{{ post.created_at.strftime('%Y-%m-%d') }}</small>
-                                </div>
-                                <p class="mb-1 small">
-                                    {{ post.content[:80] }}{% if post.content|length > 80 %}...{% endif %}
-                                </p>
-                            </a>
+                            <li class="mb-3">
+                                <a href="{{ url_for('student.view_post', post_id=post.id) }}" class="text-white text-decoration-none">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-1 fw-bold">{{ post.title }}</h5>
+                                        <small class="text-light"><i class="fas fa-calendar me-1"></i>{{ post.created_at.strftime('%Y-%m-%d') }}</small>
+                                    </div>
+                                    <p class="mb-1 text-light">
+                                        {{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}
+                                    </p>
+                                </a>
+                            </li>
                         {% endfor %}
-                    </div>
+                    </ul>
                 {% else %}
-                    <div class="alert alert-info m-3">
+                    <div class="alert alert-dark text-white border-light">
                         <i class="fas fa-info-circle me-2"></i>لا توجد منشورات متاحة حالياً.
                     </div>
                 {% endif %}
             </div>
         </div>
 
-        <!-- Educational Tips -->
+        <!-- Educational Tips - Better styling -->
         <div class="card card-hover">
             <div class="card-header bg-dark text-white">
-                <h5><i class="fas fa-lightbulb me-2"></i>نصائح تعليمية</h5>
+                <h5 class="section-title"><i class="fas fa-lightbulb me-2"></i>نصائح تعليمية</h5>
             </div>
-            <div class="card-body p-0">
-                <div class="list-group list-group-flush">
-                    <div class="list-group-item d-flex align-items-center p-2">
-                        <i class="fas fa-calendar-check me-3 text-primary"></i>
-                        <span>حدد جدولاً منتظماً للدراسة</span>
-                    </div>
-                    <div class="list-group-item d-flex align-items-center p-2">
-                        <i class="fas fa-pencil-alt me-3 text-success"></i>
-                        <span>دوّن ملاحظات أثناء مشاهدة الفيديوهات</span>
-                    </div>
-                    <div class="list-group-item d-flex align-items-center p-2">
-                        <i class="fas fa-comments me-3 text-warning"></i>
-                        <span>شارك بفاعلية من خلال التعليقات</span>
-                    </div>
-                    <div class="list-group-item d-flex align-items-center p-2">
-                        <i class="fas fa-puzzle-piece me-3 text-info"></i>
-                        <span>طبق ما تتعلمه في الواقع العملي</span>
-                    </div>
-                </div>
+            <div class="card-body tips-list">
+                <ul class="list-unstyled">
+                    <li>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3 fs-3 text-warning">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fw-bold">حدد جدولاً منتظماً للدراسة</h6>
+                                <p class="mb-0 small text-light">خصص وقتًا ثابتًا يوميًا للدراسة للحصول على أفضل النتائج</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3 fs-3 text-info">
+                                <i class="fas fa-pencil-alt"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fw-bold">دوّن ملاحظات أثناء المشاهدة</h6>
+                                <p class="mb-0 small text-light">تدوين الملاحظات يساعد على تثبيت المعلومات بشكل أفضل</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="me-3 fs-3 text-success">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fw-bold">شارك بفاعلية في التعليقات</h6>
+                                <p class="mb-0 small text-light">التفاعل مع الطلاب الآخرين يثري تجربة التعلم</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="d-flex align-items-center">
+                            <div class="me-3 fs-3 text-primary">
+                                <i class="fas fa-puzzle-piece"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fw-bold">طبق ما تتعلمه عمليًا</h6>
+                                <p class="mb-0 small text-light">التطبيق العملي يساعد على ترسيخ المفاهيم بشكل أعمق</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
