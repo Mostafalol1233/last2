@@ -853,3 +853,76 @@ def test_history():
         attempts_by_test=attempts_by_test,
         tests=tests_dict
     )
+@admin_tests.route('/admin/tests/create_manual', methods=['GET', 'POST'])
+@login_required
+def create_manual_test():
+    """إنشاء اختبار يدوي جديد مع إضافة الأسئلة مباشرة"""
+    if not current_user.is_admin():
+        flash('ليس لديك صلاحية للوصول إلى هذه الصفحة', 'danger')
+        return redirect(url_for('home'))
+    
+    form = TestForm()
+    
+    if form.validate_on_submit():
+        test = Test(
+            title=form.title.data,
+            description=form.description.data,
+            created_by=current_user.id,
+            time_limit_minutes=form.time_limit_minutes.data,
+            passing_score=form.passing_score.data,
+            is_active=form.is_active.data
+        )
+        db.session.add(test)
+        db.session.commit()
+        
+        # معالجة الأسئلة المضافة يدويًا
+        questions_data = request.form.to_dict(flat=False)
+        
+        # الحصول على عدد الأسئلة المقدمة من خلال البيانات
+        question_indices = set()
+        for key in questions_data.keys():
+            if key.startswith('questions[') and key.endswith('][text]'):
+                index = key.split('[')[1].split(']')[0]
+                question_indices.add(index)
+        
+        # إنشاء كل سؤال
+        for index in question_indices:
+            question_text = questions_data.get(f'questions[{index}][text]', [''])[0]
+            question_type = questions_data.get(f'questions[{index}][type]', ['multiple_choice'])[0]
+            points = int(questions_data.get(f'questions[{index}][points]', ['1'])[0])
+            
+            if not question_text:
+                continue
+                
+            # إنشاء السؤال
+            question = TestQuestion(
+                test_id=test.id,
+                question_text=question_text,
+                question_type=question_type,
+                points=points,
+                order=int(index) + 1
+            )
+            db.session.add(question)
+            db.session.flush()  # للحصول على معرف السؤال
+            
+            # إضافة الخيارات إذا كان السؤال اختيار من متعدد أو صح/خطأ
+            if question_type in ['multiple_choice', 'true_false']:
+                choices = []
+                correct_index = int(questions_data.get(f'questions[{index}][correct]', ['0'])[0])
+                
+                for choice_index in range(4):  # نفترض حد أقصى 4 خيارات
+                    choice_key = f'questions[{index}][choices][{choice_index}]'
+                    if choice_key in questions_data and questions_data[choice_key][0]:
+                        choice = QuestionChoice(
+                            question_id=question.id,
+                            choice_text=questions_data[choice_key][0],
+                            is_correct=(choice_index == correct_index),
+                            order=choice_index + 1
+                        )
+                        db.session.add(choice)
+        
+        db.session.commit()
+        flash('تم إنشاء الاختبار والأسئلة بنجاح.', 'success')
+        return redirect(url_for('admin_tests.manage_tests'))
+    
+    return render_template('admin/create_manual_test.html', form=form)

@@ -7,13 +7,19 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card shadow">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <div class="card-header bg-primary text-white">
                     <h3 class="card-title mb-0">إدارة الاختبارات</h3>
-                    <a href="{{ url_for('admin.create_test') }}" class="btn btn-light">
-                        <i class="fas fa-plus"></i> إنشاء اختبار جديد
-                    </a>
                 </div>
                 <div class="card-body">
+                    <div class="mb-4">
+                        <a href="{{ url_for('admin_tests.create_test') }}" class="btn btn-success me-2">
+                            <i class="fas fa-file-upload me-1"></i> إنشاء اختبار بواسطة ملف
+                        </a>
+                        <a href="{{ url_for('admin_tests.create_manual_test') }}" class="btn btn-primary">
+                            <i class="fas fa-edit me-1"></i> إنشاء اختبار يدوي
+                        </a>
+                    </div>
+                    
                     {% if tests %}
                         <div class="table-responsive">
                             <table class="table table-hover">
@@ -21,10 +27,9 @@
                                     <tr>
                                         <th>#</th>
                                         <th>عنوان الاختبار</th>
-                                        <th>الوصف</th>
                                         <th>عدد الأسئلة</th>
-                                        <th>مدة الاختبار</th>
-                                        <th>درجة النجاح</th>
+                                        <th>المدة (دقائق)</th>
+                                        <th>نسبة النجاح</th>
                                         <th>الحالة</th>
                                         <th>تاريخ الإنشاء</th>
                                         <th>الإجراءات</th>
@@ -35,53 +40,42 @@
                                         <tr>
                                             <td>{{ loop.index }}</td>
                                             <td>{{ test.title }}</td>
-                                            <td>{{ test.description|truncate(50) }}</td>
                                             <td>{{ test.questions.count() }}</td>
-                                            <td>{{ test.time_limit_minutes }} دقيقة</td>
+                                            <td>{{ test.time_limit_minutes }}</td>
                                             <td>{{ test.passing_score }}%</td>
                                             <td>
                                                 {% if test.is_active %}
                                                     <span class="badge bg-success">نشط</span>
                                                 {% else %}
-                                                    <span class="badge bg-danger">غير نشط</span>
+                                                    <span class="badge bg-secondary">غير نشط</span>
                                                 {% endif %}
                                             </td>
                                             <td>{{ test.created_at.strftime('%Y-%m-%d') }}</td>
                                             <td>
-                                                <div class="btn-group">
-                                                    <a href="{{ url_for('admin.edit_test', test_id=test.id) }}" class="btn btn-sm btn-primary">
-                                                        <i class="fas fa-edit"></i> تعديل
+                                                <div class="btn-group" role="group">
+                                                    <a href="{{ url_for('admin_tests.edit_test', test_id=test.id) }}" class="btn btn-sm btn-primary">
+                                                        <i class="fas fa-edit"></i> تحرير
                                                     </a>
-                                                    <a href="{{ url_for('admin.test_results', test_id=test.id) }}" class="btn btn-sm btn-info">
-                                                        <i class="fas fa-chart-bar"></i> النتائج
-                                                    </a>
-                                                    <button type="button" class="btn btn-sm btn-danger" 
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#deleteModal{{ test.id }}">
-                                                        <i class="fas fa-trash-alt"></i> حذف
+                                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ test.id }}">
+                                                        <i class="fas fa-trash"></i> حذف
                                                     </button>
                                                 </div>
                                                 
                                                 <!-- Modal for delete confirmation -->
-                                                <div class="modal fade" id="deleteModal{{ test.id }}" tabindex="-1" aria-hidden="true">
+                                                <div class="modal fade" id="deleteModal{{ test.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ test.id }}" aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title">تأكيد الحذف</h5>
+                                                                <h5 class="modal-title" id="deleteModalLabel{{ test.id }}">تأكيد الحذف</h5>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                هل أنت متأكد من حذف الاختبار "{{ test.title }}"؟
-                                                                <br>
-                                                                <div class="alert alert-danger mt-2">
-                                                                    <i class="fas fa-exclamation-triangle"></i>
-                                                                    تحذير: سيتم حذف جميع الأسئلة والمحاولات المرتبطة بهذا الاختبار بشكل نهائي.
-                                                                </div>
+                                                                هل أنت متأكد من رغبتك في حذف الاختبار "{{ test.title }}"؟ لا يمكن التراجع عن هذا الإجراء.
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
-                                                                <form action="{{ url_for('admin.delete_test', test_id=test.id) }}" method="POST">
-                                                                    <button type="submit" class="btn btn-danger">نعم، قم بالحذف</button>
+                                                                <form method="POST" action="{{ url_for('admin_tests.delete_test', test_id=test.id) }}">
+                                                                    <button type="submit" class="btn btn-danger">نعم، حذف الاختبار</button>
                                                                 </form>
                                                             </div>
                                                         </div>
@@ -95,7 +89,8 @@
                         </div>
                     {% else %}
                         <div class="alert alert-info">
-                            لم يتم إنشاء أي اختبارات بعد. <a href="{{ url_for('admin.create_test') }}">قم بإنشاء اختبار جديد</a>
+                            <i class="fas fa-info-circle"></i>
+                            لا توجد اختبارات مضافة بعد. يمكنك إنشاء اختبار جديد باستخدام الزر أعلاه.
                         </div>
                     {% endif %}
                 </div>

@@ -3,54 +3,63 @@
 {% block title %}Login - Educational Platform{% endblock %}
 
 {% block content %}
-<div class="login-container">
-    <h2 class="text-center mb-4">
-        <i class="fas fa-sign-in-alt me-2"></i>Login
-    </h2>
-
-    <form method="POST" action="{{ url_for('main.login') }}">
-        {{ form.hidden_tag() }}
-
-        <div class="mb-3">
-            {{ form.username.label(class="form-label") }}
-            {% if form.username.errors %}
-                {{ form.username(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.username.errors %}
-                        {{ error }}
-                    {% endfor %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-sign-in-alt me-2"></i>تسجيل الدخول
+                    </h4>
                 </div>
-            {% else %}
-                {{ form.username(class="form-control", placeholder="Enter your username", id="username") }}
-            {% endif %}
-        </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('main.login') }}">
+                        {{ form.hidden_tag() }}
 
-        <div class="mb-3">
-            {{ form.password.label(class="form-label") }}
-            {% if form.password.errors %}
-                {{ form.password(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.password.errors %}
-                        {{ error }}
-                    {% endfor %}
+                        <div class="mb-3">
+                            {{ form.username.label(class="form-label") }}
+                            {% if form.username.errors %}
+                                {{ form.username(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.username.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.username(class="form-control", placeholder="أدخل اسم المستخدم", id="username") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.password.label(class="form-label") }}
+                            {% if form.password.errors %}
+                                {{ form.password(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.password.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.password(class="form-control", placeholder="أدخل كلمة المرور", id="password") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form></div></div></div>
+
+                    <div class="mt-3 text-center">
+                        <p class="mb-0">
+                            <small class="text-muted">ليس لديك حساب؟ <a href="{{ url_for('main.register') }}">تسجيل حساب جديد</a></small>
+                        </p>
+                        <p class="mt-2 mb-0">
+                            <small class="text-muted"><a href="{{ url_for('main.forgot_password') }}">نسيت كلمة المرور؟</a></small>
+                        </p>
+                    </div>
                 </div>
-            {% else %}
-                {{ form.password(class="form-control", placeholder="Enter your password", id="password") }}
-            {% endif %}
+            </div>
         </div>
-
-        <div class="d-grid gap-2">
-            {{ form.submit(class="btn btn-primary") }}
-        </div>
-    </form>
-
-    <div class="mt-4 text-center">
-        <p class="mb-0">
-            <small class="text-muted">ليس لديك حساب؟ <a href="{{ url_for('main.register') }}">تسجيل حساب جديد</a></small>
-        </p>
-        <p class="mt-2 mb-0">
-            <small class="text-muted"><a href="{{ url_for('main.forgot_password') }}">نسيت كلمة المرور؟</a></small>
-        </p>
     </div>
 </div>
 <script>
