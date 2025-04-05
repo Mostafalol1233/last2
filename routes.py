@@ -1336,6 +1336,18 @@ def transfer_points():
     transfers = PointTransfer.query.order_by(PointTransfer.created_at.desc()).all()
     return render_template('admin/transfer_points.html', form=form, transfers=transfers)
 
+@admin_bp.route('/reset_all_points', methods=['POST'])
+@login_required
+def reset_all_points():
+    if not current_user.is_admin():
+        abort(403)
+    
+    # Reset points for all students
+    User.query.filter_by(role='student').update({User.points: 0})
+    db.session.commit()
+    flash('تم تصفير نقاط جميع الطلاب بنجاح', 'success')
+    return redirect(url_for('admin.users_list'))
+
 @admin_bp.route('/users_list')
 @login_required
 def users_list():

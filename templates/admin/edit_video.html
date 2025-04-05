@@ -61,7 +61,7 @@
                             {{ form.requires_code.label(class="form-check-label") }}
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             {{ form.points_cost.label(class="form-control-label") }}
                             {% if form.points_cost.errors %}
                                 {{ form.points_cost(class="form-control is-invalid") }}
@@ -75,7 +75,7 @@
                             {% endif %}
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group mt-4">
                             {{ form.submit(class="btn btn-primary") }}
                             <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">الرجوع للخلف</a>
                         </div>
