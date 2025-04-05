@@ -1469,22 +1469,44 @@ def ai_chat():
         if simple_response:
             response = simple_response
         else:
-            try:
-                # استخدام OpenAI API للحصول على إجابة (الإصدار 0.28)
-                chat_response = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
-                    messages=[
-                        {"role": "system", "content": "أنت مساعد تعليمي متخصص في مساعدة الطلاب. قدم إجابات موجزة ومفيدة باللغة العربية. أنت تمثل المساعد الذكي لمنصة الأستاذ أحمد حلي التعليمية."},
-                        {"role": "user", "content": message}
-                    ],
-                    max_tokens=300,
-                    temperature=0.7
-                )
-                response = chat_response.choices[0].message['content']
-            except Exception as e:
-                # في حالة حدوث خطأ مع API
-                print(f"خطأ في OpenAI API: {str(e)}")
-                response = "عذراً، حدث خطأ أثناء معالجة سؤالك. يرجى المحاولة مرة أخرى لاحقاً."
+            # تحقق من وجود مفتاح OpenAI API
+            if not openai.api_key:
+                response = "لم يتم إعداد مفتاح OpenAI API بعد. يرجى الاتصال بمسؤول النظام."
+                print("مفتاح OpenAI API غير معد")
+            else:
+                try:
+                    # استخدام OpenAI API للحصول على إجابة (الإصدار الجديد)
+                    from openai import OpenAI
+                    client = OpenAI(api_key=openai.api_key)
+                    
+                    try:
+                        # محاولة استخدام الواجهة الجديدة
+                        chat_response = client.chat.completions.create(
+                            model="gpt-3.5-turbo",
+                            messages=[
+                                {"role": "system", "content": "أنت مساعد تعليمي متخصص في مساعدة الطلاب. قدم إجابات موجزة ومفيدة باللغة العربية. أنت تمثل المساعد الذكي لمنصة الأستاذ أحمد حلي التعليمية."},
+                                {"role": "user", "content": message}
+                            ],
+                            max_tokens=300,
+                            temperature=0.7
+                        )
+                        response = chat_response.choices[0].message.content
+                    except AttributeError:
+                        # إذا فشلت الواجهة الجديدة، جرب الواجهة القديمة
+                        chat_response = openai.ChatCompletion.create(
+                            model="gpt-3.5-turbo",
+                            messages=[
+                                {"role": "system", "content": "أنت مساعد تعليمي متخصص في مساعدة الطلاب. قدم إجابات موجزة ومفيدة باللغة العربية. أنت تمثل المساعد الذكي لمنصة الأستاذ أحمد حلي التعليمية."},
+                                {"role": "user", "content": message}
+                            ],
+                            max_tokens=300,
+                            temperature=0.7
+                        )
+                        response = chat_response.choices[0].message['content']
+                except Exception as e:
+                    # في حالة حدوث خطأ مع API
+                    print(f"خطأ في OpenAI API: {str(e)}")
+                    response = "عذراً، حدث خطأ أثناء معالجة سؤالك. يرجى المحاولة مرة أخرى لاحقاً."
         
         # حفظ المحادثة في قاعدة البيانات
         chat_message = AIChatMessage(
@@ -1665,6 +1687,86 @@ def available_tests():
             'completed': completed,
             'in_progress': in_progress,
             'best_score': max([a.score for a in completed]) if completed else None
+        }
+    
+    # إذا لم تكن هناك اختبارات، أنشئ اختبارًا تجريبيًا للاختبار
+    if not tests:
+        test = Test(
+            title="اختبار الرياضيات الأساسية",
+            description="اختبار أساسيات الرياضيات للصف الأول",
+            created_by=1,  # افتراض أن المعرف 1 هو للمسؤول
+            is_active=True,
+            time_limit_minutes=30,
+            passing_score=60
+        )
+        db.session.add(test)
+        db.session.commit()
+        
+        # إضافة بعض الأسئلة للاختبار
+        questions = [
+            {
+                'text': 'كم يساوي 5 + 7؟',
+                'type': 'multiple_choice',
+                'points': 1,
+                'choices': [
+                    {'text': '10', 'is_correct': False},
+                    {'text': '12', 'is_correct': True},
+                    {'text': '13', 'is_correct': False},
+                    {'text': '15', 'is_correct': False}
+                ]
+            },
+            {
+                'text': 'كم يساوي 9 × 8؟',
+                'type': 'multiple_choice',
+                'points': 1,
+                'choices': [
+                    {'text': '64', 'is_correct': False},
+                    {'text': '72', 'is_correct': True},
+                    {'text': '81', 'is_correct': False},
+                    {'text': '56', 'is_correct': False}
+                ]
+            },
+            {
+                'text': 'هل 25 أكبر من 52؟',
+                'type': 'true_false',
+                'points': 1,
+                'choices': [
+                    {'text': 'صحيح', 'is_correct': False},
+                    {'text': 'خطأ', 'is_correct': True}
+                ]
+            }
+        ]
+        
+        for i, q in enumerate(questions, start=1):
+            question = TestQuestion(
+                test_id=test.id,
+                question_text=q['text'],
+                question_type=q['type'],
+                points=q['points'],
+                order=i
+            )
+            db.session.add(question)
+            db.session.commit()
+            
+            for j, c in enumerate(q['choices'], start=1):
+                choice = QuestionChoice(
+                    question_id=question.id,
+                    choice_text=c['text'],
+                    is_correct=c['is_correct'],
+                    order=j
+                )
+                db.session.add(choice)
+            
+            db.session.commit()
+            
+        # إعادة الحصول على الاختبارات بعد إنشاء الاختبار الجديد
+        tests = Test.query.filter_by(is_active=True).all()
+        
+        # تحديث attempts_by_test لتشمل الاختبار الجديد
+        attempts_by_test[test.id] = {
+            'completed': [],
+            'in_progress': [],
+            'best_score': None
         }
     
     return render_template('student/tests.html', 
