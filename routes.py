@@ -2,7 +2,8 @@ import logging
 import os
 import secrets
 import string
-import openai
+# import openai - مُعطّل حاليًا وتم استبداله بـ DuckDuckGo API
+import requests
 import json
 from datetime import datetime, timedelta
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app, send_file, jsonify
@@ -22,8 +23,8 @@ from forms import (
     TestQuestionForm, QuestionChoiceForm, TestAttemptForm, TestTakingForm
 )
 
-# إعداد OpenAI API
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+# إعداد OpenAI API - مُعطّل حاليًا لاستخدام DuckDuckGo API بدلاً منه
+# openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # Create blueprints
 main_bp = Blueprint('main', __name__)
@@ -1515,44 +1516,41 @@ def ai_chat():
         if simple_response:
             response = simple_response
         else:
-            # تحقق من وجود مفتاح OpenAI API
-            if not openai.api_key:
-                response = "لم يتم إعداد مفتاح OpenAI API بعد. يرجى الاتصال بمسؤول النظام."
-                print("مفتاح OpenAI API غير معد")
-            else:
-                try:
-                    # استخدام OpenAI API للحصول على إجابة (الإصدار الجديد)
-                    from openai import OpenAI
-                    client = OpenAI(api_key=openai.api_key)
+            # محاولة البحث باستخدام DuckDuckGo
+            try:
+                url = f"https://api.duckduckgo.com/?q={message}&format=json"
+                api_response = requests.get(url)
+                if api_response.status_code == 200:
+                    data = api_response.json()
                     
-                    try:
-                        # محاولة استخدام الواجهة الجديدة
-                        chat_response = client.chat.completions.create(
-                            model="gpt-3.5-turbo",
-                            messages=[
-                                {"role": "system", "content": "أنت مساعد تعليمي متخصص في مساعدة الطلاب. قدم إجابات موجزة ومفيدة باللغة العربية. أنت تمثل المساعد الذكي لمنصة الأستاذ أحمد حلي التعليمية."},
-                                {"role": "user", "content": message}
-                            ],
-                            max_tokens=300,
-                            temperature=0.7
-                        )
-                        response = chat_response.choices[0].message.content
-                    except AttributeError:
-                        # إذا فشلت الواجهة الجديدة، جرب الواجهة القديمة
-                        chat_response = openai.ChatCompletion.create(
-                            model="gpt-3.5-turbo",
-                            messages=[
-                                {"role": "system", "content": "أنت مساعد تعليمي متخصص في مساعدة الطلاب. قدم إجابات موجزة ومفيدة باللغة العربية. أنت تمثل المساعد الذكي لمنصة الأستاذ أحمد حلي التعليمية."},
-                                {"role": "user", "content": message}
-                            ],
-                            max_tokens=300,
-                            temperature=0.7
-                        )
-                        response = chat_response.choices[0].message['content']
-                except Exception as e:
-                    # في حالة حدوث خطأ مع API
-                    print(f"خطأ في OpenAI API: {str(e)}")
-                    response = "عذراً، حدث خطأ أثناء معالجة سؤالك. يرجى المحاولة مرة أخرى لاحقاً."
+                    # تجميع النتائج
+                    results = []
+                    
+                    # الملخص الأساسي
+                    if data.get('Abstract'):
+                        results.append(data['Abstract'])
+                    
+                    # التعريف
+                    if data.get('Definition'):
+                        results.append(f"تعريف: {data['Definition']}")
+                    
+                    # المواضيع ذات الصلة
+                    related_topics = data.get('RelatedTopics', [])
+                    if related_topics and len(related_topics) > 0:
+                        topic_texts = [topic.get('Text') for topic in related_topics[:5] if topic.get('Text')]
+                        if topic_texts:
+                            results.append("مواضيع ذات صلة:\n" + "\n• ".join(topic_texts))
+                    
+                    # إذا وجدنا معلومات
+                    if results:
+                        response = "\n\n".join(results)
+                    else:
+                        response = "لم أتمكن من إيجاد معلومات حول هذا الموضوع. يرجى تعديل البحث والمحاولة مرة أخرى."
+                else:
+                    response = "حدث خطأ أثناء البحث. يرجى المحاولة مرة أخرى لاحقاً."
+            except Exception as e:
+                print(f"خطأ في استخدام DuckDuckGo API: {str(e)}")
+                response = "حدث خطأ أثناء معالجة سؤالك. يرجى المحاولة مرة أخرى لاحقاً."
         
         # حفظ المحادثة في قاعدة البيانات
         chat_message = AIChatMessage(

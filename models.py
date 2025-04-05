@@ -17,6 +17,7 @@ class User(UserMixin, db.Model):
     points = db.Column(db.Integer, default=0)  # نقاط المحفظة
     reset_token = db.Column(db.String(100), nullable=True)  # رمز استعادة كلمة المرور
     reset_token_expiry = db.Column(db.DateTime, nullable=True)  # تاريخ انتهاء صلاحية الرمز
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # تاريخ إنشاء الحساب
     
     # Relationships
     videos = db.relationship('Video', backref='uploader', lazy='dynamic')
