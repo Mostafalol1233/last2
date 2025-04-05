@@ -651,7 +651,7 @@ def start_test(test_id):
 
     # Check if test is active
     if not test.is_active:
-        flash('هذا الاختبار غير متاح حاليًا.', 'warning')
+        flash('هذا الاختبار غير متاح حالياً.', 'warning')
         return redirect(url_for('student_tests.available_tests'))
 
     # Check if there's already an in-progress attempt
@@ -672,17 +672,6 @@ def start_test(test_id):
         started_at=datetime.utcnow()
     )
     db.session.add(attempt)
-    db.session.commit()
-
-    # إنشاء إجابات فارغة لجميع أسئلة الاختبار
-    questions = TestQuestion.query.filter_by(test_id=test_id).all()
-    for question in questions:
-        answer = TestAnswer(
-            attempt_id=attempt.id,
-            question_id=question.id
-        )
-        db.session.add(answer)
-
     db.session.commit()
 
     return render_template('student/start_test.html', test=test, attempt=attempt)
@@ -767,7 +756,7 @@ def take_test(attempt_id):
             admin_msg = DirectMessage(
                 sender_id=current_user.id,
                 recipient_id=test.created_by,
-                message=f"تم إكمال الاختبار {test.title} بنتيجة {attempt.score}% {'(ناجح)' if attempt.passed else '(راسب)'}"
+                message=f""تم إكمال الاختبار {test.title} بنتيجة {attempt.score}% {'(ناجح)' if attempt.passed else '(راسب)'}"
             )
             db.session.add(admin_msg)
 
