@@ -13,3 +13,11 @@ pymysql>=1.1.1
 openai==0.28
 reportlab
 reportlab
+stripe
+twilio
+python-dotenv
+stripe
+twilio
+python-dotenv
+stripe
+twilio

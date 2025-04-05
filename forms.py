@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, HiddenField, BooleanField, IntegerField, SelectMultipleField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, HiddenField, BooleanField, IntegerField, SelectMultipleField, FloatField
 from wtforms.validators import DataRequired, Length, URL, Optional, EqualTo, ValidationError, NumberRange
 from models import User
 
@@ -149,14 +149,6 @@ class ProfileForm(FlaskForm):
         Length(max=20, message='يجب أن لا يتجاوز رقم الهاتف 20 رقماً')
     ])
     submit = SubmitField('تحديث البيانات')
-    
-class TransferPointsForm(FlaskForm):
-    student_id = SelectField('الطالب', coerce=int, validators=[DataRequired(message='يجب اختيار الطالب')])
-    points = IntegerField('عدد النقاط', validators=[
-        DataRequired(message='يجب إدخال عدد النقاط'),
-        NumberRange(min=1, message='يجب أن يكون عدد النقاط أكبر من صفر')
-    ])
-    submit = SubmitField('تحويل النقاط')
 
 class DirectMessageForm(FlaskForm):
     recipient_id = SelectField('إرسال إلى', coerce=int, validators=[DataRequired(message='يجب اختيار المستلم')])
@@ -165,3 +157,75 @@ class DirectMessageForm(FlaskForm):
         Length(min=1, max=1000, message='يجب أن تكون الرسالة بين 1 و 1000 حرف')
     ])
     submit = SubmitField('إرسال')
+
+class PaymentForm(FlaskForm):
+    """Form for creating/editing payment plans"""
+    name = StringField('اسم الخطة', validators=[
+        DataRequired(message='يجب إدخال اسم الخطة'),
+        Length(min=3, max=100, message='يجب أن يكون اسم الخطة بين 3 و 100 حرف')
+    ])
+    description = TextAreaField('الوصف', validators=[
+        Optional(),
+        Length(max=500, message='يجب أن لا يتجاوز الوصف 500 حرف')
+    ])
+    price = FloatField('السعر', validators=[
+        DataRequired(message='يجب إدخال السعر'),
+        NumberRange(min=0, message='يجب أن يكون السعر قيمة موجبة')
+    ])
+    currency = SelectField('العملة', choices=[
+        ('SAR', 'ريال سعودي'),
+        ('USD', 'دولار أمريكي'),
+        ('EUR', 'يورو')
+    ], validators=[DataRequired(message='يجب اختيار العملة')])
+    duration_days = IntegerField('مدة الاشتراك (بالأيام)', validators=[
+        DataRequired(message='يجب إدخال مدة الاشتراك'),
+        NumberRange(min=1, message='يجب أن تكون مدة الاشتراك يوم واحد على الأقل')
+    ])
+    features = TextAreaField('المميزات (ميزة واحدة في كل سطر)', validators=[
+        Optional()
+    ])
+    submit = SubmitField('حفظ')
+
+class SubscriptionSelectForm(FlaskForm):
+    """Form for selecting subscription plan"""
+    plan_id = SelectField('خطة الاشتراك', coerce=int, validators=[
+        DataRequired(message='يجب اختيار خطة اشتراك')
+    ])
+    submit = SubmitField('اشتراك')
+
+class SMSSettingsForm(FlaskForm):
+    """Form for configuring SMS settings"""
+    account_sid = StringField('Twilio Account SID', validators=[
+        DataRequired(message='يجب إدخال Twilio Account SID')
+    ])
+    auth_token = PasswordField('Twilio Auth Token', validators=[
+        DataRequired(message='يجب إدخال Twilio Auth Token')
+    ])
+    phone_number = StringField('رقم الهاتف', validators=[
+        DataRequired(message='يجب إدخال رقم الهاتف'),
+        Length(max=20, message='يجب أن لا يتجاوز رقم الهاتف 20 رقماً')
+    ])
+    submit = SubmitField('حفظ الإعدادات')
+
+class SMSTestForm(FlaskForm):
+    """Form for testing SMS functionality"""
+    phone_number = StringField('رقم الهاتف للاختبار', validators=[
+        DataRequired(message='يجب إدخال رقم الهاتف'),
+        Length(max=20, message='يجب أن لا يتجاوز رقم الهاتف 20 رقماً')
+    ])
+    message = TextAreaField('نص الرسالة', validators=[
+        DataRequired(message='يجب كتابة نص الرسالة'),
+        Length(max=160, message='يجب أن لا يتجاوز طول الرسالة 160 حرفاً')
+    ])
+    submit = SubmitField('إرسال رسالة اختبار')
+
+class BulkSMSForm(FlaskForm):
+    """Form for sending bulk SMS messages"""
+    user_ids = SelectMultipleField('تحديد المستخدمين', coerce=int, validators=[
+        DataRequired(message='يجب تحديد مستخدم واحد على الأقل')
+    ])
+    message = TextAreaField('نص الرسالة', validators=[
+        DataRequired(message='يجب كتابة نص الرسالة'),
+        Length(max=160, message='يجب أن لا يتجاوز طول الرسالة 160 حرفاً')
+    ])
+    submit = SubmitField('إرسال الرسائل')

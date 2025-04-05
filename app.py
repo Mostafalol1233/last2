@@ -97,11 +97,15 @@ with app.app_context():
     import models
     from models import User
     import routes
+    import payment_routes
+    import sms_routes
     
     # Register the blueprints
     app.register_blueprint(routes.main_bp)
     app.register_blueprint(routes.admin_bp, url_prefix='/admin')
     app.register_blueprint(routes.student_bp, url_prefix='/student')
+    app.register_blueprint(payment_routes.payment_bp, url_prefix='/payment')
+    app.register_blueprint(sms_routes.sms_bp, url_prefix='/sms')
     
     # Create all database tables
     db.create_all()
