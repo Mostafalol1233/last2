@@ -62,6 +62,8 @@ def handle_simple_queries(message):
     """معالجة الاستعلامات البسيطة دون الحاجة إلى OpenAI API"""
     import re
     import math
+    import requests
+    import json
     
     # تبسيط النص وإزالة الزوائد
     message = message.strip().lower()
@@ -77,6 +79,50 @@ def handle_simple_queries(message):
     for question in identity_questions:
         if question in message:
             return "أنا المساعد الذكي لمنصة الأستاذ أحمد حلي التعليمية. أساعد الطلاب في فهم المواد ودروس الأستاذ أحمد حلي والإجابة على أسئلتهم."
+    
+    # استخدام DuckDuckGo للاستعلامات البحثية
+    search_indicators = ['ابحث عن', 'ما هو', 'من هو', 'اعرف لي', 'عرفني', 'معلومات عن']
+    is_search = False
+    search_query = message
+    
+    for indicator in search_indicators:
+        if message.startswith(indicator):
+            is_search = True
+            search_query = message[len(indicator):].strip()
+            break
+    
+    # إذا كان طلب بحث، استخدام DuckDuckGo API
+    if is_search or len(message.split()) <= 5:  # استعلامات قصيرة محتمل أن تكون بحث
+        try:
+            url = f"https://api.duckduckgo.com/?q={search_query}&format=json"
+            response = requests.get(url)
+            if response.status_code == 200:
+                data = response.json()
+                
+                # تجميع النتائج
+                results = []
+                
+                # الملخص الأساسي
+                if data.get('Abstract'):
+                    results.append(data['Abstract'])
+                
+                # معلومات إضافية
+                if data.get('Definition'):
+                    results.append(f"تعريف: {data['Definition']}")
+                
+                # روابط ذات صلة
+                related_topics = data.get('RelatedTopics', [])
+                if related_topics and len(related_topics) > 0:
+                    topic_texts = [topic.get('Text') for topic in related_topics[:3] if topic.get('Text')]
+                    if topic_texts:
+                        results.append("مواضيع ذات صلة: " + " | ".join(topic_texts))
+                
+                # إذا وجدنا معلومات
+                if results:
+                    return "\n\n".join(results)
+        except Exception as e:
+            print(f"خطأ في استعلام DuckDuckGo: {str(e)}")
+            # في حالة الخطأ، نستمر في الدالة للاستعلامات البسيطة الأخرى
     
     # العمليات الحسابية البسيطة
     # للجمع: مثال "كم يساوي 2+3" أو "2 + 3"
