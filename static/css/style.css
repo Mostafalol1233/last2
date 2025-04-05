@@ -77,11 +77,27 @@ header, footer {
     padding: 8px 15px;
     border-radius: 5px;
     transition: all 0.3s ease;
+    font-weight: bold;
 }
 
 .navbar-custom .nav-link:hover {
     background-color: #f8f9fa;
     color: var(--primary-color) !important;
+}
+
+/* الألوان في القوائم المنسدلة */
+.dropdown-menu {
+    background-color: var(--bg-light);
+}
+
+.dropdown-item {
+    color: var(--text-dark);
+    font-weight: bold;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: var(--primary-color);
 }
 
 /* Apply animations to elements */
@@ -334,4 +350,29 @@ footer a:hover {
 /* Badge styling */
 .badge-new {
     animation: pulse 1.5s infinite;
+}
+
+/* الألوان في القوائم المنسدلة */
+.dropdown-menu {
+    background-color: var(--bg-light);
+}
+
+.dropdown-item {
+    color: var(--text-dark);
+    font-weight: bold;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: var(--primary-color);
+}
+
+/* تصغير حجم اللوجو */
+.navbar-brand img {
+    max-height: 40px;
+}
+
+/* تعديل حجم الخط في القائمة */
+.navbar-custom .nav-link {
+    font-weight: bold;
 }
