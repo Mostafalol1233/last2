@@ -36,7 +36,7 @@
     --danger-color: #e74c3c;
     --text-light: #f8f9fa;
     --text-dark: #343a40;
-    --bg-light: #f0f2f5;
+    --bg-light: #e6e8eb; /* Darker background */
     --bg-dark: #2d3436;
     --bg-card: #2c3e50;
     --bg-card-dark: #1e272e;
@@ -174,9 +174,9 @@ body {
     display: block;
     position: relative;
     width: 24px;
-    height: 3px;
+    height: 4px;
     margin: 8px auto;
-    background-color: var(--text-dark);
+    background-color: #222;
     transition: all 0.3s ease;
 }
 
@@ -185,8 +185,8 @@ body {
     content: '';
     position: absolute;
     width: 24px;
-    height: 3px;
-    background-color: var(--text-dark);
+    height: 4px;
+    background-color: #222;
     transition: all 0.3s ease;
 }
 
