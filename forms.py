@@ -229,3 +229,63 @@ class BulkSMSForm(FlaskForm):
         Length(max=160, message='يجب أن لا يتجاوز طول الرسالة 160 حرفاً')
     ])
     submit = SubmitField('إرسال الرسائل')
+
+class TestCreateForm(FlaskForm):
+    """Form for creating a new test"""
+    title = StringField('عنوان الاختبار', validators=[
+        DataRequired(message='يجب إدخال عنوان الاختبار'),
+        Length(min=3, max=100, message='يجب أن يكون العنوان بين 3 و 100 حرف')
+    ])
+    description = TextAreaField('وصف الاختبار', validators=[
+        Optional(),
+        Length(max=500, message='يجب أن لا يتجاوز الوصف 500 حرف')
+    ])
+    time_limit_minutes = IntegerField('الوقت المحدد (بالدقائق)', validators=[
+        DataRequired(message='يجب تحديد المدة الزمنية للاختبار'),
+        NumberRange(min=5, max=180, message='يجب أن تكون المدة بين 5 و 180 دقيقة')
+    ], default=30)
+    passing_score = IntegerField('نسبة النجاح المطلوبة (%)', validators=[
+        DataRequired(message='يجب تحديد نسبة النجاح'),
+        NumberRange(min=50, max=100, message='يجب أن تكون النسبة بين 50% و 100%')
+    ], default=60)
+    is_active = BooleanField('نشط', default=True)
+    submit = SubmitField('إنشاء الاختبار')
+
+class TestQuestionForm(FlaskForm):
+    """Form for adding a question to a test"""
+    question_text = TextAreaField('السؤال', validators=[
+        DataRequired(message='يجب إدخال نص السؤال'),
+        Length(min=5, max=500, message='يجب أن يكون السؤال بين 5 و 500 حرف')
+    ])
+    question_type = SelectField('نوع السؤال', choices=[
+        ('multiple_choice', 'اختيار من متعدد'),
+        ('true_false', 'صح أو خطأ'),
+        ('short_answer', 'إجابة قصيرة')
+    ], validators=[DataRequired(message='يجب اختيار نوع السؤال')])
+    points = IntegerField('الدرجة', validators=[
+        DataRequired(message='يجب تحديد درجة السؤال'),
+        NumberRange(min=1, max=10, message='يجب أن تكون الدرجة بين 1 و 10')
+    ], default=1)
+    submit = SubmitField('إضافة السؤال')
+
+class QuestionChoiceForm(FlaskForm):
+    """Form for adding choices to a multiple choice question"""
+    choice_text = TextAreaField('الخيار', validators=[
+        DataRequired(message='يجب إدخال نص الخيار'),
+        Length(min=1, max=200, message='يجب أن يكون الخيار بين 1 و 200 حرف')
+    ])
+    is_correct = BooleanField('الإجابة الصحيحة')
+    submit = SubmitField('إضافة الخيار')
+
+class TestAttemptForm(FlaskForm):
+    """Form for submitting answers to a test"""
+    submit = SubmitField('إنهاء الاختبار')
+    
+class TestAnswerForm(FlaskForm):
+    """Form for handling individual test answers"""
+    submit = SubmitField('حفظ الإجابات')
+
+class TestTakingForm(FlaskForm):
+    """Form for taking a test (includes hidden fields for test_id)"""
+    test_id = HiddenField('معرف الاختبار', validators=[DataRequired()])
+    submit = SubmitField('بدء الاختبار')

@@ -3,17 +3,23 @@ import os
 import secrets
 import string
 import openai
-from datetime import datetime
-from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app, send_file
+import json
+from datetime import datetime, timedelta
+from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app, send_file, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse
 from werkzeug.utils import secure_filename
 from app import db, app
-from models import User, Video, Comment, Post, VideoView, LectureCode, VideoLike, StudentNote, AIChatMessage, DirectMessage, PointTransfer
+from models import (
+    User, Video, Comment, Post, VideoView, LectureCode, VideoLike, StudentNote, 
+    AIChatMessage, DirectMessage, PointTransfer, Test, TestQuestion, QuestionChoice,
+    TestAttempt, TestAnswer
+)
 from forms import (
     LoginForm, VideoUploadForm, VideoEditForm, PostForm, CommentForm, RegistrationForm,
     LectureCodeForm, GenerateCodeForm, StudentNoteForm, AIChatForm, ForgotPasswordForm,
-    ResetPasswordForm, ProfileForm, DirectMessageForm, TransferPointsForm
+    ResetPasswordForm, ProfileForm, DirectMessageForm, TransferPointsForm, TestCreateForm,
+    TestQuestionForm, QuestionChoiceForm, TestAttemptForm, TestTakingForm
 )
 
 # إعداد OpenAI API
@@ -787,6 +793,284 @@ def edit_video(video_id):
     
     return render_template('admin/edit_video.html', form=form, video=video)
 
+# Admin Test Management Routes
+@admin_bp.route('/tests')
+@login_required
+def manage_tests():
+    if not current_user.is_admin():
+        abort(403)
+        
+    tests = Test.query.order_by(Test.created_at.desc()).all()
+    return render_template('admin/tests.html', tests=tests)
+
+@admin_bp.route('/tests/create', methods=['GET', 'POST'])
+@login_required
+def create_test():
+    if not current_user.is_admin():
+        abort(403)
+        
+    form = TestCreateForm()
+    if form.validate_on_submit():
+        test = Test(
+            title=form.title.data,
+            description=form.description.data,
+            created_by=current_user.id,
+            time_limit_minutes=form.time_limit_minutes.data,
+            passing_score=form.passing_score.data
+        )
+        db.session.add(test)
+        db.session.commit()
+        flash('تم إنشاء الاختبار بنجاح. يرجى إضافة أسئلة الآن.', 'success')
+        return redirect(url_for('admin.edit_test', test_id=test.id))
+        
+    return render_template('admin/create_test.html', form=form)
+
+@admin_bp.route('/tests/<int:test_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_test(test_id):
+    if not current_user.is_admin():
+        abort(403)
+        
+    test = Test.query.get_or_404(test_id)
+    form = TestCreateForm(obj=test)
+    
+    # Form for adding questions
+    question_form = TestQuestionForm()
+    
+    if form.validate_on_submit():
+        test.title = form.title.data
+        test.description = form.description.data
+        test.time_limit_minutes = form.time_limit_minutes.data
+        test.passing_score = form.passing_score.data
+        db.session.commit()
+        flash('تم تحديث الاختبار بنجاح.', 'success')
+        return redirect(url_for('admin.edit_test', test_id=test.id))
+        
+    return render_template('admin/edit_test.html', test=test, form=form, question_form=question_form)
+
+@admin_bp.route('/tests/<int:test_id>/add_question', methods=['POST'])
+@login_required
+def add_question(test_id):
+    if not current_user.is_admin():
+        abort(403)
+        
+    test = Test.query.get_or_404(test_id)
+    form = TestQuestionForm()
+    
+    if form.validate_on_submit():
+        # Count questions to determine order
+        next_order = TestQuestion.query.filter_by(test_id=test_id).count() + 1
+        
+        question = TestQuestion(
+            test_id=test_id,
+            question_text=form.question_text.data,
+            question_type=form.question_type.data,
+            points=form.points.data,
+            order=next_order
+        )
+        db.session.add(question)
+        db.session.commit()
+        
+        # If true/false question, automatically add Yes/No choices
+        if form.question_type.data == 'true_false':
+            true_choice = QuestionChoice(
+                question_id=question.id,
+                choice_text='صح',
+                is_correct=True,
+                order=1
+            )
+            false_choice = QuestionChoice(
+                question_id=question.id,
+                choice_text='خطأ',
+                is_correct=False,
+                order=2
+            )
+            db.session.add_all([true_choice, false_choice])
+            db.session.commit()
+            flash('تم إضافة سؤال صح/خطأ بنجاح.', 'success')
+            return redirect(url_for('admin.edit_test', test_id=test_id))
+        else:
+            flash('تم إضافة السؤال بنجاح. يرجى إضافة الخيارات الآن.', 'success')
+            return redirect(url_for('admin.edit_question', question_id=question.id))
+    
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(f"خطأ في حقل {getattr(form, field).label.text}: {error}", 'danger')
+    
+    return redirect(url_for('admin.edit_test', test_id=test_id))
+
+@admin_bp.route('/questions/<int:question_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_question(question_id):
+    if not current_user.is_admin():
+        abort(403)
+        
+    question = TestQuestion.query.get_or_404(question_id)
+    test = Test.query.get_or_404(question.test_id)
+    
+    form = TestQuestionForm(obj=question)
+    choice_form = QuestionChoiceForm()
+    
+    if form.validate_on_submit():
+        question.question_text = form.question_text.data
+        question.question_type = form.question_type.data
+        question.points = form.points.data
+        db.session.commit()
+        flash('تم تحديث السؤال بنجاح.', 'success')
+        
+    return render_template('admin/edit_question.html', 
+                          question=question, 
+                          test=test, 
+                          form=form, 
+                          choice_form=choice_form)
+
+@admin_bp.route('/questions/<int:question_id>/add_choice', methods=['POST'])
+@login_required
+def add_choice(question_id):
+    if not current_user.is_admin():
+        abort(403)
+        
+    question = TestQuestion.query.get_or_404(question_id)
+    form = QuestionChoiceForm()
+    
+    if form.validate_on_submit():
+        # Count choices to determine order
+        next_order = QuestionChoice.query.filter_by(question_id=question_id).count() + 1
+        
+        choice = QuestionChoice(
+            question_id=question_id,
+            choice_text=form.choice_text.data,
+            is_correct=form.is_correct.data,
+            order=next_order
+        )
+        db.session.add(choice)
+        db.session.commit()
+        flash('تم إضافة الخيار بنجاح.', 'success')
+    
+    return redirect(url_for('admin.edit_question', question_id=question_id))
+
+@admin_bp.route('/choices/<int:choice_id>/toggle_correct', methods=['POST'])
+@login_required
+def toggle_choice_correct(choice_id):
+    if not current_user.is_admin():
+        abort(403)
+        
+    choice = QuestionChoice.query.get_or_404(choice_id)
+    
+    # Toggle the current state
+    choice.is_correct = not choice.is_correct
+    
+    # If this is a true/false question, ensure only one correct answer
+    question = TestQuestion.query.get(choice.question_id)
+    if question.question_type == 'true_false' and choice.is_correct:
+        # Set all other choices to False
+        for other_choice in question.choices.all():
+            if other_choice.id != choice.id:
+                other_choice.is_correct = False
+    
+    db.session.commit()
+    return jsonify(success=True, is_correct=choice.is_correct)
+
+@admin_bp.route('/choices/<int:choice_id>/delete', methods=['POST'])
+@login_required
+def delete_choice(choice_id):
+    if not current_user.is_admin():
+        abort(403)
+        
+    choice = QuestionChoice.query.get_or_404(choice_id)
+    question_id = choice.question_id
+    
+    db.session.delete(choice)
+    db.session.commit()
+    flash('تم حذف الخيار بنجاح.', 'success')
+    
+    return redirect(url_for('admin.edit_question', question_id=question_id))
+
+@admin_bp.route('/questions/<int:question_id>/delete', methods=['POST'])
+@login_required
+def delete_question(question_id):
+    if not current_user.is_admin():
+        abort(403)
+        
+    question = TestQuestion.query.get_or_404(question_id)
+    test_id = question.test_id
+    
+    # Delete all choices first due to foreign key constraints
+    for choice in question.choices.all():
+        db.session.delete(choice)
+    
+    db.session.delete(question)
+    db.session.commit()
+    flash('تم حذف السؤال بنجاح.', 'success')
+    
+    return redirect(url_for('admin.edit_test', test_id=test_id))
+
+@admin_bp.route('/tests/<int:test_id>/delete', methods=['POST'])
+@login_required
+def delete_test(test_id):
+    if not current_user.is_admin():
+        abort(403)
+        
+    test = Test.query.get_or_404(test_id)
+    
+    # Delete all associated data (cascading delete)
+    # - First delete answers
+    for attempt in test.attempts.all():
+        for answer in attempt.answers.all():
+            db.session.delete(answer)
+    
+    # - Then delete attempts
+    for attempt in test.attempts.all():
+        db.session.delete(attempt)
+    
+    # - Then delete choices and questions
+    for question in test.questions.all():
+        for choice in question.choices.all():
+            db.session.delete(choice)
+        db.session.delete(question)
+    
+    # Finally delete the test
+    db.session.delete(test)
+    db.session.commit()
+    flash('تم حذف الاختبار بنجاح.', 'success')
+    
+    return redirect(url_for('admin.manage_tests'))
+
+@admin_bp.route('/tests/<int:test_id>/results')
+@login_required
+def test_results(test_id):
+    if not current_user.is_admin():
+        abort(403)
+        
+    test = Test.query.get_or_404(test_id)
+    attempts = TestAttempt.query.filter_by(test_id=test_id).order_by(TestAttempt.completed_at.desc()).all()
+    
+    # Separate attempts into completed and in-progress
+    completed_attempts = [a for a in attempts if a.completed_at is not None]
+    in_progress_attempts = [a for a in attempts if a.completed_at is None]
+    
+    return render_template('admin/test_results.html', 
+                           test=test, 
+                           completed_attempts=completed_attempts,
+                           in_progress_attempts=in_progress_attempts)
+
+@admin_bp.route('/attempts/<int:attempt_id>/view')
+@login_required
+def view_attempt(attempt_id):
+    attempt = TestAttempt.query.get_or_404(attempt_id)
+    
+    # Admins can view any attempt, students can only view their own
+    if not current_user.is_admin() and attempt.user_id != current_user.id:
+        abort(403)
+    
+    test = Test.query.get_or_404(attempt.test_id)
+    answers = attempt.answers.all()
+    
+    return render_template('view_attempt.html', 
+                          attempt=attempt, 
+                          test=test, 
+                          answers=answers)
+
 # Student routes
 @student_bp.route('/dashboard')
 @login_required
@@ -1356,3 +1640,219 @@ def delete_message(message_id):
     flash('تم حذف الرسالة بنجاح', 'success')
     
     return redirect(url_for('main.messages'))
+
+# Student Test Routes
+@student_bp.route('/tests')
+@login_required
+def available_tests():
+    """Show available tests for students"""
+    # Get all active tests
+    tests = Test.query.filter_by(is_active=True).all()
+    
+    # Get student's attempts for each test
+    attempts_by_test = {}
+    for test in tests:
+        attempts = TestAttempt.query.filter_by(
+            test_id=test.id,
+            user_id=current_user.id
+        ).order_by(TestAttempt.started_at.desc()).all()
+        
+        # Separate completed and in-progress attempts
+        completed = [a for a in attempts if a.completed_at is not None]
+        in_progress = [a for a in attempts if a.completed_at is None]
+        
+        attempts_by_test[test.id] = {
+            'completed': completed,
+            'in_progress': in_progress,
+            'best_score': max([a.score for a in completed]) if completed else None
+        }
+    
+    return render_template('student/tests.html', 
+                          tests=tests, 
+                          attempts_by_test=attempts_by_test)
+
+@student_bp.route('/tests/<int:test_id>/start', methods=['GET', 'POST'])
+@login_required
+def start_test(test_id):
+    """Start a new test attempt"""
+    test = Test.query.get_or_404(test_id)
+    
+    # Check if test is active
+    if not test.is_active:
+        flash('هذا الاختبار غير متاح حالياً.', 'warning')
+        return redirect(url_for('student.available_tests'))
+    
+    # Check if there's already an in-progress attempt
+    existing_attempt = TestAttempt.query.filter_by(
+        test_id=test_id,
+        user_id=current_user.id,
+        completed_at=None
+    ).first()
+    
+    if existing_attempt:
+        # Resume existing attempt
+        return redirect(url_for('student.take_test', attempt_id=existing_attempt.id))
+    
+    # Start new attempt
+    form = TestAttemptForm()
+    
+    if form.validate_on_submit():
+        # Create new attempt
+        attempt = TestAttempt(
+            test_id=test_id,
+            user_id=current_user.id
+        )
+        db.session.add(attempt)
+        db.session.commit()
+        
+        return redirect(url_for('student.take_test', attempt_id=attempt.id))
+    
+    return render_template('student/start_test.html', test=test, form=form)
+
+@student_bp.route('/attempt/<int:attempt_id>/take', methods=['GET', 'POST'])
+@login_required
+def take_test(attempt_id):
+    """Take a test"""
+    attempt = TestAttempt.query.get_or_404(attempt_id)
+    
+    # Ensure this is the user's own attempt
+    if attempt.user_id != current_user.id:
+        abort(403)
+    
+    # If attempt is already completed, redirect to results
+    if attempt.completed_at:
+        return redirect(url_for('student.test_results', attempt_id=attempt_id))
+    
+    test = Test.query.get_or_404(attempt.test_id)
+    
+    # Check if time expired
+    time_limit = timedelta(minutes=test.time_limit_minutes)
+    time_elapsed = datetime.utcnow() - attempt.started_at
+    time_remaining = time_limit - time_elapsed
+    
+    if time_remaining.total_seconds() <= 0:
+        # Time expired, automatically submit
+        attempt.completed_at = datetime.utcnow()
+        attempt.calculate_score()
+        db.session.commit()
+        flash('انتهى وقت الاختبار وتم تسليمه تلقائياً.', 'info')
+        return redirect(url_for('student.test_results', attempt_id=attempt_id))
+    
+    # Get all questions for this test
+    questions = TestQuestion.query.filter_by(test_id=test.id).order_by(TestQuestion.order).all()
+    
+    # Create or get existing answers
+    answers = {}
+    for question in questions:
+        answer = TestAnswer.query.filter_by(
+            attempt_id=attempt.id,
+            question_id=question.id
+        ).first()
+        
+        if not answer:
+            answer = TestAnswer(
+                attempt_id=attempt.id,
+                question_id=question.id
+            )
+            db.session.add(answer)
+            db.session.commit()
+        
+        answers[question.id] = answer
+    
+    # Process form submission
+    form = TestTakingForm()
+    
+    if form.validate_on_submit():
+        action = request.form.get('action', '')
+        
+        # Process each question's answer
+        for question in questions:
+            field_name = f'question_{question.id}'
+            if field_name in request.form:
+                answer_value = request.form.get(field_name)
+                
+                if question.question_type == 'multiple_choice':
+                    try:
+                        choice_id = int(answer_value)
+                        choice = QuestionChoice.query.get(choice_id)
+                        
+                        if choice and choice.question_id == question.id:
+                            answer = answers[question.id]
+                            answer.selected_choice_id = choice_id
+                            answer.is_correct = choice.is_correct
+                            db.session.commit()
+                    except (ValueError, TypeError):
+                        pass
+                elif question.question_type == 'true_false':
+                    try:
+                        choice_id = int(answer_value)
+                        choice = QuestionChoice.query.get(choice_id)
+                        
+                        if choice and choice.question_id == question.id:
+                            answer = answers[question.id]
+                            answer.selected_choice_id = choice_id
+                            answer.is_correct = choice.is_correct
+                            db.session.commit()
+                    except (ValueError, TypeError):
+                        pass
+                elif question.question_type == 'short_answer':
+                    answer = answers[question.id]
+                    answer.text_answer = answer_value
+                    # Short answer marking would need manual review or AI grading
+                    db.session.commit()
+        
+        if action == 'submit':
+            # Submit the test
+            attempt.completed_at = datetime.utcnow()
+            attempt.calculate_score()
+            db.session.commit()
+            flash('تم تسليم الاختبار بنجاح!', 'success')
+            return redirect(url_for('student.test_results', attempt_id=attempt_id))
+        else:
+            # Save progress
+            flash('تم حفظ إجاباتك.', 'success')
+    
+    # Calculate remaining time for JavaScript countdown
+    seconds_remaining = int(time_remaining.total_seconds())
+    
+    return render_template('student/take_test.html',
+                         test=test,
+                         attempt=attempt,
+                         questions=questions,
+                         answers=answers,
+                         seconds_remaining=seconds_remaining,
+                         form=form)
+
+@student_bp.route('/attempt/<int:attempt_id>/results')
+@login_required
+def test_results(attempt_id):
+    """View results of a completed test"""
+    attempt = TestAttempt.query.get_or_404(attempt_id)
+    
+    # Ensure this is the user's own attempt or an admin
+    if attempt.user_id != current_user.id and not current_user.is_admin():
+        abort(403)
+    
+    # If attempt is not completed yet, redirect to take test
+    if not attempt.completed_at and attempt.user_id == current_user.id:
+        return redirect(url_for('student.take_test', attempt_id=attempt_id))
+    
+    test = Test.query.get_or_404(attempt.test_id)
+    
+    # Calculate score if not already calculated
+    if attempt.score is None:
+        attempt.calculate_score()
+        db.session.commit()
+    
+    # Get all questions and answers
+    questions = TestQuestion.query.filter_by(test_id=test.id).order_by(TestQuestion.order).all()
+    answers = TestAnswer.query.filter_by(attempt_id=attempt.id).all()
+    
+    # Organize answers by question_id for easier access in template
+    answers_by_question = {answer.question_id: answer for answer in answers}
+    
+    return render_template('student/test_results.html',
+                         test=test,
+                         attempt=attempt,
+                         questions=questions,
+                         answers=answers_by_question)

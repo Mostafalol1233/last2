@@ -70,5 +70,119 @@
             </div>
         </div>
     </div>
+    
+    <!-- قسم بطاقات نتائج الاختبارات -->
+    {% if not current_user.is_admin() %}
+    <div class="row mt-4">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card shadow mb-5">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-award"></i> نتائج الاختبارات</h3>
+                </div>
+                <div class="card-body">
+                    {% set attempts = current_user.test_attempts.filter_by(completed_at=None).all() %}
+                    {% set completed_attempts = current_user.test_attempts.filter(TestAttempt.completed_at != None).all() %}
+                    
+                    {% if current_user.test_attempts.count() > 0 %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>عنوان الاختبار</th>
+                                        <th>تاريخ الإجراء</th>
+                                        <th>الدرجة</th>
+                                        <th>النتيجة</th>
+                                        <th>عرض التفاصيل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for attempt in current_user.test_attempts %}
+                                        {% if attempt.completed_at %}
+                                        <tr>
+                                            <td>{{ attempt.test.title }}</td>
+                                            <td>{{ attempt.completed_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                            <td>{{ attempt.score }}%</td>
+                                            <td>
+                                                {% if attempt.passed %}
+                                                    <span class="badge bg-success">ناجح</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">راسب</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('student_tests.test_results', attempt_id=attempt.id) }}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i> عرض
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- ملخص الإحصائيات -->
+                        <div class="row mt-4">
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h5>عدد الاختبارات</h5>
+                                        <h3 class="text-primary">{{ current_user.test_attempts.filter(TestAttempt.completed_at != None).count() }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h5>متوسط الدرجات</h5>
+                                        {% set completed = current_user.test_attempts.filter(TestAttempt.completed_at != None).all() %}
+                                        {% if completed|length > 0 %}
+                                            {% set total_score = 0 %}
+                                            {% for c in completed %}
+                                                {% set total_score = total_score + c.score %}
+                                            {% endfor %}
+                                            <h3 class="text-success">{{ (total_score / completed|length)|round(1) }}%</h3>
+                                        {% else %}
+                                            <h3 class="text-muted">-</h3>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h5>نسبة النجاح</h5>
+                                        {% set completed = current_user.test_attempts.filter(TestAttempt.completed_at != None).all() %}
+                                        {% if completed|length > 0 %}
+                                            {% set passed = 0 %}
+                                            {% for c in completed %}
+                                                {% if c.passed %}
+                                                    {% set passed = passed + 1 %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            <h3 class="{% if (passed / completed|length * 100) >= 70 %}text-success{% else %}text-warning{% endif %}">
+                                                {{ (passed / completed|length * 100)|round(0) }}%
+                                            </h3>
+                                        {% else %}
+                                            <h3 class="text-muted">-</h3>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle fa-2x mb-3"></i>
+                            <p>لم تقم بإجراء أي اختبارات بعد.</p>
+                            <a href="{{ url_for('student_tests.available_tests') }}" class="btn btn-primary mt-2">
+                                <i class="fas fa-tasks"></i> الذهاب إلى صفحة الاختبارات
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

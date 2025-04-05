@@ -321,3 +321,112 @@ class SMSMessage(db.Model):
     
     def __repr__(self):
         return f'<SMSMessage {self.id} to {self.phone_number}: {self.status}>'
+
+class Test(db.Model):
+    """Model for educational tests/quizzes"""
+    __tablename__ = 'tests'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True)
+    time_limit_minutes = db.Column(db.Integer, default=30)  # Time limit in minutes
+    passing_score = db.Column(db.Integer, default=60)  # Passing score percentage
+    
+    # Relationships
+    questions = db.relationship('TestQuestion', backref='test', lazy='dynamic', cascade='all, delete-orphan')
+    attempts = db.relationship('TestAttempt', backref='test', lazy='dynamic')
+    creator = db.relationship('User', backref=db.backref('created_tests', lazy='dynamic'))
+    
+    def __repr__(self):
+        return f'<Test {self.id}: {self.title}>'
+
+class TestQuestion(db.Model):
+    """Model for test questions"""
+    __tablename__ = 'test_questions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    test_id = db.Column(db.Integer, db.ForeignKey('tests.id'), nullable=False)
+    question_text = db.Column(db.Text, nullable=False)
+    question_type = db.Column(db.String(20), default='multiple_choice')  # multiple_choice, true_false, short_answer
+    points = db.Column(db.Integer, default=1)  # Points for this question
+    order = db.Column(db.Integer, default=0)  # Order in the test
+    
+    # Relationships
+    choices = db.relationship('QuestionChoice', backref='question', lazy='dynamic', cascade='all, delete-orphan')
+    
+    def __repr__(self):
+        return f'<TestQuestion {self.id} for Test {self.test_id}>'
+
+class QuestionChoice(db.Model):
+    """Model for multiple choice options"""
+    __tablename__ = 'question_choices'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(db.Integer, db.ForeignKey('test_questions.id'), nullable=False)
+    choice_text = db.Column(db.Text, nullable=False)
+    is_correct = db.Column(db.Boolean, default=False)
+    order = db.Column(db.Integer, default=0)  # Order of choices
+    
+    def __repr__(self):
+        return f'<QuestionChoice {self.id} for Question {self.question_id}>'
+
+class TestAttempt(db.Model):
+    """Model for tracking test attempts by users"""
+    __tablename__ = 'test_attempts'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    test_id = db.Column(db.Integer, db.ForeignKey('tests.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    started_at = db.Column(db.DateTime, default=datetime.utcnow)
+    completed_at = db.Column(db.DateTime, nullable=True)
+    score = db.Column(db.Float, nullable=True)  # Final score as percentage
+    passed = db.Column(db.Boolean, nullable=True)  # Whether the user passed
+    
+    # Relationships
+    user = db.relationship('User', backref=db.backref('test_attempts', lazy='dynamic'))
+    answers = db.relationship('TestAnswer', backref='attempt', lazy='dynamic', cascade='all, delete-orphan')
+    
+    def calculate_score(self):
+        """Calculate the score for this attempt"""
+        if not self.completed_at:
+            return None
+            
+        # Get total points available
+        total_points = db.session.query(db.func.sum(TestQuestion.points)).filter(
+            TestQuestion.test_id == self.test_id
+        ).scalar() or 0
+        
+        if total_points == 0:
+            return 0
+            
+        # Get points earned
+        correct_answers = self.answers.filter_by(is_correct=True).all()
+        points_earned = sum(answer.question.points for answer in correct_answers)
+        
+        # Calculate percentage
+        percentage = (points_earned / total_points) * 100
+        return round(percentage, 2)
+    
+    def __repr__(self):
+        return f'<TestAttempt {self.id} by User {self.user_id} on Test {self.test_id}>'
+
+class TestAnswer(db.Model):
+    """Model for user answers to test questions"""
+    __tablename__ = 'test_answers'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    attempt_id = db.Column(db.Integer, db.ForeignKey('test_attempts.id'), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('test_questions.id'), nullable=False)
+    selected_choice_id = db.Column(db.Integer, db.ForeignKey('question_choices.id'), nullable=True)
+    text_answer = db.Column(db.Text, nullable=True)  # For short answer questions
+    is_correct = db.Column(db.Boolean, nullable=True)
+    
+    # Relationships
+    question = db.relationship('TestQuestion')
+    selected_choice = db.relationship('QuestionChoice', foreign_keys=[selected_choice_id])
+    
+    def __repr__(self):
+        return f'<TestAnswer {self.id} for Question {self.question_id} in Attempt {self.attempt_id}>'

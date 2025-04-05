@@ -1,0 +1,341 @@
+{% extends 'base.html' %}
+
+{% block title %}اختبار: {{ test.title }}{% endblock %}
+
+{% block head_extra %}
+<style>
+    .question-container {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    
+    .question-number {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        background-color: #007bff;
+        color: white;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+    
+    .timer-container {
+        position: sticky;
+        top: 70px;
+        z-index: 100;
+        background-color: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .timer {
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+    }
+    
+    .timer.warning {
+        color: orange;
+    }
+    
+    .timer.danger {
+        color: red;
+        animation: pulse 1s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+    
+    .anti-cheat {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.9);
+        color: white;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        flex-direction: column;
+    }
+    
+    .question-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 15px;
+    }
+    
+    .question-nav-item {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    .question-nav-item.answered {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .question-nav-item.current {
+        border: 2px solid #007bff;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">{{ test.title }}</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="testForm" action="{{ url_for('student.take_test', attempt_id=attempt.id) }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="question-nav d-md-none">
+                            {% for question in questions %}
+                                <div class="question-nav-item" data-question="{{ question.id }}" id="nav-{{ question.id }}">
+                                    {{ loop.index }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        {% for question in questions %}
+                            <div class="question-container" id="question-{{ question.id }}">
+                                <h4>
+                                    <span class="question-number">{{ loop.index }}</span>
+                                    {{ question.question_text }}
+                                </h4>
+                                
+                                {% if question.question_type == 'multiple_choice' %}
+                                    <div class="choices mt-3">
+                                        {% for choice in question.choices %}
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" 
+                                                    name="question_{{ question.id }}" 
+                                                    value="{{ choice.id }}" 
+                                                    id="choice_{{ choice.id }}"
+                                                    {% if answers[question.id].selected_choice_id == choice.id %}checked{% endif %}
+                                                    onchange="markAnswered({{ question.id }})">
+                                                <label class="form-check-label" for="choice_{{ choice.id }}">
+                                                    {{ choice.choice_text }}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% elif question.question_type == 'true_false' %}
+                                    <div class="choices mt-3">
+                                        {% for choice in question.choices %}
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" 
+                                                    name="question_{{ question.id }}" 
+                                                    value="{{ choice.id }}" 
+                                                    id="choice_{{ choice.id }}"
+                                                    {% if answers[question.id].selected_choice_id == choice.id %}checked{% endif %}
+                                                    onchange="markAnswered({{ question.id }})">
+                                                <label class="form-check-label" for="choice_{{ choice.id }}">
+                                                    {{ choice.choice_text }}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% elif question.question_type == 'short_answer' %}
+                                    <div class="form-group mt-3">
+                                        <textarea class="form-control" 
+                                            name="question_{{ question.id }}" 
+                                            rows="3" 
+                                            placeholder="اكتب إجابتك هنا"
+                                            onchange="markAnswered({{ question.id }})"
+                                            >{{ answers[question.id].text_answer or '' }}</textarea>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="submit" name="action" value="save" class="btn btn-outline-primary">
+                                <i class="fas fa-save"></i> حفظ الإجابات
+                            </button>
+                            <button type="submit" name="action" value="submit" class="btn btn-success" onclick="return confirm('هل أنت متأكد من تسليم الاختبار؟ لا يمكن التراجع عن هذا الإجراء.');">
+                                <i class="fas fa-check-circle"></i> تسليم الاختبار
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="timer-container">
+                <h5>الوقت المتبقي</h5>
+                <div class="timer" id="timer">--:--:--</div>
+                <div class="progress mt-2">
+                    <div class="progress-bar" id="timer-progress" role="progressbar" style="width: 100%"></div>
+                </div>
+            </div>
+            
+            <div class="card shadow d-none d-md-block">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">الأسئلة</h5>
+                </div>
+                <div class="card-body">
+                    <div class="question-nav">
+                        {% for question in questions %}
+                            <div class="question-nav-item" data-question="{{ question.id }}" id="nav-{{ question.id }}">
+                                {{ loop.index }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-warning" onclick="document.getElementById('testForm').submit();">
+                            <i class="fas fa-save"></i> حفظ الإجابات
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Anti-cheat overlay -->
+<div class="anti-cheat" id="anti-cheat-overlay">
+    <h1><i class="fas fa-exclamation-triangle"></i> تحذير!</h1>
+    <h3>تم اكتشاف محاولة غش</h3>
+    <p>يرجى العودة إلى نافذة الاختبار فوراً.</p>
+    <p>سيتم تسجيل هذه المحاولة وقد تؤثر على نتيجتك النهائية.</p>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // تحويل الثواني إلى تنسيق الوقت HH:MM:SS
+    function formatTime(seconds) {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+    
+    // العداد التنازلي
+    let timeLeft = {{ seconds_remaining }};
+    const totalTime = {{ test.time_limit_minutes * 60 }};
+    const timerElem = document.getElementById('timer');
+    const progressBar = document.getElementById('timer-progress');
+    
+    function updateTimer() {
+        if (timeLeft <= 0) {
+            // انتهى الوقت، إرسال الاختبار تلقائياً
+            document.querySelector('button[value="submit"]').click();
+            return;
+        }
+        
+        timerElem.textContent = formatTime(timeLeft);
+        
+        // تحديث شريط التقدم
+        const percentLeft = (timeLeft / totalTime) * 100;
+        progressBar.style.width = `${percentLeft}%`;
+        
+        // تغيير لون المؤقت حسب الوقت المتبقي
+        if (timeLeft <= 60) { // آخر دقيقة
+            timerElem.className = 'timer danger';
+            progressBar.className = 'progress-bar bg-danger';
+        } else if (timeLeft <= 300) { // آخر 5 دقائق
+            timerElem.className = 'timer warning';
+            progressBar.className = 'progress-bar bg-warning';
+        }
+        
+        timeLeft--;
+    }
+    
+    // تحديث المؤقت كل ثانية
+    updateTimer();
+    const timerInterval = setInterval(updateTimer, 1000);
+    
+    // التنقل بين الأسئلة
+    const navItems = document.querySelectorAll('.question-nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const questionId = this.getAttribute('data-question');
+            const questionElem = document.getElementById(`question-${questionId}`);
+            questionElem.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+    
+    // تمييز الإجابات المجابة
+    function markAnswered(questionId) {
+        const navItem = document.getElementById(`nav-${questionId}`);
+        navItem.classList.add('answered');
+    }
+    
+    // تمييز الإجابات المجابة عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        {% for question in questions %}
+            {% if answers[question.id].selected_choice_id or answers[question.id].text_answer %}
+                markAnswered({{ question.id }});
+            {% endif %}
+        {% endfor %}
+    });
+    
+    // مكافحة الغش - التنبيه عند مغادرة الصفحة
+    const antiCheatOverlay = document.getElementById('anti-cheat-overlay');
+    
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden') {
+            // تم مغادرة الصفحة
+            console.log('User left the page');
+            // يمكن إضافة تسجيل هذا الحدث على الخادم
+        }
+    });
+    
+    // منع النسخ واللصق
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+        return false;
+    });
+    
+    document.addEventListener('paste', function(e) {
+        e.preventDefault();
+        return false;
+    });
+    
+    // الحفظ التلقائي كل دقيقة
+    setInterval(function() {
+        const form = document.getElementById('testForm');
+        const formData = new FormData(form);
+        formData.append('action', 'save');
+        
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }).then(response => {
+            console.log('Autosaved');
+        });
+    }, 60000);
+</script>
+{% endblock %}

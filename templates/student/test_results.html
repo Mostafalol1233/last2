@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block title %}نتائج الاختبار: {{ test.title }}{% endblock %}
+
+{% block head_extra %}
+<style>
+    .result-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .result-header {
+        border-radius: 10px 10px 0 0;
+        padding: 15px;
+    }
+    
+    .result-body {
+        padding: 20px;
+    }
+    
+    .score-display {
+        text-align: center;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+    }
+    
+    .score-circle {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin: 0 auto 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: white;
+    }
+    
+    .score-passing {
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+    
+    .score-failing {
+        background: linear-gradient(135deg, #dc3545, #fd7e14);
+    }
+    
+    .question-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-left: 5px solid #6c757d;
+    }
+    
+    .question-correct {
+        border-left-color: #28a745;
+    }
+    
+    .question-incorrect {
+        border-left-color: #dc3545;
+    }
+    
+    .choice-text {
+        padding-left: 25px;
+        position: relative;
+        margin-bottom: 8px;
+    }
+    
+    .choice-text:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 5px;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #6c757d;
+        border-radius: 50%;
+    }
+    
+    .choice-selected:before {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    
+    .choice-correct:before {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    
+    .choice-incorrect:before {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <!-- بطاقة النتيجة الإجمالية -->
+            <div class="result-card">
+                <div class="result-header {% if attempt.passed %}bg-success{% else %}bg-danger{% endif %} text-white">
+                    <h3 class="m-0">نتيجة الاختبار: {{ test.title }}</h3>
+                </div>
+                <div class="result-body">
+                    <div class="score-display">
+                        <div class="score-circle {% if attempt.passed %}score-passing{% else %}score-failing{% endif %}">
+                            {{ "%.1f"|format(attempt.score) }}%
+                        </div>
+                        
+                        <h4 class="mt-2">
+                            {% if attempt.passed %}
+                                <span class="badge bg-success">مبروك! لقد نجحت في الاختبار</span>
+                            {% else %}
+                                <span class="badge bg-danger">للأسف، لم تتمكن من اجتياز الاختبار</span>
+                            {% endif %}
+                        </h4>
+                    </div>
+                    
+                    <div class="test-details">
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5>درجة النجاح</h5>
+                                        <p class="h3">{{ test.passing_score }}%</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5>الوقت المستغرق</h5>
+                                        <p class="h3">
+                                            {% set duration = (attempt.completed_at - attempt.started_at).total_seconds() // 60 %}
+                                            {{ duration }} دقيقة
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5>تاريخ الاختبار</h5>
+                                        <p class="h3">{{ attempt.completed_at.strftime('%Y-%m-%d') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- مراجعة إجابات الاختبار -->
+            <div class="result-card">
+                <div class="result-header bg-primary text-white">
+                    <h3 class="m-0">مراجعة الإجابات</h3>
+                </div>
+                <div class="result-body">
+                    {% for question in questions %}
+                        {% set answer = answers_by_question.get(question.id) %}
+                        
+                        <div class="question-container {% if answer and answer.is_correct %}question-correct{% elif answer %}question-incorrect{% endif %}">
+                            <h5>{{ loop.index }}. {{ question.question_text }}</h5>
+                            
+                            {% if question.question_type in ['multiple_choice', 'true_false'] %}
+                                <div class="choices mt-3">
+                                    {% for choice in question.choices %}
+                                        <div class="choice-text 
+                                            {% if answer and answer.selected_choice_id == choice.id %}choice-selected
+                                                {% if choice.is_correct %}choice-correct{% else %}choice-incorrect{% endif %}
+                                            {% elif choice.is_correct %}choice-correct{% endif %}">
+                                            {{ choice.choice_text }}
+                                            
+                                            {% if answer and answer.selected_choice_id == choice.id %}
+                                                {% if choice.is_correct %}
+                                                    <i class="fas fa-check-circle text-success ml-2"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times-circle text-danger ml-2"></i>
+                                                {% endif %}
+                                            {% elif choice.is_correct %}
+                                                <i class="fas fa-check-circle text-success ml-2"></i>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% elif question.question_type == 'short_answer' %}
+                                <div class="form-group mt-3">
+                                    <label>إجابتك:</label>
+                                    <div class="border p-2 rounded bg-white">
+                                        {{ answer.text_answer or 'لم تقدم إجابة' }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <a href="{{ url_for('student.available_tests') }}" class="btn btn-primary">العودة إلى قائمة الاختبارات</a>
+                {% if not attempt.passed %}
+                    <a href="{{ url_for('student.start_test', test_id=test.id) }}" class="btn btn-outline-primary">إعادة المحاولة</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

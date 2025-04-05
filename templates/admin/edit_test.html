@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+
+{% block title %}تحرير اختبار: {{ test.title }}{% endblock %}
+
+{% block head_extra %}
+<style>
+    .question-list {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+    
+    .question-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-left: 5px solid #007bff;
+    }
+    
+    .no-questions {
+        padding: 30px;
+        text-align: center;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">تفاصيل الاختبار</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.edit_test', test_id=test.id) }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {{ form.title(class="form-control") }}
+                            {% if form.title.errors %}
+                                {% for error in form.title.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control", rows=4) }}
+                            {% if form.description.errors %}
+                                {% for error in form.description.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.time_limit_minutes.label(class="form-label") }}
+                            {{ form.time_limit_minutes(class="form-control") }}
+                            {% if form.time_limit_minutes.errors %}
+                                {% for error in form.time_limit_minutes.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            <div class="form-text">مدة الاختبار بالدقائق</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.passing_score.label(class="form-label") }}
+                            {{ form.passing_score(class="form-control") }}
+                            {% if form.passing_score.errors %}
+                                {% for error in form.passing_score.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            <div class="form-text">النسبة المئوية المطلوبة للنجاح</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                {{ form.is_active(class="form-check-input") }}
+                                {{ form.is_active.label(class="form-check-label") }}
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary") }}
+                            <a href="{{ url_for('admin.manage_tests') }}" class="btn btn-secondary">العودة إلى قائمة الاختبارات</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="card-title mb-0">أسئلة الاختبار</h4>
+                    <span class="badge bg-light text-dark">عدد الأسئلة: {{ test.questions.count() }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="add-question-form mb-4">
+                        <h5 class="mb-3">إضافة سؤال جديد</h5>
+                        <form method="POST" action="{{ url_for('admin.add_question', test_id=test.id) }}">
+                            {{ question_form.hidden_tag() }}
+                            
+                            <div class="mb-3">
+                                {{ question_form.question_text.label(class="form-label") }}
+                                {{ question_form.question_text(class="form-control", rows=3) }}
+                                {% if question_form.question_text.errors %}
+                                    {% for error in question_form.question_text.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ question_form.question_type.label(class="form-label") }}
+                                        {{ question_form.question_type(class="form-select") }}
+                                        {% if question_form.question_type.errors %}
+                                            {% for error in question_form.question_type.errors %}
+                                                <div class="text-danger">{{ error }}</div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ question_form.points.label(class="form-label") }}
+                                        {{ question_form.points(class="form-control") }}
+                                        {% if question_form.points.errors %}
+                                            {% for error in question_form.points.errors %}
+                                                <div class="text-danger">{{ error }}</div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                {{ question_form.submit(class="btn btn-success") }}
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="question-list">
+                        {% if test.questions.count() > 0 %}
+                            {% for question in test.questions.order_by('order').all() %}
+                                <div class="question-container">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5>{{ loop.index }}. {{ question.question_text }}</h5>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('admin.edit_question', question_id=question.id) }}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#deleteQuestionModal{{ question.id }}">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="question-info">
+                                        <span class="badge bg-info">{{ question.question_type }}</span>
+                                        <span class="badge bg-secondary">{{ question.points }} نقطة</span>
+                                        <span class="badge bg-dark">{{ question.choices.count() }} خيارات</span>
+                                    </div>
+                                    
+                                    {% if question.choices.count() > 0 %}
+                                        <div class="choices mt-2">
+                                            <ul class="list-group">
+                                                {% for choice in question.choices.order_by('order').all() %}
+                                                    <li class="list-group-item {% if choice.is_correct %}list-group-item-success{% endif %}">
+                                                        {{ choice.choice_text }}
+                                                        {% if choice.is_correct %}
+                                                            <span class="badge bg-success float-end">إجابة صحيحة</span>
+                                                        {% endif %}
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    {% else %}
+                                        <div class="alert alert-warning mt-2">
+                                            لا توجد خيارات لهذا السؤال. 
+                                            <a href="{{ url_for('admin.edit_question', question_id=question.id) }}">أضف خيارات</a>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <!-- Modal for delete confirmation -->
+                                    <div class="modal fade" id="deleteQuestionModal{{ question.id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">تأكيد الحذف</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    هل أنت متأكد من حذف هذا السؤال؟
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                                                    <form action="{{ url_for('admin.delete_question', question_id=question.id) }}" method="POST">
+                                                        <button type="submit" class="btn btn-danger">نعم، قم بالحذف</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-questions">
+                                <i class="fas fa-question-circle fa-3x mb-3 text-muted"></i>
+                                <h5>لا توجد أسئلة بعد</h5>
+                                <p class="text-muted">قم بإضافة أسئلة باستخدام النموذج أعلاه</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

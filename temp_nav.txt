@@ -1,0 +1,14 @@
+    <div class="bottom-links">
+        <a href="{{ url_for('main.index') }}"><i class="fas fa-home me-1"></i> الرئيسية</a>
+        <a href="#"><i class="fas fa-graduation-cap me-1"></i> الدورات</a>
+        {% if current_user.is_authenticated %}
+            {% if current_user.role == 'admin' %}
+                <a href="{{ url_for('admin_tests.manage_tests') }}"><i class="fas fa-tasks me-1"></i> الإختبارات</a>
+            {% else %}
+                <a href="{{ url_for('student_tests.view_tests') }}"><i class="fas fa-tasks me-1"></i> الإختبارات</a>
+            {% endif %}
+        {% else %}
+            <a href="{{ url_for('main.login') }}"><i class="fas fa-tasks me-1"></i> الإختبارات</a>
+        {% endif %}
+        <a href="#"><i class="fas fa-envelope me-1"></i> تواصل معنا</a>
+    </div>

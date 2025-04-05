@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+
+{% block title %}الاختبارات المتاحة{% endblock %}
+
+{% block head_extra %}
+<style>
+    .test-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+        margin-bottom: 20px;
+        border: none;
+    }
+    
+    .test-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+    }
+    
+    .test-card .card-header {
+        border-radius: 10px 10px 0 0;
+        padding: 15px;
+    }
+    
+    .test-card .card-body {
+        padding: 20px;
+    }
+    
+    .test-badge {
+        margin-right: 5px;
+    }
+    
+    .attempts-list {
+        margin-top: 15px;
+    }
+    
+    .attempt-item {
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 8px;
+    }
+    
+    .attempt-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .attempt-date {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .test-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+    
+    .test-stat-item {
+        text-align: center;
+    }
+    
+    .test-stat-value {
+        font-size: 1.2rem;
+        font-weight: bold;
+        display: block;
+    }
+    
+    .test-stat-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">الاختبارات المتاحة</h3>
+                </div>
+                <div class="card-body">
+                    {% if tests %}
+                        <div class="row">
+                            {% for test in tests %}
+                                <div class="col-md-6">
+                                    <div class="card test-card">
+                                        <div class="card-header bg-light">
+                                            <h4 class="card-title mb-0">{{ test.title }}</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="mb-2">{{ test.description }}</p>
+                                            
+                                            <div class="test-info">
+                                                <span class="badge bg-info test-badge">
+                                                    <i class="fas fa-clock"></i> {{ test.time_limit_minutes }} دقيقة
+                                                </span>
+                                                <span class="badge bg-secondary test-badge">
+                                                    <i class="fas fa-question-circle"></i> {{ test.questions.count() }} سؤال
+                                                </span>
+                                                <span class="badge bg-warning text-dark test-badge">
+                                                    <i class="fas fa-award"></i> {{ test.passing_score }}% للنجاح
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="test-stats">
+                                                <div class="test-stat-item">
+                                                    <span class="test-stat-value">
+                                                        {{ attempts_by_test.get(test.id, [])|length }}
+                                                    </span>
+                                                    <span class="test-stat-label">المحاولات</span>
+                                                </div>
+                                                
+                                                <div class="test-stat-item">
+                                                    <span class="test-stat-value">
+                                                        {% set passed_attempts = attempts_by_test.get(test.id, [])|selectattr("passed", "equalto", True)|list %}
+                                                        {% if attempts_by_test.get(test.id, [])|length > 0 %}
+                                                            {{ passed_attempts|length }}
+                                                        {% else %}
+                                                            0
+                                                        {% endif %}
+                                                    </span>
+                                                    <span class="test-stat-label">ناجح</span>
+                                                </div>
+                                                
+                                                <div class="test-stat-item">
+                                                    <span class="test-stat-value">
+                                                        {% set best_score = 0 %}
+                                                        {% for attempt in attempts_by_test.get(test.id, []) %}
+                                                            {% if attempt.score and attempt.score > best_score %}
+                                                                {% set best_score = attempt.score %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {{ "%.1f"|format(best_score) }}%
+                                                    </span>
+                                                    <span class="test-stat-label">أفضل نتيجة</span>
+                                                </div>
+                                            </div>
+                                            
+                                            {% set test_attempts = attempts_by_test.get(test.id, []) %}
+                                            {% if test_attempts %}
+                                                <div class="attempts-list">
+                                                    <h6>محاولاتك السابقة:</h6>
+                                                    {% for attempt in test_attempts|sort(attribute='started_at', reverse=True)|slice(0, 3) %}
+                                                        <div class="attempt-item {% if attempt.passed %}bg-success-subtle{% else %}bg-danger-subtle{% endif %}">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <div>
+                                                                    <span class="badge {% if attempt.passed %}bg-success{% else %}bg-danger{% endif %}">
+                                                                        {{ "%.1f"|format(attempt.score) }}%
+                                                                    </span>
+                                                                    <span class="attempt-date">{{ attempt.completed_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                                                                </div>
+                                                                <a href="{{ url_for('student.test_results', attempt_id=attempt.id) }}" class="btn btn-sm btn-outline-primary">
+                                                                    عرض النتائج
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                    
+                                                    {% if test_attempts|length > 3 %}
+                                                        <div class="text-center mt-2">
+                                                            <a href="{{ url_for('student.test_history') }}" class="btn btn-sm btn-link">
+                                                                عرض كل المحاولات ({{ test_attempts|length }})
+                                                            </a>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                            
+                                            <div class="d-grid gap-2 mt-3">
+                                                <a href="{{ url_for('student.start_test', test_id=test.id) }}" class="btn btn-primary">
+                                                    <i class="fas fa-play-circle"></i> بدء الاختبار
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            لا توجد اختبارات متاحة حاليًا. يرجى التحقق مرة أخرى لاحقًا.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if completed_attempts %}
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title mb-0">سجل الاختبارات المكتملة</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>اسم الاختبار</th>
+                                        <th>النتيجة</th>
+                                        <th>الحالة</th>
+                                        <th>تاريخ الإكمال</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for attempt in completed_attempts %}
+                                        <tr>
+                                            <td>{{ loop.index }}</td>
+                                            <td>{{ attempt.test.title }}</td>
+                                            <td>{{ "%.1f"|format(attempt.score) }}%</td>
+                                            <td>
+                                                {% if attempt.passed %}
+                                                    <span class="badge bg-success">ناجح</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">راسب</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ attempt.completed_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                            <td>
+                                                <a href="{{ url_for('student.test_results', attempt_id=attempt.id) }}" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-chart-bar"></i> عرض النتائج
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
