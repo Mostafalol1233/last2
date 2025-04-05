@@ -6,25 +6,52 @@
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            <div class="card shadow text-center">
+            <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h3 class="card-title mb-0">{{ test.title }}</h3>
+                    <h3 class="card-title mb-0">بدء اختبار: {{ test.title }}</h3>
                 </div>
                 <div class="card-body">
                     <div class="test-info mb-4">
-                        <p class="lead">{{ test.description }}</p>
-
-                        <div class="alert alert-info">
-                            <strong>مدة الاختبار:</strong> {{ test.time_limit_minutes }} دقيقة<br>
-                            <strong>درجة النجاح:</strong> {{ test.passing_score }}%
+                        <h4>معلومات الاختبار</h4>
+                        <p>{{ test.description }}</p>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>مدة الاختبار:</strong> {{ test.time_limit_minutes }} دقيقة</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>درجة النجاح:</strong> {{ test.passing_score }}%</p>
+                            </div>
                         </div>
-
-                        <div class="mt-4">
-                            <a href="{{ url_for('student.take_test', attempt_id=attempt.id) }}" class="btn btn-lg btn-success">
-                                <i class="fas fa-play-circle"></i> ابدأ الاختبار الآن
-                            </a>
+                        
+                        <div class="alert alert-warning">
+                            <h5>تعليمات هامة</h5>
+                            <ul>
+                                <li>بمجرد بدء الاختبار، سيبدأ احتساب الوقت.</li>
+                                <li>إذا غادرت الصفحة، سيستمر الوقت في العد.</li>
+                                <li>تأكد من تسليم الاختبار قبل انتهاء الوقت.</li>
+                                <li>يمكنك حفظ إجاباتك أثناء الاختبار بالضغط على زر "حفظ الإجابات".</li>
+                                <li>لا تقم بتحديث الصفحة أثناء الاختبار لتجنب فقدان الإجابات.</li>
+                                <li>يحظر استخدام مواقع أخرى أو الاستعانة بأشخاص آخرين أثناء الاختبار.</li>
+                            </ul>
                         </div>
                     </div>
+                    
+                    <form method="POST" action="{{ url_for('student.start_test', test_id=test.id) }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="agree_terms" required>
+                            <label class="form-check-label" for="agree_terms">
+                                أوافق على تعليمات الاختبار وأتعهد بالالتزام بها
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">بدء الاختبار الآن</button>
+                            <a href="{{ url_for('student.available_tests') }}" class="btn btn-secondary">العودة إلى قائمة الاختبارات</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
