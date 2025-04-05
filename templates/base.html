@@ -169,40 +169,52 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="mt-auto py-3 bg-light">
+    <footer class="mt-auto py-3 bg-dark text-white">
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
-                    <h5>حول المنصة</h5>
+                <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                    <img src="{{ url_for('static', filename='img/ahmed-helly-logo.png') }}" alt="شعار الأستاذ أحمد حلي" class="footer-logo" width="100">
+                    <h5 class="mt-3">حول المنصة</h5>
                     <p>منصة الأستاذ أحمد حلي التعليمية هي منصة متكاملة لتقديم المحتوى التعليمي بطريقة تفاعلية مبتكرة.</p>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
                     <h5>روابط سريعة</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{{ url_for('main.index') }}">الرئيسية</a></li>
+                        <li><a href="{{ url_for('main.index') }}" class="text-white">الرئيسية</a></li>
                         {% if current_user.is_authenticated %}
                             {% if current_user.role == 'admin' %}
-                                <li><a href="{{ url_for('admin.dashboard') }}">لوحة التحكم</a></li>
+                                <li><a href="{{ url_for('admin.dashboard') }}" class="text-white">لوحة التحكم</a></li>
                             {% else %}
-                                <li><a href="{{ url_for('student.dashboard') }}">لوحة التحكم</a></li>
+                                <li><a href="{{ url_for('student.dashboard') }}" class="text-white">لوحة التحكم</a></li>
                             {% endif %}
                         {% else %}
-                            <li><a href="{{ url_for('main.login') }}">تسجيل الدخول</a></li>
-                            <li><a href="{{ url_for('main.register') }}">إنشاء حساب</a></li>
+                            <li><a href="{{ url_for('main.login') }}" class="text-white">تسجيل الدخول</a></li>
+                            <li><a href="{{ url_for('main.register') }}" class="text-white">إنشاء حساب</a></li>
                         {% endif %}
                     </ul>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 text-center text-md-start">
                     <h5>تواصل معنا</h5>
                     <ul class="list-unstyled">
                         <li><i class="fas fa-envelope me-2"></i> info@ahmed-helly.com</li>
                         <li><i class="fas fa-phone me-2"></i> +123-456-7890</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> القاهرة، مصر</li>
                     </ul>
                 </div>
             </div>
-            <hr>
-            <div class="text-center">
-                <p>&copy; {{ now.year }} منصة الأستاذ أحمد حلي التعليمية. جميع الحقوق محفوظة.</p>
+            <hr class="mt-4 mb-4">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                    <p class="mb-0">&copy; {{ now.year }} منصة الأستاذ أحمد حلي التعليمية. جميع الحقوق محفوظة.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0">
+                        <i class="fas fa-code me-1"></i> تطوير 
+                        <a href="https://www.linkedin.com/in/mustafa-ahmed/" target="_blank" class="text-white fw-bold">
+                            مصطفى محمد
+                        </a>
+                    </p>
+                </div>
             </div>
         </div>
     </footer>
