@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Student Dashboard - Educational Platform{% endblock %}
+{% block title %}لوحة تحكم الطالب - منصة الأستاذ أحمد حلي التعليمية{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <div class="card bg-dark mb-4">
+        <div class="card dashboard-stats mb-4 card-hover">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4>
                     <i class="fas fa-graduation-cap me-2"></i>مرحباً، {{ current_user.full_name or current_user.username }}!
-                    <span class="badge bg-success ms-2">
+                    <span class="badge bg-success ms-2 badge-new">
                         <i class="fas fa-coins me-1"></i>رصيدك: {{ current_user.points }} نقطة
                     </span>
                 </h4>
@@ -22,47 +22,85 @@
                     مرحباً بك في لوحة التحكم الخاصة بك. يمكنك هنا الوصول إلى جميع الفيديوهات والمنشورات والميزات التعليمية.
                 </p>
 
+                <!-- Quick Stats -->
                 <div class="row mt-3">
                     <div class="col-md-4 mb-3">
-                        <a href="{{ url_for('student.view_notes') }}" class="btn btn-info btn-lg w-100">
+                        <div class="dashboard-stats text-center">
+                            <div class="stat-icon">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <h3>{{ videos|length }}</h3>
+                            <p>فيديوهات متاحة</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="dashboard-stats text-center">
+                            <div class="stat-icon">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <h3>{{ current_user.points }}</h3>
+                            <p>رصيد النقاط</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="dashboard-stats text-center">
+                            <div class="stat-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <h3>{{ posts|length }}</h3>
+                            <p>المنشورات</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="row mt-3">
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <a href="{{ url_for('student.view_notes') }}" class="btn btn-info btn-lg w-100 d-flex align-items-center justify-content-center">
                             <i class="fas fa-sticky-note me-2"></i>ملاحظاتي الشخصية
                         </a>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <a href="{{ url_for('student.ai_chat') }}" class="btn btn-success btn-lg w-100">
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <a href="{{ url_for('student.ai_chat') }}" class="btn btn-success btn-lg w-100 d-flex align-items-center justify-content-center">
                             <i class="fas fa-robot me-2"></i>الدردشة الذكية
                         </a>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <a href="#videos-section" class="btn btn-primary btn-lg w-100">
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <a href="{{ url_for('payment.pricing') }}" class="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-credit-card me-2"></i>خطط الاشتراك
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <a href="#videos-section" class="btn btn-warning btn-lg w-100 d-flex align-items-center justify-content-center">
                             <i class="fas fa-video me-2"></i>الفيديوهات التعليمية
                         </a>
                     </div>
                 </div>
 
-                <div class="row mt-2">
-                    <div class="col-md-6 mb-3">
-                        <a href="{{ url_for('student.math_formulas') }}" class="btn btn-warning btn-lg w-100">
-                            <i class="fas fa-square-root-alt me-2"></i>القوانين الرياضية العامة
-                        </a>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <a href="{{ url_for('student.algebra_formulas') }}" class="btn btn-warning btn-lg w-100">
-                            <i class="fas fa-superscript me-2"></i>قوانين الجبر - ثانوي
-                        </a>
-                    </div>
-                </div>
-
-                <div class="row mt-2">
-                    <div class="col-md-6 mb-3">
-                        <a href="{{ url_for('student.advanced_formulas') }}" class="btn btn-warning btn-lg w-100">
-                            <i class="fas fa-integral me-2"></i>قوانين التفاضل والميكانيكا
-                        </a>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <a href="{{ url_for('student.advanced_calculator') }}" class="btn btn-warning btn-lg w-100">
-                            <i class="fas fa-calculator me-2"></i>الآلة الحاسبة المتقدمة
-                        </a>
+                <!-- Math Formulas Section - Moved to top for better visibility -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card card-hover border-0">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>الأدوات الرياضية</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="math-tools">
+                                    <a href="{{ url_for('student.math_formulas') }}" class="btn btn-light">
+                                        <i class="fas fa-square-root-alt me-2"></i>القوانين العامة
+                                    </a>
+                                    <a href="{{ url_for('student.algebra_formulas') }}" class="btn btn-light">
+                                        <i class="fas fa-superscript me-2"></i>قوانين الجبر
+                                    </a>
+                                    <a href="{{ url_for('student.advanced_formulas') }}" class="btn btn-light">
+                                        <i class="fas fa-integral me-2"></i>قوانين التفاضل
+                                    </a>
+                                    <a href="{{ url_for('student.advanced_calculator') }}" class="btn btn-light">
+                                        <i class="fas fa-calculator me-2"></i>الآلة الحاسبة
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -72,20 +110,20 @@
 
 <div class="row">
     <div class="col-lg-8">
-        <div class="card bg-dark mb-4">
+        <div class="card mb-4 card-hover">
             <div class="card-header">
                 <h5 id="videos-section"><i class="fas fa-video me-2"></i>الفيديوهات المتاحة</h5>
             </div>
             <div class="card-body">
                 {% if videos %}
-                    <div class="row">
+                    <div class="row video-list">
                         {% for video in videos %}
                             <div class="col-md-6 mb-4">
-                                <div class="card bg-dark h-100 card-hover">
+                                <div class="card h-100 card-hover">
                                     <div class="card-body">
                                         <h5 class="card-title">{{ video.title }}</h5>
                                         <p class="card-text text-muted">
-                                            {{ video.created_at.strftime('%Y-%m-%d') }}
+                                            <i class="fas fa-calendar me-1"></i>{{ video.created_at.strftime('%Y-%m-%d') }}
                                         </p>
                                         {% if video.description %}
                                             <p class="card-text">
@@ -93,13 +131,13 @@
                                             </p>
                                         {% endif %}
 
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <a href="{{ url_for('student.view_video', video_id=video.id) }}" class="btn btn-primary">
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                            <a href="{{ url_for('student.view_video', video_id=video.id) }}" class="btn btn-primary mt-2">
                                                 <i class="fas fa-play me-1"></i>مشاهدة
                                             </a>
 
                                             {% if video.requires_code and video.id not in viewed_videos %}
-                                                <div class="d-flex align-items-center">
+                                                <div class="d-flex align-items-center mt-2">
                                                     <span class="badge bg-warning me-2">
                                                         <i class="fas fa-key me-1"></i>يتطلب كود
                                                     </span>
@@ -109,12 +147,9 @@
                                                         </a>
                                                     {% endif %}
                                                 </div>
-                                                <div class="mt-2">
-                                                    <small class="text-muted">رصيدك الحالي: {{ current_user.points }} نقطة</small>
-                                                </div>
                                             {% elif video.requires_code and video.id in viewed_videos %}
-                                                <span class="badge bg-success">
-                                                    <i class="fas fa-unlock me-1"></i>مفتوح الآن - تم شراء الكود
+                                                <span class="badge bg-success mt-2">
+                                                    <i class="fas fa-unlock me-1"></i>مفتوح الآن
                                                 </span>
                                             {% endif %}
                                         </div>
@@ -133,44 +168,58 @@
     </div>
 
     <div class="col-lg-4">
-        <div class="card bg-dark mb-4">
+        <!-- Latest Posts - Made more compact -->
+        <div class="card mb-4 card-hover">
             <div class="card-header">
                 <h5><i class="fas fa-file-alt me-2"></i>أحدث المنشورات</h5>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 {% if posts %}
-                    <div class="list-group list-group-flush">
+                    <div class="list-group list-group-flush post-list">
                         {% for post in posts %}
-                            <a href="{{ url_for('student.view_post', post_id=post.id) }}" class="list-group-item list-group-item-action bg-dark">
+                            <a href="{{ url_for('student.view_post', post_id=post.id) }}" class="list-group-item list-group-item-action p-2">
                                 <div class="d-flex w-100 justify-content-between">
                                     <h6 class="mb-1">{{ post.title }}</h6>
-                                    <small>{{ post.created_at.strftime('%Y-%m-%d') }}</small>
+                                    <small><i class="fas fa-calendar me-1"></i>{{ post.created_at.strftime('%Y-%m-%d') }}</small>
                                 </div>
-                                <p class="mb-1">
-                                    {{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}
+                                <p class="mb-1 small">
+                                    {{ post.content[:80] }}{% if post.content|length > 80 %}...{% endif %}
                                 </p>
                             </a>
                         {% endfor %}
                     </div>
                 {% else %}
-                    <div class="alert alert-info">
+                    <div class="alert alert-info m-3">
                         <i class="fas fa-info-circle me-2"></i>لا توجد منشورات متاحة حالياً.
                     </div>
                 {% endif %}
             </div>
         </div>
 
-        <div class="card bg-dark">
+        <!-- Educational Tips -->
+        <div class="card card-hover">
             <div class="card-header">
                 <h5><i class="fas fa-lightbulb me-2"></i>نصائح تعليمية</h5>
             </div>
-            <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item bg-dark">حدد جدولاً منتظماً للدراسة</li>
-                    <li class="list-group-item bg-dark">دوّن ملاحظات أثناء مشاهدة الفيديوهات</li>
-                    <li class="list-group-item bg-dark">شارك بفاعلية من خلال التعليقات</li>
-                    <li class="list-group-item bg-dark">طبق ما تتعلمه في الواقع العملي</li>
-                </ul>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex align-items-center p-2">
+                        <i class="fas fa-calendar-check me-3 text-primary"></i>
+                        <span>حدد جدولاً منتظماً للدراسة</span>
+                    </div>
+                    <div class="list-group-item d-flex align-items-center p-2">
+                        <i class="fas fa-pencil-alt me-3 text-success"></i>
+                        <span>دوّن ملاحظات أثناء مشاهدة الفيديوهات</span>
+                    </div>
+                    <div class="list-group-item d-flex align-items-center p-2">
+                        <i class="fas fa-comments me-3 text-warning"></i>
+                        <span>شارك بفاعلية من خلال التعليقات</span>
+                    </div>
+                    <div class="list-group-item d-flex align-items-center p-2">
+                        <i class="fas fa-puzzle-piece me-3 text-info"></i>
+                        <span>طبق ما تتعلمه في الواقع العملي</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

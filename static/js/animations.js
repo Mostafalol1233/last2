@@ -1,8 +1,8 @@
 /**
- * Subtle animations and effects
+ * Enhanced animations and effects
  * 
- * This script adds minimal animations to improve user experience
- * without being distracting or flashy.
+ * This script adds smooth animations to improve user experience
+ * with eye-friendly transitions and effects.
  */
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -25,21 +25,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Simple button hover effect (no ripple)
-    document.querySelectorAll('.btn-primary').forEach(button => {
-        // Replace bright colors with more subtle ones
-        button.classList.remove('btn-primary');
-        button.classList.add('btn-outline-primary');
-    });
-    
-    document.querySelectorAll('.btn-danger').forEach(button => {
-        button.classList.remove('btn-danger');
-        button.classList.add('btn-outline-danger');
-    });
-    
-    document.querySelectorAll('.btn-success').forEach(button => {
-        button.classList.remove('btn-success');
-        button.classList.add('btn-outline-success');
+    // Enhance card animations
+    document.querySelectorAll('.card.card-hover').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.15)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+        });
     });
     
     // Improve initialization of form inputs
@@ -51,21 +47,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 label.classList.add('active');
             }
         }
-    });
-    
-    // Simple card hover effect
-    document.querySelectorAll('.card').forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-            this.style.transition = 'box-shadow 0.2s ease';
+        
+        // Add focus animations
+        input.addEventListener('focus', function() {
+            this.style.borderLeft = '4px solid var(--primary-color)';
+            this.style.transform = 'translateX(5px)';
         });
         
-        card.addEventListener('mouseleave', function() {
-            this.style.boxShadow = '';
+        input.addEventListener('blur', function() {
+            if (!this.value) {
+                this.style.borderLeft = '4px solid transparent';
+                this.style.transform = 'translateX(0)';
+            }
         });
     });
     
-    // Smooth scroll for anchors - keep this useful feature
+    // Smooth scroll for anchors
     document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -81,47 +78,89 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Add subtle styles without overwhelming animations
+    // Add scroll animations for elements
+    const animateOnScroll = function() {
+        const elements = document.querySelectorAll('.card, .dashboard-stats');
+        
+        elements.forEach(element => {
+            // Check if element is visible
+            const elementTop = element.getBoundingClientRect().top;
+            const elementVisible = 150;
+            
+            if (elementTop < window.innerHeight - elementVisible) {
+                element.classList.add('animated');
+            }
+        });
+    };
+    
+    // Add animation class on scroll
+    window.addEventListener('scroll', animateOnScroll);
+    
+    // Run once on page load
+    animateOnScroll();
+    
+    // Theme toggle functionality if exists
+    const themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            const html = document.querySelector('html');
+            if (html.getAttribute('data-bs-theme') === 'dark') {
+                html.setAttribute('data-bs-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                this.innerHTML = '<i class="fas fa-moon"></i>';
+            } else {
+                html.setAttribute('data-bs-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                this.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+        });
+        
+        // Set initial theme based on user preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.querySelector('html').setAttribute('data-bs-theme', savedTheme);
+            themeToggle.innerHTML = savedTheme === 'dark' ? 
+                '<i class="fas fa-sun"></i>' : 
+                '<i class="fas fa-moon"></i>';
+        }
+    }
+    
+    // Add custom styles
     const style = document.createElement('style');
     style.textContent = `
-        /* Use more subdued colors for interactive elements */
-        .btn-outline-primary {
-            color: #3d6bb3;
-            border-color: #3d6bb3;
-        }
-        .btn-outline-primary:hover {
-            background-color: #3d6bb3;
-            color: white;
-        }
-        
-        .btn-outline-danger {
-            color: #b45252;
-            border-color: #b45252;
-        }
-        .btn-outline-danger:hover {
-            background-color: #b45252;
-            color: white;
+        /* Animation classes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
-        .btn-outline-success {
-            color: #4e8d7c;
-            border-color: #4e8d7c;
-        }
-        .btn-outline-success:hover {
-            background-color: #4e8d7c;
-            color: white;
+        .animated {
+            animation: fadeInUp 0.6s ease-out forwards;
         }
         
-        /* Subtle transition for all buttons */
-        .btn {
-            transition: all 0.2s ease;
-        }
-        
-        /* Add active label styling */
+        /* Active label styling */
         label.active {
             transform: translateY(-20px);
             font-size: 0.85em;
-            color: #6c757d;
+            color: var(--primary-color);
+        }
+        
+        /* List group hover effects */
+        .list-group-item {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .list-group-item:hover {
+            background-color: rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary-color);
+            transform: translateX(5px);
         }
     `;
     document.head.appendChild(style);

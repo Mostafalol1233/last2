@@ -13,9 +13,6 @@
     }
   ],
   "env": {
-    "PYTHONPATH": ".",
-    "FLASK_DEBUG": "0",
-    "FLASK_ENV": "production"
-  },
-  "buildCommand": "pip install -r requirements.txt && python vercel_setup.py"
+    "PYTHONUNBUFFERED": "1"
+  }
 }

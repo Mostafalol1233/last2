@@ -8,7 +8,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse
 from werkzeug.utils import secure_filename
-from app import db
+from app import db, app
 from models import User, Video, Comment, Post, VideoView, LectureCode, VideoLike, StudentNote, AIChatMessage, DirectMessage, PointTransfer
 from forms import (
     LoginForm, VideoUploadForm, VideoEditForm, PostForm, CommentForm, RegistrationForm,
@@ -23,6 +23,11 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 main_bp = Blueprint('main', __name__)
 admin_bp = Blueprint('admin', __name__)
 student_bp = Blueprint('student', __name__)
+
+# Context processor to provide current date and time to all templates
+@app.context_processor
+def inject_now():
+    return {'now': datetime.now()}
 
 # Helper functions
 def save_video_file(file):
