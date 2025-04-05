@@ -62,16 +62,16 @@
                         </div>
 
                         <div class="form-group">
-                            {{ form.price.label(class="form-control-label") }}
-                            {% if form.price.errors %}
-                                {{ form.price(class="form-control is-invalid") }}
+                            {{ form.points_cost.label(class="form-control-label") }}
+                            {% if form.points_cost.errors %}
+                                {{ form.points_cost(class="form-control is-invalid") }}
                                 <div class="invalid-feedback">
-                                    {% for error in form.price.errors %}
+                                    {% for error in form.points_cost.errors %}
                                         <span>{{ error }}</span>
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                {{ form.price(class="form-control") }}
+                                {{ form.points_cost(class="form-control") }}
                             {% endif %}
                         </div>
 
