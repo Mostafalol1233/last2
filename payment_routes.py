@@ -158,7 +158,9 @@ def admin_create_plan():
         )
         
         # Set features from form data
-        features = form.features.data.split('\n')
+        features = []
+        if form.features.data:
+            features = form.features.data.split('\n')
         plan.set_features([f for f in features if f.strip()])
         
         db.session.add(plan)
@@ -191,7 +193,9 @@ def admin_edit_plan(plan_id):
         plan.duration_days = form.duration_days.data
         
         # Set features from form data
-        features = form.features.data.split('\n')
+        features = []
+        if form.features.data:
+            features = form.features.data.split('\n')
         plan.set_features([f for f in features if f.strip()])
         
         db.session.commit()
