@@ -1,29 +1,28 @@
 
 document.addEventListener('DOMContentLoaded', function() {
-    // تحسين معالجة رسائل "جاري المعالجة"
+    // تعطيل جميع رسائل "جاري المعالجة"
     const loadingMessages = document.querySelectorAll('.loading-message');
     loadingMessages.forEach(msg => {
         msg.style.display = 'none';
     });
 
-    // معالجة نماذج توليد الأكواد
-    const codeGenForms = document.querySelectorAll('form[action*="generate_lecture_code"]');
-    codeGenForms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            const submitBtn = form.querySelector('button[type="submit"]');
-            if (submitBtn) {
-                submitBtn.disabled = false;
-            }
-        });
+    // تمكين جميع الأزرار في النماذج
+    const allForms = document.querySelectorAll('form');
+    allForms.forEach(form => {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('disabled');
+        }
     });
 
-    // معالجة نماذج الاختبارات
-    const testForms = document.querySelectorAll('form[action*="/tests/"]');
-    testForms.forEach(form => {
+    // إعادة تمكين النموذج بعد الإرسال
+    document.querySelectorAll('form').forEach(form => {
         form.addEventListener('submit', function(e) {
-            const submitBtn = form.querySelector('button[type="submit"]');
+            const submitBtn = this.querySelector('button[type="submit"]');
             if (submitBtn) {
                 submitBtn.disabled = false;
+                submitBtn.classList.remove('disabled');
             }
         });
     });
