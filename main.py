@@ -20,7 +20,10 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "ahmed-helly-educational-platform-secret-key")
 
 # تكوين قاعدة البيانات
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///instance/app.db")
+# استخدام SQLite مع مسار مطلق في مجلد قابل للكتابة
+db_path = os.path.join(os.getcwd(), 'app.db')
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+    
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
@@ -86,11 +89,8 @@ with app.app_context():
 
 def check_if_first_run():
     """Check if this is the first run by checking if an indicator file exists"""
-    indicator_file = 'instance/first_run_complete.txt'
+    indicator_file = os.path.join(os.getcwd(), 'first_run_complete.txt')
     if not os.path.exists(indicator_file):
-        # Create the directory if it doesn't exist
-        os.makedirs(os.path.dirname(indicator_file), exist_ok=True)
-        
         try:
             # Try to import and run the create_test function
             from create_test import create_sample_test
