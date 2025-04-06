@@ -51,14 +51,6 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "mkdir -p instance && chmod 777 instance"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python create_users.py"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
 args = "gunicorn --workers 3 --timeout 120 --bind 0.0.0.0:5000 --reload main:app"
 
 [[ports]]
