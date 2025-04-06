@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}سجل الاختبارات{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">سجل الاختبارات المكتملة</h3>
+                </div>
+                <div class="card-body">
+                    {% if attempts %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>اسم الاختبار</th>
+                                        <th>النتيجة</th>
+                                        <th>الحالة</th>
+                                        <th>تاريخ الإكمال</th>
+                                        <th>الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for attempt in attempts %}
+                                        <tr>
+                                            <td>{{ loop.index }}</td>
+                                            <td>{{ tests[attempt.test_id].title }}</td>
+                                            <td>{{ "%.1f"|format(attempt.score if attempt.score else 0) }}%</td>
+                                            <td>
+                                                {% if attempt.passed %}
+                                                    <span class="badge bg-success">ناجح</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">راسب</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if attempt.completed_at %}
+                                                    {{ attempt.completed_at.strftime('%Y-%m-%d %H:%M') }}
+                                                {% else %}
+                                                    {{ attempt.started_at.strftime('%Y-%m-%d %H:%M') }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('student_tests.test_results', attempt_id=attempt.id) }}" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-chart-bar"></i> عرض النتائج
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4>ملخص حسب الاختبار</h4>
+                            <div class="row">
+                                {% for test_id, test_attempts in attempts_by_test.items() %}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">{{ tests[test_id].title }}</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <p><strong>عدد المحاولات:</strong> {{ test_attempts|length }}</p>
+                                                
+                                                {% set passed_count = 0 %}
+                                                {% set best_score = 0 %}
+                                                {% for attempt in test_attempts %}
+                                                    {% if attempt.passed %}
+                                                        {% set passed_count = passed_count + 1 %}
+                                                    {% endif %}
+                                                    {% if attempt.score and attempt.score > best_score %}
+                                                        {% set best_score = attempt.score %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                
+                                                <p><strong>المحاولات الناجحة:</strong> {{ passed_count }} من {{ test_attempts|length }}</p>
+                                                <p><strong>أفضل نتيجة:</strong> {{ "%.1f"|format(best_score) }}%</p>
+                                                
+                                                <div class="progress">
+                                                    <div class="progress-bar bg-success" role="progressbar" 
+                                                        style="width: {{ best_score }}%;" 
+                                                        aria-valuenow="{{ best_score }}" aria-valuemin="0" aria-valuemax="100">
+                                                        {{ "%.1f"|format(best_score) }}%
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            لم تكمل أي اختبارات حتى الآن. قم بأداء اختبار لعرض نتائجك هنا.
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mt-3">
+                        <a href="{{ url_for('student_tests.available_tests') }}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> العودة إلى الاختبارات المتاحة
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

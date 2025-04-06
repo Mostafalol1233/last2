@@ -611,7 +611,7 @@ def admin_test_results(test_id):
 # Student Routes #
 #################
 
-@student_tests.route('/student/tests')
+@student_tests.route('/')
 @login_required
 def available_tests():
     """عرض الاختبارات المتاحة للطالب"""
@@ -644,7 +644,7 @@ def available_tests():
         completed_attempts=completed_attempts[:10]  # آخر 10 محاولات مكتملة فقط
     )
 
-@student_tests.route('/tests/<int:test_id>/start')
+@student_tests.route('/<int:test_id>/start')
 @login_required
 def start_test(test_id):
     """بدء اختبار جديد"""
@@ -822,7 +822,7 @@ def test_results(attempt_id):
         answers_by_question=answers_by_question
     )
 
-@student_tests.route('/tests/history')
+@student_tests.route('/history')
 @login_required
 def test_history():
     """عرض سجل محاولات الاختبارات للطالب"""
