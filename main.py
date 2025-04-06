@@ -1,20 +1,7 @@
 
 import os
+from app import app, db
 import logging
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-from sqlalchemy.orm import DeclarativeBase
-
-# تكوين التسجيل
-logging.basicConfig(level=logging.INFO)
-
-# إنشاء قاعدة بيانات فلاسك
-class Base(DeclarativeBase):
-    pass
-
-db = SQLAlchemy(model_class=Base)
-app = Flask(__name__)
 
 # تكوين السر
 app.secret_key = os.environ.get("SESSION_SECRET", "ahmed-helly-educational-platform-secret-key")
