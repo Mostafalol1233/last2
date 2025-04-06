@@ -48,6 +48,11 @@
                                                 <a href="{{ url_for('student_tests.test_results', attempt_id=attempt.id) }}" class="btn btn-sm btn-primary">
                                                     <i class="fas fa-chart-bar"></i> عرض النتائج
                                                 </a>
+                                                {% if not attempt.passed %}
+                                                <a href="{{ url_for('student_tests.request_retry', test_id=attempt.test_id) }}" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-redo"></i> طلب محاولة إضافية
+                                                </a>
+                                                {% endif %}
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -108,7 +113,107 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- طلبات المحاولة الإضافية -->
+            {% if retry_requests %}
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="card-title mb-0">طلبات المحاولة الإضافية</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>الاختبار</th>
+                                    <th>تاريخ الطلب</th>
+                                    <th>الحالة</th>
+                                    <th>رد المشرف</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for request in retry_requests %}
+                                <tr>
+                                    <td>{{ request.test.title }}</td>
+                                    <td>{{ request.request_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>
+                                        {% if request.status == 'pending' %}
+                                        <span class="badge bg-warning">قيد الانتظار</span>
+                                        {% elif request.status == 'approved' %}
+                                        <span class="badge bg-success">تمت الموافقة</span>
+                                        {% elif request.status == 'rejected' %}
+                                        <span class="badge bg-danger">مرفوض</span>
+                                        {% elif request.status == 'used' %}
+                                        <span class="badge bg-info">تم استخدامه</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">{{ request.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if request.status == 'pending' %}
+                                        <span class="text-muted">لم يتم الرد بعد</span>
+                                        {% else %}
+                                        <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#responseModal{{ request.id }}">
+                                            عرض الرد
+                                        </button>
+                                        
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="responseModal{{ request.id }}" tabindex="-1" aria-labelledby="responseModalLabel{{ request.id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="responseModalLabel{{ request.id }}">رد المشرف على الطلب</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p><strong>الحالة:</strong> 
+                                                            {% if request.status == 'approved' %}
+                                                            <span class="badge bg-success">تمت الموافقة</span>
+                                                            {% elif request.status == 'rejected' %}
+                                                            <span class="badge bg-danger">مرفوض</span>
+                                                            {% elif request.status == 'used' %}
+                                                            <span class="badge bg-info">تم استخدامه</span>
+                                                            {% endif %}
+                                                        </p>
+                                                        <p><strong>رد المشرف:</strong></p>
+                                                        <div class="alert alert-light">
+                                                            {{ request.admin_response or 'لم يتم تقديم رد مفصل.' }}
+                                                        </div>
+                                                        
+                                                        {% if request.status == 'approved' %}
+                                                        <div class="text-center mt-3">
+                                                            <a href="{{ url_for('student_tests.start_test', test_id=request.test_id) }}" class="btn btn-success">
+                                                                بدء المحاولة الإضافية
+                                                            </a>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+});
+</script>
 {% endblock %}

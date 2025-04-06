@@ -297,3 +297,25 @@ class TestTakingForm(FlaskForm):
     """Form for taking a test (includes hidden fields for test_id)"""
     test_id = HiddenField('معرف الاختبار', validators=[DataRequired()])
     submit = SubmitField('بدء الاختبار')
+    
+class TestRetryRequestForm(FlaskForm):
+    """نموذج لطلب محاولة إضافية للاختبار"""
+    test_id = HiddenField('معرف الاختبار', validators=[DataRequired()])
+    reason = TextAreaField('سبب طلب المحاولة الإضافية', validators=[
+        DataRequired(message='يرجى ذكر سبب طلب المحاولة الإضافية'),
+        Length(min=10, max=500, message='يجب أن يكون السبب بين 10 و 500 حرف')
+    ])
+    submit = SubmitField('إرسال الطلب')
+    
+class TestRetryResponseForm(FlaskForm):
+    """نموذج للرد على طلب محاولة إضافية للاختبار"""
+    request_id = HiddenField('معرف الطلب', validators=[DataRequired()])
+    admin_response = TextAreaField('الرد على الطلب', validators=[
+        DataRequired(message='يرجى كتابة الرد على الطلب'),
+        Length(min=5, max=500, message='يجب أن يكون الرد بين 5 و 500 حرف')
+    ])
+    status = SelectField('القرار', choices=[
+        ('approved', 'الموافقة على الطلب'),
+        ('rejected', 'رفض الطلب')
+    ], validators=[DataRequired(message='يرجى اختيار القرار')])
+    submit = SubmitField('إرسال الرد')

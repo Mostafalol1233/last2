@@ -432,3 +432,25 @@ class TestAnswer(db.Model):
     
     def __repr__(self):
         return f'<TestAnswer {self.id} for Question {self.question_id} in Attempt {self.attempt_id}>'
+        
+class TestRetryRequest(db.Model):
+    """نموذج لتتبع طلبات الطلاب لإعادة المحاولة في الاختبارات"""
+    __tablename__ = 'test_retry_requests'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    test_id = db.Column(db.Integer, db.ForeignKey('tests.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    request_date = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='pending')  # pending, approved, rejected
+    reason = db.Column(db.Text, nullable=True)  # سبب طلب المحاولة الإضافية
+    admin_response = db.Column(db.Text, nullable=True)  # رد المشرف على الطلب
+    response_date = db.Column(db.DateTime, nullable=True)  # تاريخ الرد
+    responded_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # المشرف الذي رد على الطلب
+    
+    # Relationships
+    test = db.relationship('Test', foreign_keys=[test_id])
+    user = db.relationship('User', foreign_keys=[user_id], backref=db.backref('retry_requests', lazy='dynamic'))
+    admin = db.relationship('User', foreign_keys=[responded_by])
+    
+    def __repr__(self):
+        return f'<TestRetryRequest {self.id} for Test {self.test_id}, User {self.user_id}, Status: {self.status}>'

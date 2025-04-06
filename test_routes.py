@@ -18,14 +18,16 @@ from pypdf import PdfReader
 import docx
 
 from app import db, app
-from models import Test, TestQuestion, QuestionChoice, TestAttempt, TestAnswer
+from models import Test, TestQuestion, QuestionChoice, TestAttempt, TestAnswer, TestRetryRequest, User
 from forms import (
     TestCreateForm as TestForm, 
     TestQuestionForm, 
     QuestionChoiceForm, 
     TestAnswerForm, 
     TestAttemptForm, 
-    TestTakingForm
+    TestTakingForm,
+    TestRetryRequestForm,
+    TestRetryResponseForm
 )
 
 # تحديد الأنماط للإجابات المحتملة
@@ -248,6 +250,66 @@ student_tests = Blueprint('student_tests', __name__)
 #################
 # Admin Routes #
 #################
+
+@admin_tests.route('/admin/retry_requests')
+@login_required
+def retry_requests():
+    """عرض طلبات المحاولة الإضافية للاختبارات"""
+    if not current_user.is_admin():
+        flash('ليس لديك صلاحية للوصول إلى هذه الصفحة', 'danger')
+        return redirect(url_for('home'))
+    
+    # جلب جميع طلبات المحاولة الإضافية مع بيانات الاختبار والطالب
+    pending_requests = TestRetryRequest.query.filter_by(status='pending').order_by(TestRetryRequest.request_date.desc()).all()
+    responded_requests = TestRetryRequest.query.filter(TestRetryRequest.status != 'pending').order_by(TestRetryRequest.response_date.desc()).limit(20).all()
+    
+    return render_template(
+        'admin/retry_requests.html',
+        pending_requests=pending_requests,
+        responded_requests=responded_requests
+    )
+
+@admin_tests.route('/admin/retry_requests/<int:request_id>/respond', methods=['GET', 'POST'])
+@login_required
+def respond_retry_request(request_id):
+    """الرد على طلب محاولة إضافية للاختبار"""
+    if not current_user.is_admin():
+        flash('ليس لديك صلاحية للوصول إلى هذه الصفحة', 'danger')
+        return redirect(url_for('home'))
+    
+    retry_request = TestRetryRequest.query.get_or_404(request_id)
+    
+    # التحقق من حالة الطلب
+    if retry_request.status != 'pending':
+        flash('تم الرد على هذا الطلب بالفعل.', 'info')
+        return redirect(url_for('admin_tests.retry_requests'))
+    
+    # جلب معلومات الاختبار والطالب
+    test = Test.query.get_or_404(retry_request.test_id)
+    student = User.query.get_or_404(retry_request.user_id)
+    
+    form = TestRetryResponseForm()
+    form.request_id.data = request_id
+    
+    if form.validate_on_submit():
+        # تحديث حالة الطلب
+        retry_request.status = form.status.data
+        retry_request.admin_response = form.admin_response.data
+        retry_request.response_date = datetime.utcnow()
+        retry_request.responded_by = current_user.id
+        
+        db.session.commit()
+        
+        flash('تم الرد على طلب المحاولة الإضافية بنجاح.', 'success')
+        return redirect(url_for('admin_tests.retry_requests'))
+    
+    return render_template(
+        'admin/respond_retry_request.html',
+        retry_request=retry_request,
+        test=test,
+        student=student,
+        form=form
+    )
 
 @admin_tests.route('/admin/tests')
 @login_required
@@ -718,6 +780,30 @@ def start_test(test_id):
         # استئناف المحاولة الموجودة
         return redirect(url_for('student_tests.take_test', attempt_id=existing_attempt.id))
     
+    # التحقق من وجود محاولة سابقة مكتملة لهذا الاختبار
+    completed_attempts = TestAttempt.query.filter_by(
+        test_id=test_id,
+        user_id=current_user.id,
+        completed_at=db.cast(db.literal(True), db.Boolean)  # completed_at NOT NULL
+    ).count()
+    
+    # التحقق من وجود طلب محاولة إضافية معتمد للطالب
+    approved_retry_request = TestRetryRequest.query.filter_by(
+        test_id=test_id,
+        user_id=current_user.id,
+        status='approved'
+    ).first()
+    
+    # إذا كان الطالب لديه محاولة مكتملة ولم يحصل على موافقة لمحاولة إضافية
+    if completed_attempts > 0 and not approved_retry_request:
+        flash('لقد أنهيت هذا الاختبار مسبقًا. يمكنك طلب محاولة إضافية من المشرف.', 'warning')
+        return redirect(url_for('student_tests.request_retry', test_id=test_id))
+    
+    # استخدام طلب المحاولة الإضافية إذا كان موجودًا (بتعيين حالته إلى "used")
+    if approved_retry_request:
+        approved_retry_request.status = 'used'
+        db.session.commit()
+    
     # إنشاء محاولة جديدة
     attempt = TestAttempt(
         test_id=test_id,
@@ -936,11 +1022,85 @@ def test_history():
     tests = Test.query.filter(Test.id.in_(test_ids)).all()
     tests_dict = {test.id: test for test in tests}
     
+    # جلب طلبات المحاولات الإضافية الحالية
+    retry_requests = TestRetryRequest.query.filter_by(
+        user_id=current_user.id
+    ).order_by(TestRetryRequest.request_date.desc()).all()
+    
     return render_template(
         'student/test_history.html',
         attempts=attempts,
         attempts_by_test=attempts_by_test,
-        tests=tests_dict
+        tests=tests_dict,
+        retry_requests=retry_requests
+    )
+    
+@student_tests.route('/<int:test_id>/request_retry', methods=['GET', 'POST'])
+@login_required
+def request_retry(test_id):
+    """طلب محاولة إضافية للاختبار"""
+    if current_user.is_admin():
+        flash('هذه الصفحة مخصصة للطلاب فقط.', 'warning')
+        return redirect(url_for('admin.dashboard'))
+    
+    test = Test.query.get_or_404(test_id)
+    
+    # التحقق من أن الطالب قد أنهى اختبارًا سابقًا بالفعل
+    completed_attempt = TestAttempt.query.filter_by(
+        test_id=test_id,
+        user_id=current_user.id,
+        completed_at=db.cast(db.literal(True), db.Boolean)  # completed_at NOT NULL
+    ).first()
+    
+    if not completed_attempt:
+        flash('لم تقم بإجراء هذا الاختبار بعد. يجب عليك إكمال الاختبار أولاً قبل طلب محاولة إضافية.', 'warning')
+        return redirect(url_for('student_tests.available_tests'))
+    
+    # التحقق من وجود طلب قيد الانتظار
+    pending_request = TestRetryRequest.query.filter_by(
+        test_id=test_id,
+        user_id=current_user.id,
+        status='pending'
+    ).first()
+    
+    if pending_request:
+        flash('لديك بالفعل طلب محاولة إضافية قيد الانتظار لهذا الاختبار.', 'info')
+        return redirect(url_for('student_tests.test_history'))
+    
+    # التحقق من وجود طلب معتمد
+    approved_request = TestRetryRequest.query.filter_by(
+        test_id=test_id,
+        user_id=current_user.id,
+        status='approved'
+    ).first()
+    
+    if approved_request:
+        flash('تمت الموافقة على طلب محاولة إضافية لهذا الاختبار بالفعل. يمكنك بدء الاختبار الآن.', 'success')
+        return redirect(url_for('student_tests.start_test', test_id=test_id))
+    
+    form = TestRetryRequestForm()
+    form.test_id.data = test_id
+    
+    if form.validate_on_submit():
+        # إنشاء طلب محاولة إضافية
+        retry_request = TestRetryRequest(
+            test_id=test_id,
+            user_id=current_user.id,
+            reason=form.reason.data,
+            request_date=datetime.utcnow(),
+            status='pending'
+        )
+        db.session.add(retry_request)
+        db.session.commit()
+        
+        flash('تم إرسال طلب المحاولة الإضافية بنجاح. سيتم إعلامك بالرد قريبًا.', 'success')
+        return redirect(url_for('student_tests.test_history'))
+    
+    return render_template(
+        'student/request_retry.html',
+        test=test,
+        form=form,
+        completed_attempt=completed_attempt
     )
 @admin_tests.route('/admin/tests/create_manual', methods=['GET', 'POST'])
 @login_required
