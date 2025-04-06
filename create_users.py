@@ -1,5 +1,5 @@
 
-from app import app, db
+from main import app, db
 from models import User
 
 def create_default_users():
