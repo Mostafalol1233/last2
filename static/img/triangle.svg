@@ -1,31 +1,9 @@
 <svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
-    <style>
-        .axis { stroke: #777; stroke-width: 1; }
-        .triangle { stroke: #007bff; stroke-width: 2; fill: rgba(0, 123, 255, 0.1); }
-        .label { font-family: Arial, sans-serif; font-size: 14px; text-anchor: middle; }
-        .small-label { font-family: Arial, sans-serif; font-size: 12px; }
-        .right-angle { stroke: #007bff; stroke-width: 1; fill: none; }
-        .dimension { stroke: #777; stroke-dasharray: 4 2; stroke-width: 1; }
-    </style>
-    
-    <!-- Triangle -->
-    <polygon points="50,150 50,30 170,150" class="triangle" />
-    
-    <!-- Right angle symbol -->
-    <path d="M 65,135 L 65,150 L 50,150" class="right-angle" />
-    
-    <!-- Labels -->
-    <text x="40" y="90" class="label">a = 3</text>
-    <text x="110" y="165" class="label">b = 4</text>
-    <text x="110" y="80" class="label">c = ?</text>
-    
-    <!-- Vertex labels -->
-    <text x="45" y="155" class="small-label" text-anchor="end">A</text>
-    <text x="45" y="25" class="small-label" text-anchor="end">B</text>
-    <text x="175" y="155" class="small-label">C</text>
-    
-    <!-- Dimensions -->
-    <line x1="50" y1="30" x2="50" y2="150" class="dimension" />
-    <line x1="50" y1="150" x2="170" y2="150" class="dimension" />
-    <line x1="50" y1="30" x2="170" y2="150" class="dimension" />
+  <polygon points="10,190 10,40 210,190" fill="none" stroke="black" stroke-width="3"/>
+  <line x1="10" y1="190" x2="35" y2="165" stroke="black" stroke-width="1"/>
+  <line x1="35" y1="165" x2="35" y2="190" stroke="black" stroke-width="1"/>
+  <line x1="35" y1="190" x2="10" y2="190" stroke="black" stroke-width="1"/>
+  <text x="100" y="125" font-family="Arial" font-size="24" fill="black">c</text>
+  <text x="5" y="110" font-family="Arial" font-size="24" fill="black">a = 3</text>
+  <text x="110" y="190" font-family="Arial" font-size="24" fill="black">b = 4</text>
 </svg>

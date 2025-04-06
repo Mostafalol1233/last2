@@ -32,6 +32,16 @@
                                 <i class="fas fa-users"></i> قائمة المستخدمين
                             </a>
                         </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{{ url_for('admin.manage_tests') }}" class="btn btn-danger btn-block">
+                                <i class="fas fa-clipboard-list"></i> إدارة الاختبارات
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{{ url_for('admin.transfer_points') }}" class="btn btn-success btn-block">
+                                <i class="fas fa-exchange-alt"></i> تحويل النقاط
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -82,10 +92,13 @@
                                             <i class="fa fa-edit"></i> تعديل
                                         </a>
                                         {% if video.requires_code %}
+                                            <a href="{{ url_for('admin.generate_codes', video_id=video.id) }}" class="btn btn-sm btn-warning">
+                                                <i class="fa fa-key"></i> إدارة الأكواد
+                                            </a>
                                             <form method="POST" action="{{ url_for('admin.create_lecture_code', video_id=video.id) }}" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <button type="submit" class="btn btn-sm btn-warning">
-                                                    <i class="fa fa-key"></i> توليد كود
+                                                    <i class="fa fa-key"></i> توليد كود سريع
                                                 </button>
                                             </form>
                                         {% endif %}

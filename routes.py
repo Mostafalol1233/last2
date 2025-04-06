@@ -1368,20 +1368,39 @@ def transfer_points():
     transfers = PointTransfer.query.order_by(PointTransfer.created_at.desc()).all()
     return render_template('admin/transfer_points.html', form=form, transfers=transfers)
 
-@admin_bp.route('/reset_all_points', methods=['POST'])
+@login_required
+@admin_bp.route('/reset_all_points', methods=['GET', 'POST'])
 @login_required
 def reset_all_points():
     if not current_user.is_admin():
         abort(403)
     try:
+        # Reset points for all students
+        students = User.query.filter_by(role='student').all()
+        for student in students:
+            student.points = 0
+        db.session.commit()
+        flash('تم تصفير نقاط جميع الطلاب بنجاح', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('حدث خطأ أثناء تصفير النقاط', 'danger')
+        print(f"Error resetting points: {str(e)}")
+    return redirect(url_for('admin.users_list'))
+
+@admin_bp.route('/reset_student_points/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def reset_student_points(user_id):
+    if not current_user.is_admin():
+        abort(403)
+    try:
         # Reset points for specific student
-        student = User.query.filter_by(username='student1').first()
-        if student:
+        student = User.query.get_or_404(user_id)
+        if student.role == 'student':
             student.points = 0
             db.session.commit()
-            flash(f'تم تصفير نقاط الطالب {student.username} بنجاح', 'success')
+            flash(f'تم تصفير نقاط الطالب {student.full_name} بنجاح', 'success')
         else:
-            flash('لم يتم العثور على الطالب', 'danger')
+            flash('يمكن تصفير نقاط الطلاب فقط', 'warning')
     except Exception as e:
         db.session.rollback()
         flash('حدث خطأ أثناء تصفير النقاط', 'danger')
@@ -1902,46 +1921,55 @@ def available_tests():
 def start_test(test_id):
     """Start a new test attempt"""
     if current_user.is_admin():
+        flash('هذه الصفحة مخصصة للطلاب فقط.', 'warning')
         return redirect(url_for('admin.dashboard'))
         
     test = Test.query.get_or_404(test_id)
-
-    # Allow test access regardless of status
-    attempt = TestAttempt(
-        test_id=test_id,
-        user_id=current_user.id,
-        started_at=datetime.utcnow()
-    )
-    db.session.add(attempt)
-    db.session.commit()
     
-    return redirect(url_for('student.take_test', attempt_id=attempt.id))
-
-    # Check if there's already an in-progress attempt
-    existing_attempt = TestAttempt.query.filter_by(
-        test_id=test_id,
-        user_id=current_user.id,
-        completed_at=None
-    ).first()
-
-    if existing_attempt:
-        # Resume existing attempt
-        return redirect(url_for('student.take_test', attempt_id=existing_attempt.id))
-
-    # Start new attempt
-    form = TestAttemptForm()
-
-    if form.validate_on_submit():
-        # Create new attempt
+    # Check if the test is active
+    if not test.is_active:
+        flash('هذا الاختبار غير متاح حاليًا.', 'warning')
+        return redirect(url_for('student.available_tests'))
+    
+    form = TestTakingForm()
+    
+    if request.method == 'POST':
+        # Check if there's already an in-progress attempt
+        existing_attempt = TestAttempt.query.filter_by(
+            test_id=test_id,
+            user_id=current_user.id,
+            completed_at=None
+        ).first()
+        
+        if existing_attempt:
+            # Resume existing attempt
+            flash('لديك محاولة غير مكتملة لهذا الاختبار، يمكنك استكمالها الآن.', 'info')
+            return redirect(url_for('student.take_test', attempt_id=existing_attempt.id))
+        
+        # Create a new attempt
         attempt = TestAttempt(
             test_id=test_id,
-            user_id=current_user.id
+            user_id=current_user.id,
+            started_at=datetime.utcnow()
         )
         db.session.add(attempt)
         db.session.commit()
-
+        
+        # Create empty answers for all test questions
+        questions = TestQuestion.query.filter_by(test_id=test_id).all()
+        for question in questions:
+            answer = TestAnswer(
+                attempt_id=attempt.id,
+                question_id=question.id
+            )
+            db.session.add(answer)
+        
+        db.session.commit()
+        
+        flash('تم بدء الاختبار. ستظهر لك الأسئلة الآن. أحسن استخدام وقت الاختبار!', 'info')
         return redirect(url_for('student.take_test', attempt_id=attempt.id))
-
+    
+    # Show test details before starting
     return render_template('student/start_test.html', test=test, form=form)
 
 @student_bp.route('/attempt/<int:attempt_id>/take', methods=['GET', 'POST'])
