@@ -7,7 +7,8 @@
     <div class="card">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h3 class="mb-0">قائمة المستخدمين</h3>
-            <form action="{{ url_for('admin.reset_all_points') }}" method="POST" onsubmit="return confirm('هل أنت متأكد من تصفير نقاط جميع الطلاب؟');">
+            <form method="POST" action="{{ url_for('admin.reset_all_points') }}" onsubmit="return confirm('هل أنت متأكد من تصفير نقاط جميع الطلاب؟');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn btn-danger">تصفير نقاط جميع الطلاب</button>
             </form>
         </div>

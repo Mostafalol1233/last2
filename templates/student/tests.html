@@ -11,44 +11,44 @@
         margin-bottom: 20px;
         border: none;
     }
-    
+
     .test-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 15px rgba(0,0,0,0.2);
     }
-    
+
     .test-card .card-header {
         border-radius: 10px 10px 0 0;
         padding: 15px;
     }
-    
+
     .test-card .card-body {
         padding: 20px;
     }
-    
+
     .test-badge {
         margin-right: 5px;
     }
-    
+
     .attempts-list {
         margin-top: 15px;
     }
-    
+
     .attempt-item {
         padding: 10px;
         border-radius: 5px;
         margin-bottom: 8px;
     }
-    
+
     .attempt-item:last-child {
         margin-bottom: 0;
     }
-    
+
     .attempt-date {
         font-size: 0.8rem;
         color: #6c757d;
     }
-    
+
     .test-stats {
         display: flex;
         justify-content: space-between;
@@ -56,17 +56,17 @@
         padding-top: 15px;
         border-top: 1px solid #eee;
     }
-    
+
     .test-stat-item {
         text-align: center;
     }
-    
+
     .test-stat-value {
         font-size: 1.2rem;
         font-weight: bold;
         display: block;
     }
-    
+
     .test-stat-label {
         font-size: 0.8rem;
         color: #6c757d;
@@ -93,7 +93,7 @@
                                         </div>
                                         <div class="card-body">
                                             <p class="mb-2">{{ test.description }}</p>
-                                            
+
                                             <div class="test-info">
                                                 <span class="badge bg-info test-badge">
                                                     <i class="fas fa-clock"></i> {{ test.time_limit_minutes }} دقيقة
@@ -105,7 +105,7 @@
                                                     <i class="fas fa-award"></i> {{ test.passing_score }}% للنجاح
                                                 </span>
                                             </div>
-                                            
+
                                             <div class="test-stats">
                                                 <div class="test-stat-item">
                                                     <span class="test-stat-value">
@@ -113,7 +113,7 @@
                                                     </span>
                                                     <span class="test-stat-label">المحاولات</span>
                                                 </div>
-                                                
+
                                                 <div class="test-stat-item">
                                                     <span class="test-stat-value">
                                                         {% set passed_attempts = attempts_by_test.get(test.id, [])|selectattr("passed", "equalto", True)|list %}
@@ -125,7 +125,7 @@
                                                     </span>
                                                     <span class="test-stat-label">ناجح</span>
                                                 </div>
-                                                
+
                                                 <div class="test-stat-item">
                                                     <span class="test-stat-value">
                                                         {% set best_score = 0 %}
@@ -139,7 +139,7 @@
                                                     <span class="test-stat-label">أفضل نتيجة</span>
                                                 </div>
                                             </div>
-                                            
+
                                             {% set test_attempts = attempts_by_test.get(test.id, []) %}
                                             {% if attempts_by_test.get(test.id) %}
                                                 <div class="attempts-list">
@@ -159,7 +159,7 @@
                                                             </div>
                                                         </div>
                                                     {% endfor %}
-                                                    
+
                                                     {% if test_attempts|length > 3 %}
                                                         <div class="text-center mt-2">
                                                             <a href="{{ url_for('student.test_history') }}" class="btn btn-sm btn-link">
@@ -169,11 +169,14 @@
                                                     {% endif %}
                                                 </div>
                                             {% endif %}
-                                            
+
                                             <div class="d-grid gap-2 mt-3">
-                                                <a href="{{ url_for('student.start_test', test_id=test.id) }}" class="btn btn-primary">
-                                                    <i class="fas fa-play-circle"></i> بدء الاختبار
-                                                </a>
+                                                <form method="POST" action="{{ url_for('student.start_test', test_id=test.id) }}" style="display: inline;">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="fas fa-play-circle"></i> بدء الاختبار
+                                                    </button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -188,7 +191,7 @@
                     {% endif %}
                 </div>
             </div>
-            
+
             {% if completed_attempts %}
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white">
