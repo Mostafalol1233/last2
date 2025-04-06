@@ -28,7 +28,7 @@
                                     <th>البريد الإلكتروني</th>
                                     <th>الهاتف</th>
                                     <th>نوع الحساب</th>
-                                    <th>النقاط</th>
+                                    <th>رصيد النقاط</th>
                                     <th>الإجراءات</th>
                                 </tr>
                             </thead>
@@ -47,7 +47,11 @@
                                         <span class="badge bg-primary">طالب</span>
                                         {% endif %}
                                     </td>
-                                    <td>{{ user.points }}</td>
+                                    <td>
+                                        <span class="badge bg-info text-dark" style="font-size: 1.1em;">
+                                            <i class="fas fa-coins"></i> {{ user.points }} نقطة
+                                        </span>
+                                    </td>
                                     <td>
                                         {% if not user.is_admin %}
                                         <a href="{{ url_for('admin.add_points', user_id=user.id) }}" class="btn btn-sm btn-success">
