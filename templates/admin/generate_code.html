@@ -97,11 +97,10 @@
                         
                         // Handle form submission
                         form.addEventListener('submit', function(e) {
-                            // أزلنا رسالة "جاري المعالجة" كما طلب المستخدم
-                            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>جاري التوليد...';
+                            // نحتفظ بحالة الزر دون تغيير عند النقر عليه
                             submitButton.disabled = true;
                             
-                            // تطبيق تأثير بصري لجعل المستخدم يعرف أن هناك عملية تتم
+                            // إعادة تمكين الزر في حالة فشل الإرسال
                             setTimeout(function() {
                                 submitButton.disabled = false;
                             }, 8000); // في حالة فشل الإرسال، سيتم إعادة تمكين الزر بعد 8 ثوان

@@ -638,7 +638,8 @@ def available_tests():
     
     return render_template(
         'student/tests.html',
-        tests=tests,
+        active_tests=tests,
+        attempts=all_attempts,
         attempts_by_test=attempts_by_test,
         completed_attempts=completed_attempts[:10]  # آخر 10 محاولات مكتملة فقط
     )
