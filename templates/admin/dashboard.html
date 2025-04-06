@@ -92,7 +92,7 @@
                                             <i class="fa fa-edit"></i> تعديل
                                         </a>
                                         {% if video.requires_code %}
-                                            <a href="{{ url_for('admin.generate_codes', video_id=video.id) }}" class="btn btn-sm btn-warning">
+                                            <a href="{{ url_for('admin.lecture_codes') }}" class="btn btn-sm btn-warning">
                                                 <i class="fa fa-key"></i> إدارة الأكواد
                                             </a>
                                             <form method="POST" action="{{ url_for('admin.create_lecture_code', video_id=video.id) }}" class="d-inline">
