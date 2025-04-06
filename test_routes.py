@@ -612,6 +612,7 @@ def test_results(test_id):
 #################
 
 @student_tests.route('/tests')
+@student_tests.route('/')
 @login_required
 def available_tests():
     """عرض الاختبارات المتاحة للطالب"""
