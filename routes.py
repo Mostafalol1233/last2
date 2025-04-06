@@ -6,6 +6,10 @@ import string
 import requests
 import json
 from datetime import datetime, timedelta
+from collections import defaultdict
+
+# Track active users
+active_users = defaultdict(lambda: datetime.now())
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app, send_file, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse
@@ -1124,6 +1128,24 @@ def view_attempt(attempt_id):
 def dashboard():
     if current_user.is_admin():
         return redirect(url_for('admin.dashboard'))
+
+    # Update active users
+    active_users[current_user.id] = datetime.now()
+    
+    # Remove inactive users (more than 5 minutes)
+    cutoff_time = datetime.now() - timedelta(minutes=5)
+    inactive = [uid for uid, last_seen in active_users.items() if last_seen < cutoff_time]
+    for uid in inactive:
+        del active_users[uid]
+    
+    # Print active users to console
+    print("\nالمستخدمون النشطون:")
+    print("==================")
+    for uid in active_users:
+        user = User.query.get(uid)
+        if user:
+            print(f"- {user.full_name} ({user.username})")
+    print("==================\n")
 
     videos = Video.query.order_by(Video.created_at.desc()).all()
     posts = Post.query.order_by(Post.created_at.desc()).all()
