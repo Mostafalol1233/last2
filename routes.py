@@ -506,6 +506,64 @@ def dashboard():
         }
 
     return render_template('admin/dashboard.html', videos=videos, posts=posts, video_stats=video_stats)
+    
+@admin_bp.route('/student_results')
+@login_required
+def student_results():
+    """عرض نتائج الطلاب في الاختبارات"""
+    if not current_user.is_admin():
+        abort(403)
+    
+    # التصفية حسب اختبار محدد (إذا تم تحديده)
+    selected_test_id = request.args.get('test_id', 'all')
+    
+    # جلب جميع الاختبارات
+    tests = Test.query.order_by(Test.created_at.desc()).all()
+    
+    # جلب جميع الطلاب
+    students = User.query.filter_by(role='student').all()
+    
+    # جلب محاولات الاختبارات المكتملة وفقًا للتصفية
+    attempts_query = TestAttempt.query.filter(TestAttempt.completed_at != None)
+    
+    if selected_test_id != 'all':
+        attempts_query = attempts_query.filter_by(test_id=selected_test_id)
+    
+    # ترتيب المحاولات حسب تاريخ الإكمال (الأحدث أولاً)
+    attempts = attempts_query.order_by(TestAttempt.completed_at.desc()).all()
+    
+    # إعداد بيانات النتائج للعرض
+    student_results = []
+    for attempt in attempts:
+        student = User.query.get(attempt.user_id)
+        test = Test.query.get(attempt.test_id)
+        
+        if student and test:
+            student_results.append({
+                'attempt_id': attempt.id,
+                'student_id': student.id,
+                'student_name': student.full_name or student.username,
+                'test_id': test.id,
+                'test_title': test.title,
+                'completed_at': attempt.completed_at,
+                'score': attempt.score,
+                'passed': attempt.passed
+            })
+    
+    # حساب الإحصائيات الإجمالية
+    total_attempts = len(attempts)
+    passed_attempts = sum(1 for a in attempts if a.passed)
+    overall_success_rate = (passed_attempts / total_attempts * 100) if total_attempts > 0 else 0
+    
+    return render_template(
+        'admin/student_results.html',
+        tests=tests,
+        students=students,
+        student_results=student_results,
+        total_attempts=total_attempts,
+        overall_success_rate=overall_success_rate,
+        selected_test_id=selected_test_id
+    )
 
 @admin_bp.route('/upload_video', methods=['GET', 'POST'])
 @login_required
@@ -1715,8 +1773,22 @@ def profile():
         db.session.commit()
         flash('تم تحديث بياناتك الشخصية بنجاح.', 'success')
         return redirect(url_for('main.profile'))
+        
+    # جلب محاولات الاختبارات المكتملة للمستخدم
+    completed_attempts = TestAttempt.query.filter_by(
+        user_id=current_user.id, 
+        completed_at=not None
+    ).order_by(TestAttempt.completed_at.desc()).all()
+    
+    # جلب تفاصيل الاختبارات المرتبطة بالمحاولات
+    tests_dict = {}
+    for attempt in completed_attempts:
+        if attempt.test_id not in tests_dict:
+            test = Test.query.get(attempt.test_id)
+            if test:
+                tests_dict[attempt.test_id] = test
 
-    return render_template('profile.html', form=form)
+    return render_template('profile.html', form=form, completed_attempts=completed_attempts, tests=tests_dict)
 
 # نظام الرسائل المباشرة
 @main_bp.route('/messages', methods=['GET', 'POST'])
