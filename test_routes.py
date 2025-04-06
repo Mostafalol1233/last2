@@ -807,7 +807,7 @@ def take_test(attempt_id):
                 
                 db.session.commit()
                 flash('تم تسليم الاختبار بنجاح. يمكنك الآن عرض نتائجك.', 'success')
-                return redirect(url_for('student_tests.test_results', attempt_id=attempt.id))
+                return redirect(url_for('student.test_results', attempt_id=attempt.id))
             except Exception as e:
                 db.session.rollback()
                 logging.error(f"Error calculating score or submitting test: {str(e)}")
