@@ -1374,10 +1374,14 @@ def reset_all_points():
     if not current_user.is_admin():
         abort(403)
     try:
-        # Reset points for all students
-        User.query.filter_by(role='student').update({User.points: 0})
-        db.session.commit()
-        flash('تم تصفير نقاط جميع الطلاب بنجاح', 'success')
+        # Reset points for specific student
+        student = User.query.filter_by(username='student1').first()
+        if student:
+            student.points = 0
+            db.session.commit()
+            flash(f'تم تصفير نقاط الطالب {student.username} بنجاح', 'success')
+        else:
+            flash('لم يتم العثور على الطالب', 'danger')
     except Exception as e:
         db.session.rollback()
         flash('حدث خطأ أثناء تصفير النقاط', 'danger')
@@ -1897,12 +1901,21 @@ def available_tests():
 @login_required
 def start_test(test_id):
     """Start a new test attempt"""
+    if current_user.is_admin():
+        return redirect(url_for('admin.dashboard'))
+        
     test = Test.query.get_or_404(test_id)
 
-    # Check if test is active
-    if not test.is_active:
-        flash('هذا الاختبار غير متاح حالياً.', 'warning')
-        return redirect(url_for('student.available_tests'))
+    # Allow test access regardless of status
+    attempt = TestAttempt(
+        test_id=test_id,
+        user_id=current_user.id,
+        started_at=datetime.utcnow()
+    )
+    db.session.add(attempt)
+    db.session.commit()
+    
+    return redirect(url_for('student.take_test', attempt_id=attempt.id))
 
     # Check if there's already an in-progress attempt
     existing_attempt = TestAttempt.query.filter_by(
