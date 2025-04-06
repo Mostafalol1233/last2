@@ -611,7 +611,7 @@ def admin_test_results(test_id):
 # Student Routes #
 #################
 
-@student_tests.route('/')
+@student_tests.route('/student/tests')
 @login_required
 def available_tests():
     """عرض الاختبارات المتاحة للطالب"""
@@ -657,7 +657,7 @@ def start_test(test_id):
     # التحقق من أن الاختبار نشط
     if not test.is_active:
         flash('هذا الاختبار غير متاح حاليًا.', 'warning')
-        return redirect(url_for('student.available_tests'))
+        return redirect(url_for('student_tests.available_tests'))
     
     # التحقق من وجود محاولة غير مكتملة للطالب
     existing_attempt = TestAttempt.query.filter_by(
@@ -706,7 +706,7 @@ def take_test(attempt_id):
     
     if attempt.user_id != current_user.id:
         flash('ليس لديك صلاحية للوصول إلى هذه المحاولة.', 'danger')
-        return redirect(url_for('student.available_tests'))
+        return redirect(url_for('student_tests.available_tests'))
     
     # التحقق من أن المحاولة لم تكتمل بعد
     if attempt.completed_at is not None:
@@ -798,7 +798,7 @@ def test_results(attempt_id):
     
     if attempt.user_id != current_user.id:
         flash('ليس لديك صلاحية للوصول إلى هذه النتائج.', 'danger')
-        return redirect(url_for('student.available_tests'))
+        return redirect(url_for('student_tests.available_tests'))
     
     # التحقق من أن المحاولة مكتملة
     if attempt.completed_at is None:
