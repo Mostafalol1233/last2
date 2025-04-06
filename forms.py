@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, HiddenField, BooleanField, IntegerField, SelectMultipleField, FloatField
-from wtforms.validators import DataRequired, Length, URL, Optional, EqualTo, ValidationError, NumberRange
+from wtforms.validators import DataRequired, Length, URL, Optional, EqualTo, ValidationError, NumberRange, Email
 from models import User
 
 class LoginForm(FlaskForm):
@@ -73,7 +73,7 @@ class StudentNoteForm(FlaskForm):
 class AIChatForm(FlaskForm):
     message = TextAreaField('سؤالك', validators=[DataRequired(), Length(min=3, max=1000)])
     submit = SubmitField('إرسال')
-    
+
 class RegistrationForm(FlaskForm):
     username = StringField('اسم المستخدم', validators=[
         DataRequired(message='يجب إدخال اسم المستخدم'),
@@ -85,7 +85,8 @@ class RegistrationForm(FlaskForm):
     ])
     email = StringField('البريد الإلكتروني', validators=[
         Optional(),
-        Length(max=100, message='يجب أن لا يتجاوز البريد الإلكتروني 100 حرف')
+        Length(max=100, message='يجب أن لا يتجاوز البريد الإلكتروني 100 حرف'),
+        Email(message='يرجى إدخال بريد إلكتروني صحيح')
     ])
     phone = StringField('رقم الهاتف', validators=[
         Optional(),
@@ -103,7 +104,7 @@ class RegistrationForm(FlaskForm):
         DataRequired(message='يجب اختيار نوع الحساب')
     ])
     submit = SubmitField('تسجيل')
-    
+
     def validate_username(self, username):
         if not username.data.isalnum():
             raise ValidationError('يجب أن يحتوي اسم المستخدم على أحرف وأرقام فقط')
@@ -123,7 +124,7 @@ class ForgotPasswordForm(FlaskForm):
         DataRequired(message='يجب إدخال رقم الهاتف')
     ])
     submit = SubmitField('استعادة كلمة المرور')
-    
+
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('كلمة المرور الجديدة', validators=[
         DataRequired(message='يجب إدخال كلمة المرور'),
@@ -134,7 +135,7 @@ class ResetPasswordForm(FlaskForm):
         EqualTo('password', message='كلمة المرور غير متطابقة')
     ])
     submit = SubmitField('تغيير كلمة المرور')
-    
+
 class ProfileForm(FlaskForm):
     full_name = StringField('الاسم الثلاثي', validators=[
         DataRequired(message='يجب إدخال الاسم الثلاثي'),
@@ -288,7 +289,7 @@ class QuestionChoiceForm(FlaskForm):
 class TestAttemptForm(FlaskForm):
     """Form for submitting answers to a test"""
     submit = SubmitField('إنهاء الاختبار')
-    
+
 class TestAnswerForm(FlaskForm):
     """Form for handling individual test answers"""
     submit = SubmitField('حفظ الإجابات')
@@ -297,7 +298,7 @@ class TestTakingForm(FlaskForm):
     """Form for taking a test (includes hidden fields for test_id)"""
     test_id = HiddenField('معرف الاختبار', validators=[DataRequired()])
     submit = SubmitField('بدء الاختبار')
-    
+
 class TestRetryRequestForm(FlaskForm):
     """نموذج لطلب محاولة إضافية للاختبار"""
     test_id = HiddenField('معرف الاختبار', validators=[DataRequired()])
@@ -306,7 +307,7 @@ class TestRetryRequestForm(FlaskForm):
         Length(min=10, max=500, message='يجب أن يكون السبب بين 10 و 500 حرف')
     ])
     submit = SubmitField('إرسال الطلب')
-    
+
 class TestRetryResponseForm(FlaskForm):
     """نموذج للرد على طلب محاولة إضافية للاختبار"""
     request_id = HiddenField('معرف الطلب', validators=[DataRequired()])
