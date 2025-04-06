@@ -61,7 +61,12 @@ def save_video_file(file):
 def generate_random_code(length=8):
     """Generate a random code for lecture access"""
     alphabet = string.ascii_uppercase + string.digits
-    return ''.join(secrets.choice(alphabet) for i in range(length))
+    while True:
+        code = ''.join(secrets.choice(alphabet) for i in range(length))
+        # Check if code already exists
+        existing_code = LectureCode.query.filter_by(code=code).first()
+        if not existing_code:
+            return code
 
 def handle_simple_queries(message):
     """معالجة الاستعلامات البسيطة دون الحاجة إلى OpenAI API"""
@@ -774,12 +779,12 @@ def deactivate_code(code_id):
     if not current_user.is_admin():
         abort(403)
 
-    code = LectureCode.query.get_or_4404(code_id)
+    code = LectureCode.query.get_or_404(code_id)
     code.is_active = False
     db.session.commit()
 
     flash('تم إلغاء تنشيط الكود بنجاح.', 'success')
-    return redirect(url_for('admin.dashboard'))
+    return redirect(url_for('admin.lecture_codes'))
 
 @admin_bp.route('/view_stats/<int:video_id>')
 @login_required
