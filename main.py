@@ -36,8 +36,18 @@ def internal_server_error(e):
     return render_template('500.html'), 500
 
 # تكوين قاعدة البيانات
-# استخدام SQLite مع مسار مطلق في مجلد قابل للكتابة
-db_path = os.path.join(os.getcwd(), 'app.db')
+# استخدام قاعدة البيانات في مجلد instance أولا، وإن لم تكن موجودة يتم استخدام قاعدة البيانات في المجلد الرئيسي
+instance_db_path = os.path.join(os.getcwd(), 'instance', 'app.db')
+root_db_path = os.path.join(os.getcwd(), 'app.db')
+
+# افحص إذا كان أي من ملفات قاعدة البيانات موجود
+if os.path.exists(instance_db_path) and os.path.getsize(instance_db_path) > 0:
+    db_path = instance_db_path
+    logging.info(f"استخدام قاعدة البيانات من مجلد instance: {instance_db_path}")
+else:
+    db_path = root_db_path
+    logging.info(f"استخدام قاعدة البيانات من المجلد الرئيسي: {root_db_path}")
+
 app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
     
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
