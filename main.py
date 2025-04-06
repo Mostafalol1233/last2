@@ -4,6 +4,7 @@ import logging
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.orm import DeclarativeBase
 
 # تكوين التسجيل
@@ -15,6 +16,7 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 app = Flask(__name__)
+csrf = CSRFProtect(app)
 
 # تكوين السر
 app.secret_key = os.environ.get("SESSION_SECRET", "ahmed-helly-educational-platform-secret-key")

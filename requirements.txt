@@ -23,3 +23,6 @@ stripe
 twilio
 pypdf
 python-docx
+docx
+flask-wtf
+requests
