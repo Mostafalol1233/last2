@@ -187,8 +187,8 @@
                                 <li>
                                     <a class="dropdown-item" href="{{ url_for('main.messages') }}">
                                         <i class="fas fa-envelope"></i> الرسائل
-                                        {% if current_user.unread_messages_count > 0 %}
-                                        <span class="badge bg-danger">{{ current_user.unread_messages_count }}</span>
+                                        {% if current_user.is_authenticated %}
+                                        
                                         {% endif %}
                                     </a>
                                 </li>

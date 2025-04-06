@@ -577,7 +577,7 @@ def delete_choice(choice_id):
 
 @admin_tests.route('/admin/tests/<int:test_id>/results')
 @login_required
-def test_results(test_id):
+def admin_test_results(test_id):
     """عرض نتائج الاختبار للمسؤول"""
     if not current_user.is_admin():
         flash('ليس لديك صلاحية للوصول إلى هذه الصفحة', 'danger')
@@ -611,7 +611,6 @@ def test_results(test_id):
 # Student Routes #
 #################
 
-@student_tests.route('/tests')
 @student_tests.route('/')
 @login_required
 def available_tests():

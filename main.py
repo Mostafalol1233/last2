@@ -2,7 +2,6 @@
 import os
 from app import app, db
 import logging
-from test_routes import admin_tests, student_tests
 
 def check_if_first_run():
     """Check if this is the first run by checking if an indicator file exists"""
@@ -29,22 +28,9 @@ def check_if_first_run():
 
 def register_blueprints():
     """Register all application blueprints"""
-    from routes import main_bp, admin_bp, student_bp
-    from payment_routes import payment_bp
-    from sms_routes import sms_bp
-    
-    # Register the main blueprints
-    app.register_blueprint(main_bp)
-    app.register_blueprint(admin_bp, url_prefix='/admin')
-    app.register_blueprint(student_bp, url_prefix='/student')
-    
-    # Register specialty blueprints
-    app.register_blueprint(payment_bp, url_prefix='/payment')
-    app.register_blueprint(sms_bp, url_prefix='/sms')
-    
-    # Register test blueprints
-    app.register_blueprint(admin_tests, url_prefix='/admin/tests')
-    app.register_blueprint(student_tests, url_prefix='/student/tests')
+    # Note: All blueprints are already registered in app.py
+    # This function is kept for legacy reasons but doesn't do anything
+    pass
 
 if __name__ == "__main__":
     # Register all blueprints
