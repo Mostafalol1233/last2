@@ -6,6 +6,7 @@ import os
 import re
 import tempfile
 import io
+import logging
 from datetime import datetime, timedelta
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, abort
 from flask_login import login_required, current_user
@@ -16,7 +17,7 @@ from werkzeug.utils import secure_filename
 from pypdf import PdfReader
 import docx
 
-from app import db
+from app import db, app
 from models import Test, TestQuestion, QuestionChoice, TestAttempt, TestAnswer
 from forms import (
     TestCreateForm as TestForm, 
@@ -770,13 +771,25 @@ def take_test(attempt_id):
                         if choice:
                             answer.selected_choice_id = choice.id
                             answer.is_correct = choice.is_correct
+                            # إضافة تسجيل لأغراض التصحيح
+                            logging.info(f"Saved answer for question {question.id}, choice {choice.id}, is_correct: {choice.is_correct}")
                     except (ValueError, TypeError) as e:
-                        # لوغ الخطأ ولكن لا تتوقف العملية
-                        app.logger.error(f"Error saving choice answer: {str(e)}")
+                        # تسجيل الخطأ ولكن لا تتوقف العملية
+                        logging.error(f"Error saving choice answer: {str(e)}")
                 elif question.question_type == 'short_answer':
                     answer.text_answer = answer_value
+                    answer.is_correct = grade_short_answer(question, answer_value)
+                    logging.info(f"Saved short answer for question {question.id}: {answer_value}")
         
-        db.session.commit()
+        # تأكد من حفظ التغييرات
+        try:
+            db.session.commit()
+            logging.info("Successfully saved all answers")
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Error committing answers: {str(e)}")
+            flash('حدث خطأ أثناء حفظ إجاباتك. يرجى المحاولة مرة أخرى.', 'danger')
+            return redirect(url_for('student_tests.take_test', attempt_id=attempt.id))
         
         # إذا كان طلب AJAX (الحفظ التلقائي)
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -785,12 +798,21 @@ def take_test(attempt_id):
         if action == 'submit':
             # إكمال الاختبار
             attempt.completed_at = datetime.utcnow()
-            attempt.score = attempt.calculate_score()
-            attempt.passed = attempt.score >= test.passing_score
-            db.session.commit()
             
-            flash('تم تسليم الاختبار بنجاح. يمكنك الآن عرض نتائجك.', 'success')
-            return redirect(url_for('student_tests.test_results', attempt_id=attempt.id))
+            # تأكد من حساب النتيجة بشكل صحيح
+            try:
+                attempt.score = attempt.calculate_score()
+                attempt.passed = attempt.score >= test.passing_score
+                logging.info(f"Test submitted. Score: {attempt.score}, Passing score: {test.passing_score}, Passed: {attempt.passed}")
+                
+                db.session.commit()
+                flash('تم تسليم الاختبار بنجاح. يمكنك الآن عرض نتائجك.', 'success')
+                return redirect(url_for('student_tests.test_results', attempt_id=attempt.id))
+            except Exception as e:
+                db.session.rollback()
+                logging.error(f"Error calculating score or submitting test: {str(e)}")
+                flash('حدث خطأ أثناء تسليم الاختبار. يرجى المحاولة مرة أخرى.', 'danger')
+                return redirect(url_for('student_tests.take_test', attempt_id=attempt.id))
         
         flash('تم حفظ إجاباتك. يمكنك متابعة الاختبار.', 'success')
     
@@ -932,17 +954,45 @@ def create_manual_test():
                 
                 for choice_index in range(4):  # نفترض حد أقصى 4 خيارات
                     choice_key = f'questions[{index}][choices][{choice_index}]'
-                    if choice_key in questions_data and questions_data[choice_key][0]:
-                        choice = QuestionChoice(
-                            question_id=question.id,
-                            choice_text=questions_data[choice_key][0],
-                            is_correct=(choice_index == correct_index),
-                            order=choice_index + 1
-                        )
-                        db.session.add(choice)
+                    choice_text = questions_data.get(choice_key, [''])[0]
+                    
+                    if choice_text:  # إضافة الخيار فقط إذا كان هناك نص له
+                        is_correct = (choice_index == correct_index)
+                        choices.append({
+                            'text': choice_text,
+                            'is_correct': is_correct
+                        })
+                
+                # إنشاء خيارات السؤال
+                for choice_data in choices:
+                    choice = QuestionChoice(
+                        question=question,
+                        text=choice_data['text'],
+                        is_correct=choice_data['is_correct']
+                    )
+                    db.session.add(choice)
+            elif question_type == 'short_answer':
+                # الأسئلة ذات الإجابة القصيرة تحتاج إلى إجابة نموذجية
+                correct_answer = questions_data.get(f'questions[{index}][correct_answer]', [''])[0]
+                question.correct_answer = correct_answer
+
+# وظيفة تقدير الإجابات القصيرة
+def grade_short_answer(question, answer_text):
+    """
+    تقدير الإجابة القصيرة بناءً على الإجابة النموذجية المخزنة.
+    في الوقت الحالي، نقوم بالمقارنة البسيطة مع الإجابة المخزنة.
+    """
+    if not answer_text:
+        return False
         
-        db.session.commit()
-        flash('تم إنشاء الاختبار والأسئلة بنجاح.', 'success')
-        return redirect(url_for('admin_tests.manage_tests'))
+    # TODO: تحسين هذه الوظيفة لتدعم تقديرات أكثر تعقيداً
+    correct_answer = question.correct_answer
+    if not correct_answer:
+        # إذا لم تكن هناك إجابة نموذجية مخزنة، نعتبر الإجابة صحيحة إذا قدم الطالب أي شيء
+        return bool(answer_text.strip())
     
-    return render_template('admin/create_manual_test.html', form=form)
+    # مقارنة بسيطة (يمكن تحسينها لاحقاً)
+    normalized_answer = answer_text.lower().strip()
+    normalized_correct = correct_answer.lower().strip()
+    
+    return normalized_answer == normalized_correct
