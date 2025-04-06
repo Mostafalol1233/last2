@@ -62,7 +62,7 @@ with app.app_context():
     # إنشاء الجداول
     db.create_all()
     
-    # استيراد الروتات
+    # استيراد وتسجيل البلوبرنتات
     from routes import main_bp, admin_bp, student_bp
     from test_routes import admin_tests, student_tests
     import payment_routes
@@ -70,12 +70,12 @@ with app.app_context():
     
     # تسجيل البلوبرنتات
     app.register_blueprint(main_bp)
-    app.register_blueprint(admin_bp)
-    app.register_blueprint(student_bp)
-    app.register_blueprint(admin_tests)
-    app.register_blueprint(student_tests)
-    app.register_blueprint(payment_routes.payment_bp)
-    app.register_blueprint(sms_routes.sms_bp)
+    app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(student_bp, url_prefix='/student')
+    app.register_blueprint(admin_tests, url_prefix='/admin/tests')
+    app.register_blueprint(student_tests, url_prefix='/student/tests')
+    app.register_blueprint(payment_routes.payment_bp, url_prefix='/payment')
+    app.register_blueprint(sms_routes.sms_bp, url_prefix='/sms')
     
     # دالة تحميل المستخدم
     @login_manager.user_loader
@@ -123,15 +123,7 @@ def check_if_first_run():
         except Exception as e:
             logging.error(f"Error during first run setup: {str(e)}")
 
-def register_blueprints():
-    """Register all application blueprints"""
-    # Note: All blueprints are already registered in app.py
-    # This function is kept for legacy reasons but doesn't do anything
-    pass
-
 if __name__ == "__main__":
-    # Register all blueprints
-    register_blueprints()
     
     # Check for first run
     check_if_first_run()
