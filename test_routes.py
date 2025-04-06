@@ -693,6 +693,7 @@ def start_test(test_id):
     flash('تم بدء الاختبار. ستظهر لك الأسئلة الآن. أحسن استخدام وقت الاختبار!', 'info')
     return redirect(url_for('student_tests.take_test', attempt_id=attempt.id))
 
+@student_tests.route('/attempt/<int:attempt_id>/results')
 @student_tests.route('/attempt/<int:attempt_id>', methods=['GET', 'POST'])
 @login_required
 def take_test(attempt_id):
@@ -738,6 +739,21 @@ def take_test(attempt_id):
     answers_query = TestAnswer.query.filter_by(attempt_id=attempt.id)
     answers = {answer.question_id: answer for answer in answers_query.all()}
     
+    # التأكد من وجود سجل إجابة لكل سؤال (هذا يضمن أن جميع الأسئلة لديها سجلات إجابات)
+    for question in questions:
+        if question.id not in answers:
+            new_answer = TestAnswer(
+                attempt_id=attempt.id,
+                question_id=question.id,
+                selected_choice_id=None,
+                text_answer=None,
+                is_correct=False
+            )
+            db.session.add(new_answer)
+            answers[question.id] = new_answer
+    
+    db.session.commit()  # حفظ الإجابات الجديدة
+    
     # معالجة تسليم النموذج
     if request.method == 'POST':
         action = request.form.get('action', 'save')
@@ -749,9 +765,14 @@ def take_test(attempt_id):
             
             if answer and answer_value:
                 if question.question_type in ['multiple_choice', 'true_false']:
-                    choice = QuestionChoice.query.get(int(answer_value))
-                    answer.selected_choice_id = choice.id
-                    answer.is_correct = choice.is_correct
+                    try:
+                        choice = QuestionChoice.query.get(int(answer_value))
+                        if choice:
+                            answer.selected_choice_id = choice.id
+                            answer.is_correct = choice.is_correct
+                    except (ValueError, TypeError) as e:
+                        # لوغ الخطأ ولكن لا تتوقف العملية
+                        app.logger.error(f"Error saving choice answer: {str(e)}")
                 elif question.question_type == 'short_answer':
                     answer.text_answer = answer_value
         
@@ -784,8 +805,6 @@ def take_test(attempt_id):
         seconds_remaining=seconds_remaining,
         form=form
     )
-
-@student_tests.route('/attempt/<int:attempt_id>/results')
 @login_required
 def test_results(attempt_id):
     """عرض نتائج محاولة اختبار"""
