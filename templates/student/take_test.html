@@ -4,6 +4,7 @@
 
 {% block head_extra %}
 <style>
+    
     .question-container {
         background-color: #f8f9fa;
         border-radius: 10px;
@@ -14,7 +15,28 @@
         -webkit-user-select: none; /* Safari */
         -moz-user-select: none; /* Firefox */
         -ms-user-select: none; /* IE/Edge */
+        -webkit-touch-callout: none; /* iOS Safari */
+        pointer-events: auto !important; /* السماح بالنقر ولكن منع النسخ */
     }
+    
+    /* تطبيق منع النسخ على نص الأسئلة بشكل مباشر */
+    .question-text {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-touch-callout: none;
+    }
+
+    /* تطبيق على خيارات الإجابة أيضًا */
+    .choices label, .form-check-label {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-touch-callout: none;
+    }
+
     
     .question-number {
         display: inline-block;
@@ -127,13 +149,13 @@
                         
                         {% for question in questions %}
                             <div class="question-container" id="question-{{ question.id }}">
-                                <h4>
+                                <h4 class="question-text">
                                     <span class="question-number">{{ loop.index }}</span>
                                     {{ question.question_text }}
                                 </h4>
                                 
                                 {% if question.question_type == 'multiple_choice' %}
-                                    <div class="choices mt-3">
+                                    <div class="choices mt-3" onmousedown="return false" onselectstart="return false">
                                         {% for choice in question.choices %}
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input answer-input" type="radio" 
@@ -149,7 +171,7 @@
                                         {% endfor %}
                                     </div>
                                 {% elif question.question_type == 'true_false' %}
-                                    <div class="choices mt-3">
+                                    <div class="choices mt-3" onmousedown="return false" onselectstart="return false">
                                         {% for choice in question.choices %}
                                             <div class="form-check mb-2">
                                                 <input class="form-check-input answer-input" type="radio" 
@@ -297,10 +319,71 @@
     }
     
     // تمييز الإجابات المجابة عند تحميل الصفحة
+    
+    // منع النسخ بشكل مكثّف
     document.addEventListener('DOMContentLoaded', function() {
-        {% for question in questions %}
-            {% if answers[question.id].selected_choice_id or answers[question.id].text_answer %}
-                markAnswered({{ question.id }});
+        // وضع جميع الأسئلة في عناصر span مع خاصية contenteditable=false
+        const questionTexts = document.querySelectorAll('.question-container h4');
+        questionTexts.forEach(function(element) {
+            // تطبيق فئة CSS جديدة
+            element.classList.add('question-text');
+            // منع التحرير
+            element.setAttribute('contenteditable', 'false');
+        });
+
+        // تعزيز منع النسخ
+        function preventCopy(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+
+        // استهداف الأحداث المتعلقة بالنسخ
+        const allEvents = [
+            'copy', 'cut', 'paste', 'keydown', 'contextmenu', 'selectstart', 'dragstart'
+        ];
+        
+        // تطبيق على العناصر المهمة
+        const protectedElements = document.querySelectorAll('.question-container, .question-text, .choices, .form-check-label');
+        
+        protectedElements.forEach(function(element) {
+            allEvents.forEach(function(event) {
+                element.addEventListener(event, function(e) {
+                    // السماح بأحداث لوحة المفاتيح فقط للتنقل وليس للنسخ
+                    if (event === 'keydown') {
+                        // منع Ctrl+C, Ctrl+X, Ctrl+V
+                        if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'x' || e.key === 'v')) {
+                            return preventCopy(e);
+                        }
+                        // السماح بالتنقل العادي
+                        return true;
+                    }
+                    
+                    // منع النسخ والقص واللصق والسحب
+                    if (event === 'copy' || event === 'cut' || event === 'paste' || event === 'dragstart' || event === 'contextmenu') {
+                        return preventCopy(e);
+                    }
+                    
+                    // نسمح ببعض الأحداث للعناصر التفاعلية مثل الأزرار وخيارات الاختيار
+                    if (e.target.matches('input[type="radio"], button, .btn, input[type="checkbox"], textarea')) {
+                        return true;
+                    }
+                    
+                    // منع اختيار النص في العناصر المحمية
+                    if (event === 'selectstart' && !e.target.matches('input, textarea, .answer-input')) {
+                        return preventCopy(e);
+                    }
+                });
+            });
+        });
+        
+        // منع سحب الصور أيضًا
+        const images = document.querySelectorAll('img');
+        images.forEach(img => {
+            img.addEventListener('dragstart', preventCopy);
+        });
+    });
+
             {% endif %}
         {% endfor %}
     });
