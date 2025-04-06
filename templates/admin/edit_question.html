@@ -11,7 +11,7 @@
                     <h3 class="card-title mb-0">تحرير السؤال</h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('admin.edit_question', question_id=question.id) }}">
+                    <form method="POST" action="{{ url_for('admin.edit_question', question_id=question.id) }}" enctype="multipart/form-data">
                         {{ form.hidden_tag() }}
                         
                         <div class="mb-3">
@@ -47,6 +47,58 @@
                                     {% endif %}
                                 </div>
                             </div>
+                        </div>
+                        <div class="mb-3">
+                            {{ form.question_image.label(class="form-label") }}
+                            {{ form.question_image(class="form-control") }}
+                            {% if form.question_image.errors %}
+                                {% for error in form.question_image.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            
+                            {% if question.image_path %}
+                            <div class="mt-2">
+                                <div class="card">
+                                    <div class="card-header bg-info text-white">
+                                        الصورة الحالية
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <img src="{{ url_for('static', filename=question.image_path) }}" alt="صورة السؤال" class="img-fluid rounded" style="max-height: 200px;">
+                                    </div>
+                                    <div class="card-footer bg-light text-muted small">
+                                        لاستبدال الصورة، قم بتحميل صورة جديدة من الأعلى
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        
+                        <div class="mb-3">
+                            {{ form.question_image.label(class="form-label") }}
+                            {{ form.question_image(class="form-control") }}
+                            {% if form.question_image.errors %}
+                                {% for error in form.question_image.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            
+                            {% if question.image_path %}
+                            <div class="mt-2">
+                                <div class="card">
+                                    <div class="card-header bg-info text-white">
+                                        الصورة الحالية
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <img src="{{ url_for('static', filename=question.image_path) }}" alt="صورة السؤال" class="img-fluid rounded" style="max-height: 200px;">
+                                    </div>
+                                    <div class="card-footer bg-light text-muted small">
+                                        لاستبدال الصورة، قم بتحميل صورة جديدة من الأعلى
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
                         </div>
                         
                         <div class="d-grid gap-2">

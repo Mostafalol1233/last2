@@ -117,7 +117,7 @@
                 <div class="card-body">
                     <div class="add-question-form mb-4">
                         <h5 class="mb-3">إضافة سؤال جديد</h5>
-                        <form method="POST" action="{{ url_for('admin_tests.add_question', test_id=test.id) }}">
+                        <form method="POST" action="{{ url_for('admin_tests.add_question', test_id=test.id) }}" enctype="multipart/form-data">
                             {{ question_form.hidden_tag() }}
                             
                             <div class="mb-3">
@@ -153,6 +153,17 @@
                                         {% endif %}
                                     </div>
                                 </div>
+                            <div class="mb-3">
+                                {{ question_form.question_image.label(class="form-label") }}
+                                {{ question_form.question_image(class="form-control") }}
+                                {% if question_form.question_image.errors %}
+                                    {% for error in question_form.question_image.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                                <div class="form-text">يمكنك إضافة صورة للسؤال (اختياري)</div>
+                            </div>
+
                             </div>
                             
                             <div class="d-grid">

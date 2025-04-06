@@ -270,6 +270,10 @@ class TestQuestionForm(FlaskForm):
         DataRequired(message='يجب تحديد درجة السؤال'),
         NumberRange(min=1, max=10, message='يجب أن تكون الدرجة بين 1 و 10')
     ], default=1)
+    question_image = FileField('صورة السؤال (اختياري)', validators=[
+        Optional(),
+        FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'يجب أن تكون الصورة من نوع jpg، jpeg، png، أو gif فقط.')
+    ])
     submit = SubmitField('إضافة السؤال')
 
 class QuestionChoiceForm(FlaskForm):

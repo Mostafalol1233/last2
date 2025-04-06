@@ -354,6 +354,7 @@ class TestQuestion(db.Model):
     question_type = db.Column(db.String(20), default='multiple_choice')  # multiple_choice, true_false, short_answer
     points = db.Column(db.Integer, default=1)  # Points for this question
     order = db.Column(db.Integer, default=0)  # Order in the test
+    image_path = db.Column(db.String(255), nullable=True)  # Path to question image
     
     # Relationships
     choices = db.relationship('QuestionChoice', backref='question', lazy='dynamic', cascade='all, delete-orphan')

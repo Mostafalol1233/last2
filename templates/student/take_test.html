@@ -154,6 +154,12 @@
                                     {{ question.question_text }}
                                 </h4>
                                 
+                                {% if question.image_path %}
+                                <div class="question-image my-3">
+                                    <img src="{{ url_for('static', filename=question.image_path) }}" alt="صورة للسؤال {{ loop.index }}" class="img-fluid rounded shadow-sm" style="max-width: 100%; max-height: 300px;">
+                                </div>
+                                {% endif %}
+                                
                                 {% if question.question_type == 'multiple_choice' %}
                                     <div class="choices mt-3" onmousedown="return false" onselectstart="return false">
                                         {% for choice in question.choices %}

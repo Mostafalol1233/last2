@@ -2118,4 +2118,4 @@ def test_results(attempt_id):
                          test=test,
                          attempt=attempt,
                          questions=questions,
-                         answers=answers_by_question)
+                         answers_by_question=answers_by_question)

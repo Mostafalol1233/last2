@@ -383,6 +383,7 @@ def add_question(test_id):
         max_order = db.session.query(func.max(TestQuestion.order)).filter_by(test_id=test.id).scalar()
         next_order = 1 if max_order is None else max_order + 1
         
+        # إنشاء السؤال
         question = TestQuestion(
             test_id=test.id,
             question_text=form.question_text.data,
@@ -390,6 +391,27 @@ def add_question(test_id):
             points=form.points.data,
             order=next_order
         )
+        
+        # حفظ الصورة إذا تم تحميلها
+        if form.question_image.data:
+            # التأكد من وجود مجلد للصور
+            tests_img_path = os.path.join(app.static_folder, 'img', 'tests')
+            os.makedirs(tests_img_path, exist_ok=True)
+            
+            # تأمين اسم الملف وحفظه
+            filename = secure_filename(form.question_image.data.filename)
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            image_filename = f"question_{timestamp}_{filename}"
+            image_path = os.path.join(tests_img_path, image_filename)
+            
+            # حفظ الملف
+            form.question_image.data.save(image_path)
+            
+            # تخزين مسار الصورة في قاعدة البيانات (مسار نسبي من مجلد static)
+            question.image_path = f"img/tests/{image_filename}"
+            
+            logging.info(f"تم حفظ صورة للسؤال في المسار: {question.image_path}")
+        
         db.session.add(question)
         db.session.commit()
         
@@ -422,7 +444,32 @@ def edit_question(question_id):
     choice_form = QuestionChoiceForm()
     
     if form.validate_on_submit():
+        # نحتفظ بالقيم القديمة قبل تحديثها عبر النموذج
+        old_image_path = question.image_path
+        
+        # تحديث جميع حقول السؤال من النموذج باستثناء صورة السؤال (لأنها حقل خاص)
         form.populate_obj(question)
+        
+        # التعامل مع صورة السؤال إذا تم تحميلها
+        if form.question_image.data:
+            # التأكد من وجود مجلد للصور
+            tests_img_path = os.path.join(app.static_folder, 'img', 'tests')
+            os.makedirs(tests_img_path, exist_ok=True)
+            
+            # تأمين اسم الملف وحفظه
+            filename = secure_filename(form.question_image.data.filename)
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            image_filename = f"question_{timestamp}_{filename}"
+            image_path = os.path.join(tests_img_path, image_filename)
+            
+            # حفظ الملف
+            form.question_image.data.save(image_path)
+            
+            # تخزين مسار الصورة في قاعدة البيانات (مسار نسبي من مجلد static)
+            question.image_path = f"img/tests/{image_filename}"
+            
+            logging.info(f"تم تحديث صورة السؤال في المسار: {question.image_path}")
+        
         db.session.commit()
         flash('تم تحديث السؤال بنجاح.', 'success')
         return redirect(url_for('admin_tests.edit_question', question_id=question.id))
