@@ -754,7 +754,7 @@ def available_tests():
         completed_attempts=completed_attempts[:10]  # آخر 10 محاولات مكتملة فقط
     )
 
-@student_tests.route('/<int:test_id>/start')
+@student_tests.route('/<int:test_id>/start', methods=['GET', 'POST'])
 @login_required
 def start_test(test_id):
     """بدء اختبار جديد"""
@@ -786,6 +786,11 @@ def start_test(test_id):
         user_id=current_user.id,
         completed_at=db.cast(db.literal(True), db.Boolean)  # completed_at NOT NULL
     ).count()
+    
+    # التحقق من أن الطلب نوعه POST (من الزر في الصفحة) وليس GET (من URL مباشرة)
+    if request.method != 'POST':
+        # إعادة توجيه إلى صفحة الاختبارات المتاحة إذا كانت الطريقة GET
+        return redirect(url_for('student_tests.available_tests'))
     
     # التحقق من وجود طلب محاولة إضافية معتمد للطالب
     approved_retry_request = TestRetryRequest.query.filter_by(
