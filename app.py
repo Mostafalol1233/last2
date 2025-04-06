@@ -3,11 +3,15 @@ import logging
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.orm import DeclarativeBase
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+# Initialize CSRF protection
+csrf = CSRFProtect()
 
 class Base(DeclarativeBase):
     pass
@@ -57,6 +61,9 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize the database with the app
 db.init_app(app)
+
+# Initialize CSRF protection
+csrf.init_app(app)
 
 # Setup Flask-Login
 login_manager = LoginManager()
