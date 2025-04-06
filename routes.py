@@ -402,33 +402,66 @@ Where:
 # Main routes
 @main_bp.route('/')
 def index():
-    return redirect(url_for('main.login'))
+    logging.info("Index route accessed")
+    try:
+        return redirect(url_for('main.login'))
+    except Exception as e:
+        logging.error(f"Error redirecting to login: {str(e)}")
+        return "Error accessing the login page. Please check the server logs.", 500
 
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    logging.info("Login route accessed")
+    
     if current_user.is_authenticated:
+        logging.info(f"User already authenticated: {current_user.username}, role: {current_user.role}")
         if current_user.role == 'admin':
             return redirect(url_for('admin.dashboard'))
         else:
-            return redirect(url_for('student.dashboard'))
+            logging.info(f"Redirecting authenticated student to dashboard")
+            try:
+                return redirect(url_for('student.dashboard'))
+            except Exception as e:
+                logging.error(f"Error redirecting to student dashboard: {str(e)}")
+                return "Error accessing the student dashboard. Please check the server logs.", 500
 
     form = LoginForm()
     if form.validate_on_submit():
+        logging.info(f"Login attempt for username: {form.username.data}")
+        
         user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
+        if user is None:
+            logging.warning(f"Login failed: User {form.username.data} not found")
+            flash('Invalid username or password', 'danger')
+            return redirect(url_for('main.login'))
+            
+        if not user.check_password(form.password.data):
+            logging.warning(f"Login failed: Incorrect password for {form.username.data}")
             flash('Invalid username or password', 'danger')
             return redirect(url_for('main.login'))
 
-        login_user(user)
+        try:
+            login_user(user)
+            logging.info(f"User logged in successfully: {user.username}, role: {user.role}")
+        except Exception as e:
+            logging.error(f"Error during login_user: {str(e)}")
+            flash('An error occurred during login. Please try again.', 'danger')
+            return redirect(url_for('main.login'))
 
         next_page = request.args.get('next')
         if not next_page or urlparse(next_page).netloc != '':
             if user.role == 'admin':
                 next_page = url_for('admin.dashboard')
+                logging.info(f"Redirecting admin to: {next_page}")
             else:
                 next_page = url_for('student.dashboard')
+                logging.info(f"Redirecting student to: {next_page}")
 
-        return redirect(next_page)
+        try:
+            return redirect(next_page)
+        except Exception as e:
+            logging.error(f"Error redirecting after login: {str(e)}")
+            return f"Error redirecting after login: {str(e)}", 500
 
     return render_template('login.html', form=form)
 
@@ -1189,37 +1222,65 @@ def view_attempt(attempt_id):
 @student_bp.route('/dashboard')
 @login_required
 def dashboard():
+    logging.info(f"Student dashboard accessed by user: {current_user.username}, role: {current_user.role}")
+    
     if current_user.is_admin():
+        logging.info("Admin tried to access student dashboard, redirecting to admin dashboard")
         return redirect(url_for('admin.dashboard'))
 
-    # Update active users
-    active_users[current_user.id] = datetime.now()
-    
-    # Remove inactive users (more than 5 minutes)
-    cutoff_time = datetime.now() - timedelta(minutes=5)
-    inactive = [uid for uid, last_seen in active_users.items() if last_seen < cutoff_time]
-    for uid in inactive:
-        del active_users[uid]
-    
-    # Print active users to console
-    print("\nالمستخدمون النشطون:")
-    print("==================")
-    for uid in active_users:
-        user = User.query.get(uid)
-        if user:
-            print(f"- {user.full_name} ({user.username})")
-    print("==================\n")
+    try:
+        # Update active users
+        active_users[current_user.id] = datetime.now()
+        
+        # Remove inactive users (more than 5 minutes)
+        cutoff_time = datetime.now() - timedelta(minutes=5)
+        inactive = [uid for uid, last_seen in active_users.items() if last_seen < cutoff_time]
+        for uid in inactive:
+            del active_users[uid]
+        
+        # Print active users to console
+        print("\nالمستخدمون النشطون:")
+        print("==================")
+        for uid in active_users:
+            user = User.query.get(uid)
+            if user:
+                print(f"- {user.full_name} ({user.username})")
+        print("==================\n")
 
-    videos = Video.query.order_by(Video.created_at.desc()).all()
-    posts = Post.query.order_by(Post.created_at.desc()).all()
+        # Fetch videos and posts
+        try:
+            videos = Video.query.order_by(Video.created_at.desc()).all()
+            logging.info(f"Found {len(videos)} videos to display")
+        except Exception as e:
+            logging.error(f"Error fetching videos: {str(e)}")
+            videos = []
+            
+        try:
+            posts = Post.query.order_by(Post.created_at.desc()).all()
+            logging.info(f"Found {len(posts)} posts to display")
+        except Exception as e:
+            logging.error(f"Error fetching posts: {str(e)}")
+            posts = []
 
-    # تحديد الفيديوهات التي شاهدها الطالب بالفعل
-    viewed_videos = set()
-    user_views = VideoView.query.filter_by(user_id=current_user.id).all()
-    for view in user_views:
-        viewed_videos.add(view.video_id)
+        # تحديد الفيديوهات التي شاهدها الطالب بالفعل
+        viewed_videos = set()
+        try:
+            user_views = VideoView.query.filter_by(user_id=current_user.id).all()
+            for view in user_views:
+                viewed_videos.add(view.video_id)
+            logging.info(f"User has viewed {len(viewed_videos)} videos")
+        except Exception as e:
+            logging.error(f"Error fetching viewed videos: {str(e)}")
 
-    return render_template('student/dashboard.html', videos=videos, posts=posts, viewed_videos=viewed_videos)
+        try:
+            return render_template('student/dashboard.html', videos=videos, posts=posts, viewed_videos=viewed_videos)
+        except Exception as e:
+            logging.error(f"Error rendering student dashboard: {str(e)}")
+            return "Error rendering student dashboard. Please check the server logs.", 500
+            
+    except Exception as e:
+        logging.error(f"Unexpected error in student dashboard: {str(e)}")
+        return "An unexpected error occurred. Please check the server logs.", 500
 
 @student_bp.route('/dashboard/en')
 @login_required

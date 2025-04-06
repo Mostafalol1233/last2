@@ -1,7 +1,7 @@
 
 import os
 import logging
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from sqlalchemy.orm import DeclarativeBase
@@ -18,6 +18,22 @@ app = Flask(__name__)
 
 # تكوين السر
 app.secret_key = os.environ.get("SESSION_SECRET", "ahmed-helly-educational-platform-secret-key")
+
+# إضافة معالجات الأخطاء
+@app.errorhandler(403)
+def forbidden(e):
+    logging.error(f"403 Forbidden error: {str(e)}")
+    return render_template('403.html'), 403
+
+@app.errorhandler(404)
+def page_not_found(e):
+    logging.error(f"404 Page not found error: {str(e)}")
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    logging.error(f"500 Internal server error: {str(e)}")
+    return render_template('500.html'), 500
 
 # تكوين قاعدة البيانات
 # استخدام SQLite مع مسار مطلق في مجلد قابل للكتابة
