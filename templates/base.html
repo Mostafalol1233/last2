@@ -252,6 +252,7 @@
                         <a href="https://www.linkedin.com/in/mostafa-mohamed-409540336/" target="_blank" class="text-dark text-decoration-none">
                             <h5 class="mt-2 fw-bold">MUSTAFA MOHAMED</h5>
                         </a>
+                        <p class="mt-1">تم التطوير بواسطة مصطفى محمد</p>
                     </div>
                 </div>
                 <div class="col-md-4 text-center text-md-end mb-3 mb-md-0">
@@ -286,7 +287,7 @@
         <a href="#"><i class="fas fa-graduation-cap me-1"></i> الدورات</a>
         {% if current_user.is_authenticated %}
             {% if current_user.role == 'admin' %}
-                <a href="{{ url_for('admin.manage_tests') }}"><i class="fas fa-tasks me-1"></i> الإختبارات</a>
+                <a href="{{ url_for('admin_tests.manage_tests') }}"><i class="fas fa-tasks me-1"></i> الإختبارات</a>
             {% else %}
                 <a href="{{ url_for('student.available_tests') }}"><i class="fas fa-tasks me-1"></i> الإختبارات</a>
             {% endif %}

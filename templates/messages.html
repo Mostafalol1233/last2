@@ -7,7 +7,7 @@
     <div class="row mb-4">
         <div class="col">
             <h2><i class="fas fa-envelope me-2"></i>الرسائل الخاصة</h2>
-            <p class="text-muted">يمكنك مراسلة {% if current_user.is_admin() %}الطلاب{% else %}المدرسين والمشرفين{% endif %} من خلال هذه الصفحة</p>
+            <p class="text-muted">يمكنك مراسلة {% if current_user.is_authenticated and current_user.is_admin() %}الطلاب{% else %}المدرسين والمشرفين{% endif %} من خلال هذه الصفحة</p>
         </div>
     </div>
 

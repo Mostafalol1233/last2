@@ -18,7 +18,7 @@
                     <h5>توليد كود جديد للمحاضرة: {{ video.title }}</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('admin.create_lecture_code', video_id=video.id) }}">
+                    <form method="POST" action="{{ url_for('admin.create_lecture_code', video_id=video.id) }}" id="codeGeneratorForm">
                         {{ form.csrf_token }}
                         {{ form.video_id }}
                         
@@ -64,7 +64,9 @@
                         </div>
                         
                         <div class="mb-3 d-grid">
-                            {{ form.submit(class="btn btn-primary") }}
+                            <button type="submit" class="btn btn-primary" id="submitButton">
+                                <i class="fas fa-key me-1"></i>توليد كود
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -74,6 +76,8 @@
                         const multipleStudentsCheckbox = document.querySelector('#multiple_students');
                         const singleStudentOptions = document.querySelector('#single-student-options');
                         const multipleStudentsOptions = document.querySelector('#multiple-students-options');
+                        const form = document.querySelector('#codeGeneratorForm');
+                        const submitButton = document.querySelector('#submitButton');
                         
                         function toggleOptions() {
                             if (multipleStudentsCheckbox.checked) {
@@ -90,6 +94,18 @@
                         
                         // Listen for changes
                         multipleStudentsCheckbox.addEventListener('change', toggleOptions);
+                        
+                        // Handle form submission
+                        form.addEventListener('submit', function(e) {
+                            // أزلنا رسالة "جاري المعالجة" كما طلب المستخدم
+                            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>جاري التوليد...';
+                            submitButton.disabled = true;
+                            
+                            // تطبيق تأثير بصري لجعل المستخدم يعرف أن هناك عملية تتم
+                            setTimeout(function() {
+                                submitButton.disabled = false;
+                            }, 8000); // في حالة فشل الإرسال، سيتم إعادة تمكين الزر بعد 8 ثوان
+                        });
                     });
                 </script>
                 <div class="card-footer">

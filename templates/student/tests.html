@@ -83,9 +83,9 @@
                     <h3 class="card-title mb-0">الاختبارات المتاحة</h3>
                 </div>
                 <div class="card-body">
-                    {% if tests %}
+                    {% if active_tests %}
                         <div class="row">
-                            {% for test in tests %}
+                            {% for test in active_tests %}
                                 <div class="col-md-6">
                                     <div class="card test-card">
                                         <div class="card-header bg-light">
@@ -109,19 +109,26 @@
                                             <div class="test-stats">
                                                 <div class="test-stat-item">
                                                     <span class="test-stat-value">
-                                                        {{ attempts_by_test.get(test.id, [])|length }}
+                                                        {% set test_attempts = [] %}
+                                                        {% for attempt in attempts %}
+                                                            {% if attempt.test_id == test.id %}
+                                                                {% set test_attempts = test_attempts + [attempt] %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {{ test_attempts|length }}
                                                     </span>
                                                     <span class="test-stat-label">المحاولات</span>
                                                 </div>
 
                                                 <div class="test-stat-item">
                                                     <span class="test-stat-value">
-                                                        {% set passed_attempts = attempts_by_test.get(test.id, [])|selectattr("passed", "equalto", True)|list %}
-                                                        {% if attempts_by_test.get(test.id, [])|length > 0 %}
-                                                            {{ passed_attempts|length }}
-                                                        {% else %}
-                                                            0
-                                                        {% endif %}
+                                                        {% set passed_count = 0 %}
+                                                        {% for attempt in attempts %}
+                                                            {% if attempt.test_id == test.id and attempt.passed %}
+                                                                {% set passed_count = passed_count + 1 %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {{ passed_count }}
                                                     </span>
                                                     <span class="test-stat-label">ناجح</span>
                                                 </div>
@@ -129,8 +136,8 @@
                                                 <div class="test-stat-item">
                                                     <span class="test-stat-value">
                                                         {% set best_score = 0 %}
-                                                        {% for attempt in attempts_by_test.get(test.id, []) %}
-                                                            {% if attempt.score and attempt.score > best_score %}
+                                                        {% for attempt in attempts %}
+                                                            {% if attempt.test_id == test.id and attempt.score and attempt.score > best_score %}
                                                                 {% set best_score = attempt.score %}
                                                             {% endif %}
                                                         {% endfor %}
@@ -140,18 +147,30 @@
                                                 </div>
                                             </div>
 
-                                            {% set test_attempts = attempts_by_test.get(test.id, []) %}
-                                            {% if attempts_by_test.get(test.id) %}
+                                            {% set filtered_attempts = [] %}
+                                            {% for attempt in attempts %}
+                                                {% if attempt.test_id == test.id %}
+                                                    {% set filtered_attempts = filtered_attempts + [attempt] %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            
+                                            {% if filtered_attempts|length > 0 %}
                                                 <div class="attempts-list">
                                                     <h6>محاولاتك السابقة:</h6>
-                                                    {% for attempt in (attempts_by_test.get(test.id, [])|sort(attribute='started_at', reverse=True))[:3] if attempt %}
+                                                    {% for attempt in filtered_attempts[:3] %}
                                                         <div class="attempt-item {% if attempt.passed %}bg-success-subtle{% else %}bg-danger-subtle{% endif %}">
                                                             <div class="d-flex justify-content-between align-items-center">
                                                                 <div>
                                                                     <span class="badge {% if attempt.passed %}bg-success{% else %}bg-danger{% endif %}">
-                                                                        {{ "%.1f"|format(attempt.score) }}%
+                                                                        {{ "%.1f"|format(attempt.score if attempt.score else 0) }}%
                                                                     </span>
-                                                                    <span class="attempt-date">{{ attempt.completed_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                                                                    <span class="attempt-date">
+                                                                        {% if attempt.completed_at %}
+                                                                            {{ attempt.completed_at.strftime('%Y-%m-%d %H:%M') }}
+                                                                        {% else %}
+                                                                            {{ attempt.started_at.strftime('%Y-%m-%d %H:%M') }}
+                                                                        {% endif %}
+                                                                    </span>
                                                                 </div>
                                                                 <a href="{{ url_for('student.test_results', attempt_id=attempt.id) }}" class="btn btn-sm btn-outline-primary">
                                                                     عرض النتائج
@@ -160,10 +179,10 @@
                                                         </div>
                                                     {% endfor %}
 
-                                                    {% if test_attempts|length > 3 %}
+                                                    {% if filtered_attempts|length > 3 %}
                                                         <div class="text-center mt-2">
                                                             <a href="{{ url_for('student.test_history') }}" class="btn btn-sm btn-link">
-                                                                عرض كل المحاولات ({{ test_attempts|length }})
+                                                                عرض كل المحاولات ({{ filtered_attempts|length }})
                                                             </a>
                                                         </div>
                                                     {% endif %}
@@ -192,7 +211,7 @@
                 </div>
             </div>
 
-            {% if completed_attempts %}
+            {% if attempts %}
                 <div class="card shadow">
                     <div class="card-header bg-primary text-white">
                         <h3 class="card-title mb-0">سجل الاختبارات المكتملة</h3>
@@ -211,11 +230,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% set completed_attempts = [] %}
+                                    {% for attempt in attempts %}
+                                        {% if attempt.completed_at %}
+                                            {% set completed_attempts = completed_attempts + [attempt] %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    
                                     {% for attempt in completed_attempts %}
                                         <tr>
                                             <td>{{ loop.index }}</td>
                                             <td>{{ attempt.test.title }}</td>
-                                            <td>{{ "%.1f"|format(attempt.score) }}%</td>
+                                            <td>{{ "%.1f"|format(attempt.score if attempt.score else 0) }}%</td>
                                             <td>
                                                 {% if attempt.passed %}
                                                     <span class="badge bg-success">ناجح</span>
@@ -223,7 +249,13 @@
                                                     <span class="badge bg-danger">راسب</span>
                                                 {% endif %}
                                             </td>
-                                            <td>{{ attempt.completed_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                            <td>
+                                                {% if attempt.completed_at %}
+                                                    {{ attempt.completed_at.strftime('%Y-%m-%d %H:%M') }}
+                                                {% else %}
+                                                    {{ attempt.started_at.strftime('%Y-%m-%d %H:%M') }}
+                                                {% endif %}
+                                            </td>
                                             <td>
                                                 <a href="{{ url_for('student.test_results', attempt_id=attempt.id) }}" class="btn btn-sm btn-primary">
                                                     <i class="fas fa-chart-bar"></i> عرض النتائج
