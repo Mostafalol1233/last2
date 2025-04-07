@@ -936,11 +936,27 @@ def start_test(test_id):
     
     # خصم النقاط إذا كان الاختبار يتطلب ذلك
     if test.access_type == 'points':
-        current_user.points -= test.points_required
-        logging.info(f"تم خصم {test.points_required} نقطة من رصيد الطالب {current_user.username}. الرصيد الجديد: {current_user.points}")
-        flash(f'تم خصم {test.points_required} نقطة من رصيدك. رصيدك الحالي هو {current_user.points} نقطة.', 'info')
-    
-    db.session.commit()
+        # تسجيل إضافي قبل خصم النقاط
+        logging.info(f"قبل الخصم: الطالب {current_user.username} لديه {current_user.points} نقطة")
+        logging.info(f"سيتم خصم {test.points_required} نقطة للوصول إلى الاختبار {test.title}")
+        
+        try:
+            # خصم النقاط من رصيد المستخدم
+            current_user.points -= test.points_required
+            
+            # التأكد من حفظ التغييرات
+            db.session.commit()
+            
+            # تسجيل نجاح العملية
+            logging.info(f"تم خصم {test.points_required} نقطة من رصيد الطالب {current_user.username}. الرصيد الجديد: {current_user.points}")
+            flash(f'تم خصم {test.points_required} نقطة من رصيدك. رصيدك الحالي هو {current_user.points} نقطة.', 'info')
+        except Exception as e:
+            # تسجيل الخطأ إذا حدث
+            logging.error(f"خطأ أثناء خصم النقاط: {str(e)}")
+            db.session.rollback()
+    else:
+        # حفظ المحاولة الجديدة فقط إذا لم تكن هناك حاجة لخصم نقاط
+        db.session.commit()
     logging.info(f"تم إنشاء محاولة جديدة للطالب {current_user.username} للاختبار {test_id} - معرف المحاولة: {attempt.id}")
     
     # إنشاء إجابات فارغة لجميع أسئلة الاختبار
