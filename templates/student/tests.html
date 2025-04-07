@@ -108,42 +108,23 @@
 
                                             <div class="test-stats">
                                                 <div class="test-stat-item">
-                                                    <span class="test-stat-value">
-                                                        {% set test_attempts = [] %}
-                                                        {% for attempt in attempts %}
-                                                            {% if attempt.test_id == test.id %}
-                                                                {% set test_attempts = test_attempts + [attempt] %}
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                        {{ test_attempts|length }}
-                                                    </span>
-                                                    <span class="test-stat-label">المحاولات</span>
+                                                    <span class="test-stat-value">{{ test_status[test.id].completed_count }}</span>
+                                                    <span class="test-stat-label">المحاولات من {{ test.max_attempts }}</span>
                                                 </div>
 
                                                 <div class="test-stat-item">
-                                                    <span class="test-stat-value">
-                                                        {% set passed_count = 0 %}
-                                                        {% for attempt in attempts %}
-                                                            {% if attempt.test_id == test.id and attempt.passed %}
-                                                                {% set passed_count = passed_count + 1 %}
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                        {{ passed_count }}
-                                                    </span>
+                                                    <span class="test-stat-value">{{ test_status[test.id].passed_count }}</span>
                                                     <span class="test-stat-label">ناجح</span>
                                                 </div>
 
                                                 <div class="test-stat-item">
-                                                    <span class="test-stat-value">
-                                                        {% set best_score = 0 %}
-                                                        {% for attempt in attempts %}
-                                                            {% if attempt.test_id == test.id and attempt.score and attempt.score > best_score %}
-                                                                {% set best_score = attempt.score %}
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                        {{ "%.1f"|format(best_score) }}%
-                                                    </span>
+                                                    <span class="test-stat-value">{{ "%.1f"|format(test_status[test.id].best_score) }}%</span>
                                                     <span class="test-stat-label">أفضل نتيجة</span>
+                                                </div>
+                                                
+                                                <div class="test-stat-item">
+                                                    <span class="test-stat-value">{{ test_status[test.id].remaining_attempts }}</span>
+                                                    <span class="test-stat-label">المحاولات المتبقية</span>
                                                 </div>
                                             </div>
 
@@ -190,12 +171,21 @@
                                             {% endif %}
 
                                             <div class="d-grid gap-2 mt-3">
-                                                <form method="POST" action="{{ url_for('student_tests.start_test', test_id=test.id) }}" style="display: inline;">
-                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                    <button type="submit" class="btn btn-primary">
-                                                        <i class="fas fa-play-circle"></i> بدء الاختبار
-                                                    </button>
-                                                </form>
+                                                {% if test_status[test.id].remaining_attempts > 0 %}
+                                                    <form method="POST" action="{{ url_for('student_tests.start_test', test_id=test.id) }}" style="display: inline;">
+                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="fas fa-play-circle"></i> بدء الاختبار
+                                                        </button>
+                                                    </form>
+                                                {% else %}
+                                                    <div class="alert alert-warning">
+                                                        لقد استنفذت جميع المحاولات المسموح بها ({{ test.max_attempts }}).
+                                                        <a href="{{ url_for('student_tests.request_retry', test_id=test.id) }}" class="btn btn-sm btn-warning mt-2">
+                                                            <i class="fas fa-redo"></i> طلب محاولة إضافية
+                                                        </a>
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>

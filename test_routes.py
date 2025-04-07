@@ -729,8 +729,18 @@ def available_tests():
         flash('هذه الصفحة مخصصة للطلاب فقط. استخدم واجهة الإدارة للوصول إلى الاختبارات.', 'warning')
         return redirect(url_for('admin.dashboard'))
     
+    # تسجيل الدخول للتصحيح
+    logging.info(f"الطالب {current_user.username} يعرض الاختبارات المتاحة")
+    
     # الاختبارات النشطة فقط
     tests = Test.query.filter_by(is_active=True).all()
+    
+    # جلب طلبات المحاولات الإضافية المعتمدة
+    approved_retry_requests = TestRetryRequest.query.filter_by(
+        user_id=current_user.id,
+        status='approved'
+    ).all()
+    approved_retry_test_ids = [r.test_id for r in approved_retry_requests]
     
     # جلب محاولات الطالب لكل اختبار
     all_attempts = TestAttempt.query.filter_by(user_id=current_user.id).all()
@@ -742,7 +752,51 @@ def available_tests():
             attempts_by_test[attempt.test_id] = []
         attempts_by_test[attempt.test_id].append(attempt)
     
-    # المحاولات المكتملة فقط للعرض في جدول السجل
+    # جمع إحصائيات حول حالة كل اختبار بالنسبة للطالب
+    test_status = {}
+    for test in tests:
+        test_attempts = attempts_by_test.get(test.id, [])
+        completed_attempts = [a for a in test_attempts if a.completed_at is not None]
+        pending_attempts = [a for a in test_attempts if a.completed_at is None]
+        
+        # تسجيل للتصحيح
+        logging.info(f"اختبار {test.id}: {test.title}")
+        logging.info(f"  - إجمالي المحاولات: {len(test_attempts)}")
+        logging.info(f"  - المحاولات المكتملة: {len(completed_attempts)}")
+        logging.info(f"  - المحاولات المعلقة: {len(pending_attempts)}")
+        logging.info(f"  - الحد الأقصى للمحاولات المسموح بها: {test.max_attempts}")
+        
+        # أفضل نتيجة
+        best_score = 0
+        if completed_attempts:
+            scores = [a.score for a in completed_attempts if a.score is not None]
+            best_score = max(scores) if scores else 0
+            
+        # عدد المحاولات الناجحة
+        passed_attempts = [a for a in completed_attempts if a.passed]
+        
+        # التحقق من وجود طلب محاولة إضافية معتمد
+        has_approved_retry = test.id in approved_retry_test_ids
+        
+        # المحاولات المتبقية
+        remaining_attempts = test.max_attempts - len(completed_attempts)
+        if has_approved_retry:
+            remaining_attempts += 1
+            
+        # تسجيل المحاولات المتبقية للتصحيح
+        logging.info(f"  - المحاولات المتبقية: {remaining_attempts}")
+        
+        test_status[test.id] = {
+            'completed_count': len(completed_attempts),
+            'pending_count': len(pending_attempts),
+            'best_score': best_score,
+            'passed_count': len(passed_attempts),
+            'remaining_attempts': max(0, remaining_attempts),
+            'has_approved_retry': has_approved_retry,
+            'max_attempts': test.max_attempts
+        }
+    
+    # المحاولات المكتملة فقط للعرض في جدول السجل - مرتبة من الأحدث إلى الأقدم
     completed_attempts = [a for a in all_attempts if a.completed_at is not None]
     completed_attempts.sort(key=lambda x: x.completed_at, reverse=True)
     
@@ -751,7 +805,8 @@ def available_tests():
         active_tests=tests,
         attempts=all_attempts,
         attempts_by_test=attempts_by_test,
-        completed_attempts=completed_attempts[:10]  # آخر 10 محاولات مكتملة فقط
+        completed_attempts=completed_attempts[:10],  # آخر 10 محاولات مكتملة فقط
+        test_status=test_status
     )
 
 @student_tests.route('/<int:test_id>/start', methods=['GET', 'POST'])
@@ -763,6 +818,8 @@ def start_test(test_id):
         return redirect(url_for('admin.dashboard'))
     
     test = Test.query.get_or_404(test_id)
+    logging.info(f"الطالب {current_user.username} يحاول بدء اختبار {test.id}: {test.title}")
+    logging.info(f"الحد الأقصى للمحاولات لهذا الاختبار: {test.max_attempts}")
     
     # التحقق من أن الاختبار نشط
     if not test.is_active:
@@ -778,6 +835,8 @@ def start_test(test_id):
     
     if existing_attempt:
         # استئناف المحاولة الموجودة
+        logging.info(f"وجدت محاولة غير مكتملة للطالب {current_user.username} للاختبار {test_id} - معرف المحاولة: {existing_attempt.id}")
+        flash('لديك محاولة غير مكتملة لهذا الاختبار. سيتم استئنافها الآن.', 'info')
         return redirect(url_for('student_tests.take_test', attempt_id=existing_attempt.id))
     
     # التحقق من وجود محاولة سابقة مكتملة لهذا الاختبار
@@ -788,10 +847,12 @@ def start_test(test_id):
     
     # نحسب عدد المحاولات المكتملة
     completed_attempts_count = len(completed_attempts)
+    logging.info(f"عدد المحاولات المكتملة للطالب {current_user.username} للاختبار {test_id}: {completed_attempts_count}")
     
     # التحقق من أن الطلب نوعه POST (من الزر في الصفحة) وليس GET (من URL مباشرة)
     if request.method != 'POST':
         # إعادة توجيه إلى صفحة الاختبارات المتاحة إذا كانت الطريقة GET
+        logging.info(f"محاولة وصول مباشر (GET) من الطالب {current_user.username} إلى اختبار {test_id} - تم إعادة التوجيه")
         return redirect(url_for('student_tests.available_tests'))
     
     # التحقق من وجود طلب محاولة إضافية معتمد للطالب
@@ -801,21 +862,23 @@ def start_test(test_id):
         status='approved'
     ).first()
     
-    # نسجل المحاولة في سجل المستخدم
-    logging.info(f"الطالب {current_user.username} يحاول بدء اختبار {test_id}. عدد المحاولات المكتملة حتى الآن: {completed_attempts_count}")
-    if completed_attempts_count > 0:
-        logging.info(f"محاولات سابقة للطالب {current_user.username} للاختبار {test_id}: {completed_attempts}")
+    if approved_retry_request:
+        logging.info(f"وجدت طلب محاولة إضافية معتمد للطالب {current_user.username} للاختبار {test_id}")
     
     # التحقق من عدد المحاولات المسموح بها
     if completed_attempts_count >= test.max_attempts and not approved_retry_request:
+        logging.warning(f"الطالب {current_user.username} حاول بدء اختبار {test_id} ولكنه استنفد الحد الأقصى للمحاولات ({test.max_attempts})")
         flash(f'لقد استنفذت الحد الأقصى لعدد المحاولات المسموح بها ({test.max_attempts}). يمكنك طلب محاولة إضافية من المشرف.', 'warning')
         return redirect(url_for('student_tests.request_retry', test_id=test_id))
-    elif completed_attempts_count > 0 and not approved_retry_request:
+    
+    if completed_attempts_count > 0 and not approved_retry_request:
         remaining_attempts = test.max_attempts - completed_attempts_count
+        logging.info(f"الطالب {current_user.username} لديه {remaining_attempts} محاولات متبقية للاختبار {test_id}")
         flash(f'لديك {remaining_attempts} محاولات متبقية لهذا الاختبار من أصل {test.max_attempts}.', 'info')
     
     # استخدام طلب المحاولة الإضافية إذا كان موجودًا (بتعيين حالته إلى "used")
     if approved_retry_request:
+        logging.info(f"استخدام طلب المحاولة الإضافية المعتمد للطالب {current_user.username} للاختبار {test_id}")
         approved_retry_request.status = 'used'
         db.session.commit()
     
@@ -827,6 +890,7 @@ def start_test(test_id):
     )
     db.session.add(attempt)
     db.session.commit()
+    logging.info(f"تم إنشاء محاولة جديدة للطالب {current_user.username} للاختبار {test_id} - معرف المحاولة: {attempt.id}")
     
     # إنشاء إجابات فارغة لجميع أسئلة الاختبار
     questions = TestQuestion.query.filter_by(test_id=test_id).all()
@@ -838,6 +902,7 @@ def start_test(test_id):
         db.session.add(answer)
     
     db.session.commit()
+    logging.info(f"تم إنشاء {len(questions)} إجابات فارغة للمحاولة {attempt.id}")
     
     flash('تم بدء الاختبار. ستظهر لك الأسئلة الآن. أحسن استخدام وقت الاختبار!', 'info')
     return redirect(url_for('student_tests.take_test', attempt_id=attempt.id))
