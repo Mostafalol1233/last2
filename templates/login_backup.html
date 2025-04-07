@@ -72,9 +72,37 @@
                 </form>
             </div>
             <div class="card-footer bg-light p-3 text-center">
-                <small class="text-muted">تم التطوير بواسطة <a href="https://www.linkedin.com/in/mostafa-mohamed-409540336/" target="_blank" class="text-decoration-none">مصطفى محمد</a></small>
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <img src="{{ url_for('static', filename='img/ahmed-helly-logo.png') }}" alt="شعار المعلم" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted">تم التطوير بواسطة <a href="https://www.linkedin.com/in/mostafa-mohamed-409540336/" target="_blank" class="text-decoration-none">مصطفى محمد</a></small>
+                    </div>
+                    <div class="col-md-4">
+                        <img src="{{ url_for('static', filename='img/mustafa-logo.png') }}" alt="شعار المطور" class="img-fluid" style="max-height: 50px;">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- JavaScript لإظهار وإخفاء كلمة المرور -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const togglePassword = document.querySelector('.toggle-password');
+    const passwordField = document.getElementById('password-field');
+    
+    togglePassword.addEventListener('click', function() {
+        // تغيير نوع حقل كلمة المرور
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        
+        // تغيير أيقونة العين
+        this.querySelector('i').classList.toggle('fa-eye');
+        this.querySelector('i').classList.toggle('fa-eye-slash');
+    });
+});
+</script>
 {% endblock %}
