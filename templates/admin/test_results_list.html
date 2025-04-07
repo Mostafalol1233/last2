@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}نتائج اختبار: {{ test.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">نتائج اختبار: {{ test.title }}</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-chart-line"></i> إحصائيات الاختبار</h5>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            عدد المحاولات
+                                            <span class="badge bg-primary rounded-pill">{{ total_attempts }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            عدد المحاولات الناجحة
+                                            <span class="badge bg-success rounded-pill">{{ passed_attempts }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            نسبة النجاح
+                                            <span class="badge bg-info rounded-pill">{{ '%.1f'|format(passed_attempts / total_attempts * 100 if total_attempts > 0 else 0) }}%</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            متوسط الدرجات
+                                            <span class="badge bg-primary rounded-pill">{{ '%.1f'|format(average_score) }}%</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">معلومات الاختبار</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            حالة الاختبار
+                                            <span class="badge {% if test.is_active %}bg-success{% else %}bg-danger{% endif %} rounded-pill">
+                                                {% if test.is_active %}نشط{% else %}غير نشط{% endif %}
+                                            </span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            الوقت المحدد
+                                            <span class="badge bg-secondary rounded-pill">{{ test.time_limit_minutes }} دقيقة</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            نسبة النجاح المطلوبة
+                                            <span class="badge bg-warning text-dark rounded-pill">{{ test.passing_score }}%</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            الحد الأقصى للمحاولات
+                                            <span class="badge bg-dark rounded-pill">{{ test.max_attempts }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- جدول المحاولات -->
+                    {% if attempts %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>اسم الطالب</th>
+                                        <th>تاريخ المحاولة</th>
+                                        <th>الدرجة</th>
+                                        <th>النتيجة</th>
+                                        <th>الوقت المستغرق</th>
+                                        <th>عرض التفاصيل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for attempt in attempts %}
+                                        <tr>
+                                            <td>{{ loop.index }}</td>
+                                            <td>{{ attempt.student.full_name }}</td>
+                                            <td>{{ attempt.completed_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                            <td class="fw-bold">{{ "%.1f"|format(attempt.score) }}%</td>
+                                            <td>
+                                                {% if attempt.passed %}
+                                                    <span class="badge bg-success">ناجح</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">راسب</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% set duration = (attempt.completed_at - attempt.started_at).total_seconds() // 60 %}
+                                                {{ duration }} دقيقة
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('admin_tests.admin_test_results', test_id=test.id, attempt_id=attempt.id) }}" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-eye"></i> عرض التفاصيل
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            لا توجد محاولات لهذا الاختبار بعد.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- أزرار التحكم -->
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('admin_tests.manage_tests') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i> العودة لقائمة الاختبارات
+                </a>
+                
+                <div>
+                    <a href="{{ url_for('admin_tests.edit_test', test_id=test.id) }}" class="btn btn-warning">
+                        <i class="fas fa-edit me-2"></i> تعديل الاختبار
+                    </a>
+                    {% if test.is_active %}
+                        <a href="{{ url_for('admin_tests.toggle_test_status', test_id=test.id) }}" class="btn btn-danger" onclick="return confirm('هل أنت متأكد من إيقاف تفعيل هذا الاختبار؟ سيؤدي ذلك إلى إظهار الإجابات للطلاب.');">
+                            <i class="fas fa-ban me-2"></i> إيقاف تفعيل الاختبار
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('admin_tests.toggle_test_status', test_id=test.id) }}" class="btn btn-success" onclick="return confirm('هل أنت متأكد من تفعيل هذا الاختبار؟ لن تظهر الإجابات للطلاب أثناء التفعيل.');">
+                            <i class="fas fa-check-circle me-2"></i> تفعيل الاختبار
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -716,22 +716,64 @@ def admin_test_results(test_id):
         flash('ليس لديك صلاحية لعرض نتائج هذا الاختبار', 'danger')
         return redirect(url_for('admin_tests.manage_tests'))
     
-    # جلب جميع محاولات الاختبار المكتملة مرتبة بالتاريخ
-    attempts = TestAttempt.query.filter_by(test_id=test_id, completed_at=not None).order_by(TestAttempt.completed_at.desc()).all()
+    # جلب محاولة محددة إذا تم تحديدها في الاستعلام
+    attempt_id = request.args.get('attempt_id', type=int)
     
-    # حساب إحصائيات الاختبار
-    total_attempts = len(attempts)
-    passed_attempts = sum(1 for a in attempts if a.passed)
-    average_score = sum(a.score for a in attempts) / total_attempts if total_attempts > 0 else 0
-    
-    return render_template(
-        'admin/test_results.html',
-        test=test,
-        attempts=attempts,
-        total_attempts=total_attempts,
-        passed_attempts=passed_attempts,
-        average_score=average_score
-    )
+    if attempt_id:
+        # عرض نتائج محاولة محددة (بالتفصيل)
+        attempt = TestAttempt.query.get_or_404(attempt_id)
+        
+        # التحقق من أن هذه المحاولة تنتمي للاختبار المطلوب
+        if attempt.test_id != int(test_id):
+            flash('المحاولة المطلوبة غير موجودة في هذا الاختبار', 'danger')
+            return redirect(url_for('admin_tests.admin_test_results', test_id=test_id))
+        
+        # التحقق من اكتمال المحاولة
+        if not attempt.completed_at:
+            flash('هذه المحاولة غير مكتملة بعد', 'danger')
+            return redirect(url_for('admin_tests.admin_test_results', test_id=test_id))
+        
+        # جلب الطالب الذي قام بالمحاولة
+        student = User.query.get_or_404(attempt.user_id)
+        
+        # جلب الأسئلة بترتيبها
+        questions = TestQuestion.query.filter_by(test_id=test.id).order_by(TestQuestion.order).all()
+        
+        # جلب الإجابات مرتبة حسب السؤال
+        answers = TestAnswer.query.filter_by(attempt_id=attempt.id).all()
+        answers_by_question = {answer.question_id: answer for answer in answers}
+        
+        return render_template(
+            'admin/test_results.html',
+            test=test,
+            attempt=attempt,
+            student=student,
+            questions=questions,
+            answers=answers,
+            answers_by_question=answers_by_question
+        )
+    else:
+        # عرض قائمة المحاولات للاختبار
+        # جلب جميع محاولات الاختبار المكتملة مرتبة بالتاريخ
+        attempts = TestAttempt.query.filter_by(test_id=test_id, completed_at=not None).order_by(TestAttempt.completed_at.desc()).all()
+        
+        # حساب إحصائيات الاختبار
+        total_attempts = len(attempts)
+        passed_attempts = sum(1 for a in attempts if a.passed)
+        average_score = sum(a.score for a in attempts) / total_attempts if total_attempts > 0 else 0
+        
+        # إضافة معلومات الطالب لكل محاولة
+        for attempt in attempts:
+            attempt.student = User.query.get(attempt.user_id)
+        
+        return render_template(
+            'admin/test_results_list.html',
+            test=test,
+            attempts=attempts,
+            total_attempts=total_attempts,
+            passed_attempts=passed_attempts,
+            average_score=average_score
+        )
 
 #################
 # Student Routes #
@@ -1157,13 +1199,29 @@ def test_results(attempt_id):
         'pending': len([a for a in all_attempts if a.completed_at is None])
     }
     
+    # حساب المحاولات المتبقية
+    completed_attempts_count = attempt_counts['completed']
+    remaining_attempts = max(0, test.max_attempts - completed_attempts_count)
+    
+    # طلبات المحاولة الإضافية المعتمدة
+    approved_retry_request = TestRetryRequest.query.filter_by(
+        test_id=test.id,
+        user_id=current_user.id,
+        status='approved'
+    ).first()
+    
+    if approved_retry_request:
+        remaining_attempts += 1
+    
     return render_template(
         'student/test_results.html',
         test=test,
         attempt=attempt,
         questions=questions,
+        answers=answers,
         answers_by_question=answers_by_question,
-        attempt_counts=attempt_counts
+        attempt_counts=attempt_counts,
+        remaining_attempts=remaining_attempts
     )
 
 @student_tests.route('/history')
@@ -1419,6 +1477,34 @@ def create_manual_test():
                 # الأسئلة ذات الإجابة القصيرة تحتاج إلى إجابة نموذجية
                 correct_answer = questions_data.get(f'questions[{index}][correct_answer]', [''])[0]
                 question.correct_answer = correct_answer
+
+@admin_tests.route('/admin/tests/<int:test_id>/toggle_status')
+@login_required
+def toggle_test_status(test_id):
+    """تغيير حالة تفعيل الاختبار (تفعيل/إلغاء تفعيل)"""
+    if not current_user.is_admin():
+        flash('ليس لديك صلاحية للوصول إلى هذه الصفحة', 'danger')
+        return redirect(url_for('home'))
+    
+    test = Test.query.get_or_404(test_id)
+    
+    # التحقق من أن المسؤول هو من أنشأ الاختبار
+    if test.created_by != current_user.id:
+        flash('ليس لديك صلاحية لتعديل هذا الاختبار', 'danger')
+        return redirect(url_for('admin_tests.manage_tests'))
+        
+    # تغيير حالة التفعيل
+    test.is_active = not test.is_active
+    db.session.commit()
+    
+    # رسالة مناسبة
+    if test.is_active:
+        flash(f'تم تفعيل الاختبار "{test.title}" بنجاح.', 'success')
+    else:
+        flash(f'تم إلغاء تفعيل الاختبار "{test.title}" بنجاح. يمكن للطلاب الآن رؤية الإجابات الصحيحة.', 'success')
+    
+    return redirect(url_for('admin_tests.admin_test_results', test_id=test.id))
+
 
 # وظيفة تقدير الإجابات القصيرة
 def grade_short_answer(question, answer_text):
