@@ -1,0 +1,347 @@
+Apr 07 23:26:11.41
+POST
+500
+ahmedhellly.vercel.app
+/student/tests/2/request_retry
+39
+500 Internal server error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Apr 07 23:26:07.67
+GET
+200
+ahmedhellly.vercel.app
+/static/img/ahmed-helly-logo.png
+127.0.0.1 - - [07/Apr/2025 21:26:07] "GET /static/img/ahmed-helly-logo.png HTTP/1.1" 200 -
+Apr 07 23:26:07.67
+GET
+200
+ahmedhellly.vercel.app
+/static/css/style.css
+127.0.0.1 - - [07/Apr/2025 21:26:07] "GET /static/css/style.css HTTP/1.1" 200 -
+Apr 07 23:26:07.41
+GET
+200
+ahmedhellly.vercel.app
+/student/tests/2/request_retry
+127.0.0.1 - - [07/Apr/2025 21:26:07] "GET /student/tests/2/request_retry HTTP/1.1" 200 -
+Apr 07 23:25:59.05
+POST
+500
+ahmedhellly.vercel.app
+/student/tests/1/start
+39
+500 Internal server error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Apr 07 23:25:57.56
+GET
+200
+ahmedhellly.vercel.app
+/static/img/ahmed-helly-logo.png
+127.0.0.1 - - [07/Apr/2025 21:25:57] "GET /static/img/ahmed-helly-logo.png HTTP/1.1" 200 -
+Apr 07 23:25:57.54
+GET
+200
+ahmedhellly.vercel.app
+/static/css/style.css
+127.0.0.1 - - [07/Apr/2025 21:25:57] "GET /static/css/style.css HTTP/1.1" 200 -
+Apr 07 23:25:57.24
+GET
+200
+ahmedhellly.vercel.app
+/student/tests/
+14
+127.0.0.1 - - [07/Apr/2025 21:25:57] "GET /student/tests/ HTTP/1.1" 200 -
+Apr 07 23:25:14.53
+POST
+500
+ahmedhellly.vercel.app
+/student/like_video/2
+39
+500 Internal server error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Apr 07 23:25:12.72
+GET
+200
+ahmedhellly.vercel.app
+/static/img/ahmed-helly-logo.png
+127.0.0.1 - - [07/Apr/2025 21:25:12] "GET /static/img/ahmed-helly-logo.png HTTP/1.1" 200 -
+Apr 07 23:25:12.70
+GET
+200
+ahmedhellly.vercel.app
+/static/css/style.css
+127.0.0.1 - - [07/Apr/2025 21:25:12] "GET /static/css/style.css HTTP/1.1" 200 -
+Apr 07 23:25:12.42
+GET
+200
+ahmedhellly.vercel.app
+/student/video/2
+127.0.0.1 - - [07/Apr/2025 21:25:12] "GET /student/video/2 HTTP/1.1" 200 -
+Apr 07 23:25:06.01
+GET
+200
+ahmedhellly.vercel.app
+/static/img/ahmed-helly-logo.png
+127.0.0.1 - - [07/Apr/2025 21:25:06] "GET /static/img/ahmed-helly-logo.png HTTP/1.1" 200 -
+Apr 07 23:25:06.01
+GET
+200
+ahmedhellly.vercel.app
+/static/css/style.css
+127.0.0.1 - - [07/Apr/2025 21:25:06] "GET /static/css/style.css HTTP/1.1" 200 -
+Apr 07 23:25:05.53
+GET
+200
+ahmedhellly.vercel.app
+/student/dashboard
+9
+127.0.0.1 - - [07/Apr/2025 21:25:05] "GET /student/dashboard HTTP/1.1" 200 -
+Apr 07 23:25:05.21
+GET
+302
+ahmedhellly.vercel.app
+/login
+4
+127.0.0.1 - - [07/Apr/2025 21:25:05] "GET /login HTTP/1.1" 302 -
+Apr 07 23:25:04.73
+GET
+302
+ahmedhellly.vercel.app
+/
+2
+127.0.0.1 - - [07/Apr/2025 21:25:05] "GET / HTTP/1.1" 302 -
+Apr 07 23:24:45.40
+GET
+404
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/favicon.ico
+2
+404 Page not found error: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Apr 07 23:24:44.92
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/static/img/mustafa-logo.png
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET /static/img/mustafa-logo.png HTTP/1.1" 200 -
+Apr 07 23:24:44.92
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/static/img/ahmed-helly-logo.png
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET /static/img/ahmed-helly-logo.png HTTP/1.1" 200 -
+Apr 07 23:24:44.92
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/static/css/style.css
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET /static/css/style.css HTTP/1.1" 200 -
+Apr 07 23:24:44.88
+GET
+404
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/favicon.ico
+2
+404 Page not found error: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Apr 07 23:24:44.79
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/login
+2
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET /login HTTP/1.1" 200 -
+Apr 07 23:24:44.69
+GET
+302
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/
+2
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET / HTTP/1.1" 302 -
+Apr 07 23:24:44.51
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/login
+2
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET /login HTTP/1.1" 200 -
+Apr 07 23:24:44.46
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/static/img/ahmed-helly-logo.png
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET /static/img/ahmed-helly-logo.png HTTP/1.1" 200 -
+Apr 07 23:24:44.46
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/static/css/style.css
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET /static/css/style.css HTTP/1.1" 200 -
+Apr 07 23:24:44.46
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/static/img/mustafa-logo.png
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET /static/img/mustafa-logo.png HTTP/1.1" 200 -
+Apr 07 23:24:44.39
+GET
+404
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/favicon.ico
+2
+404 Page not found error: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Apr 07 23:24:44.34
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/login
+2
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET /login HTTP/1.1" 200 -
+Apr 07 23:24:44.24
+GET
+302
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/
+2
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET / HTTP/1.1" 302 -
+Apr 07 23:24:44.07
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/login
+2
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET /login HTTP/1.1" 200 -
+Apr 07 23:24:43.91
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/static/img/mustafa-logo.png
+127.0.0.1 - - [07/Apr/2025 21:24:43] "GET /static/img/mustafa-logo.png HTTP/1.1" 200 -
+Apr 07 23:24:43.91
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/static/img/ahmed-helly-logo.png
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET /static/img/ahmed-helly-logo.png HTTP/1.1" 200 -
+Apr 07 23:24:43.91
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/static/css/style.css
+127.0.0.1 - - [07/Apr/2025 21:24:43] "GET /static/css/style.css HTTP/1.1" 200 -
+Apr 07 23:24:43.90
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/login
+2
+127.0.0.1 - - [07/Apr/2025 21:24:44] "GET /login HTTP/1.1" 200 -
+Apr 07 23:24:43.78
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/login
+2
+127.0.0.1 - - [07/Apr/2025 21:24:43] "GET /login HTTP/1.1" 200 -
+Apr 07 23:24:43.68
+GET
+302
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/
+2
+127.0.0.1 - - [07/Apr/2025 21:24:43] "GET / HTTP/1.1" 302 -
+Apr 07 23:24:43.42
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/login
+2
+127.0.0.1 - - [07/Apr/2025 21:24:43] "GET /login HTTP/1.1" 200 -
+Apr 07 23:24:43.08
+GET
+404
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/favicon.ico
+2
+404 Page not found error: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Apr 07 23:24:42.67
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/static/img/mustafa-logo.png
+127.0.0.1 - - [07/Apr/2025 21:24:42] "GET /static/img/mustafa-logo.png HTTP/1.1" 200 -
+Apr 07 23:24:42.66
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/static/img/ahmed-helly-logo.png
+127.0.0.1 - - [07/Apr/2025 21:24:42] "GET /static/img/ahmed-helly-logo.png HTTP/1.1" 200 -
+Apr 07 23:24:42.66
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/static/css/style.css
+127.0.0.1 - - [07/Apr/2025 21:24:42] "GET /static/css/style.css HTTP/1.1" 200 -
+Apr 07 23:24:42.54
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/login
+2
+127.0.0.1 - - [07/Apr/2025 21:24:42] "GET /login HTTP/1.1" 200 -
+Apr 07 23:24:42.44
+GET
+302
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/
+2
+127.0.0.1 - - [07/Apr/2025 21:24:42] "GET / HTTP/1.1" 302 -
+Apr 07 23:24:42.21
+GET
+200
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/login
+2
+127.0.0.1 - - [07/Apr/2025 21:24:42] "GET /login HTTP/1.1" 200 -
+Apr 07 23:24:40.30
+GET
+302
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/
+3
+INFO:root:استخدام قاعدة البيانات من مجلد instance: /var/task/instance/app.db INFO:root:Using main.py for application configuration المستخدمون النشطون: ================== - مشرف النظام (admin) - طالب للاختبار 1 (student1) - طالب للاختبار 2 (student2) - طالب تجريبي (student) - Mostafa CFS (Lol123) - mostafa (Omar) ==================
+Apr 07 23:24:38.13
+GET
+302
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/
+3
+INFO:root:استخدام قاعدة البيانات من مجلد instance: /var/task/instance/app.db INFO:root:Using main.py for application configuration المستخدمون النشطون: ================== - مشرف النظام (admin) - طالب للاختبار 1 (student1) - طالب للاختبار 2 (student2) - طالب تجريبي (student) - Mostafa CFS (Lol123) - mostafa (Omar) ==================
+Apr 07 23:24:37.84
+GET
+302
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/
+3
+INFO:root:استخدام قاعدة البيانات من مجلد instance: /var/task/instance/app.db INFO:root:Using main.py for application configuration المستخدمون النشطون: ================== - مشرف النظام (admin) - طالب للاختبار 1 (student1) - طالب للاختبار 2 (student2) - طالب تجريبي (student) - Mostafa CFS (Lol123) - mostafa (Omar) ==================
+Apr 07 23:24:37.81
+GET
+302
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/
+3
+INFO:root:استخدام قاعدة البيانات من مجلد instance: /var/task/instance/app.db INFO:root:Using main.py for application configuration المستخدمون النشطون: ================== - مشرف النظام (admin) - طالب للاختبار 1 (student1) - طالب للاختبار 2 (student2) - طالب تجريبي (student) - Mostafa CFS (Lol123) - mostafa (Omar) ==================
+Apr 07 23:24:37.77
+GET
+302
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/
+3
+INFO:root:استخدام قاعدة البيانات من مجلد instance: /var/task/instance/app.db INFO:root:Using main.py for application configuration المستخدمون النشطون: ================== - مشرف النظام (admin) - طالب للاختبار 1 (student1) - طالب للاختبار 2 (student2) - طالب تجريبي (student) - Mostafa CFS (Lol123) - mostafa (Omar) ==================
+Apr 07 23:24:36.84
+GET
+302
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/
+3
+INFO:root:استخدام قاعدة البيانات من مجلد instance: /var/task/instance/app.db INFO:root:Using main.py for application configuration المستخدمون النشطون: ================== - مشرف النظام (admin) - طالب للاختبار 1 (student1) - طالب للاختبار 2 (student2) - طالب تجريبي (student) - Mostafa CFS (Lol123) - mostafa (Omar) ==================
+Apr 07 23:24:36.78
+GET
+302
+last-8h0pw4vlg-mostafalol1233s-projects.vercel.app
+/
