@@ -806,13 +806,10 @@ def start_test(test_id):
     if completed_attempts_count > 0:
         logging.info(f"محاولات سابقة للطالب {current_user.username} للاختبار {test_id}: {completed_attempts}")
     
-    # التحقق من عدد المحاولات المسموح بها
-    if completed_attempts_count >= test.max_attempts and not approved_retry_request:
-        flash(f'لقد استنفذت الحد الأقصى لعدد المحاولات المسموح بها ({test.max_attempts}). يمكنك طلب محاولة إضافية من المشرف.', 'warning')
+    # إذا كان الطالب لديه محاولة مكتملة ولم يحصل على موافقة لمحاولة إضافية
+    if completed_attempts_count > 0 and not approved_retry_request:
+        flash('لقد أنهيت هذا الاختبار مسبقًا. يمكنك طلب محاولة إضافية من المشرف.', 'warning')
         return redirect(url_for('student_tests.request_retry', test_id=test_id))
-    elif completed_attempts_count > 0 and not approved_retry_request:
-        remaining_attempts = test.max_attempts - completed_attempts_count
-        flash(f'لديك {remaining_attempts} محاولات متبقية لهذا الاختبار من أصل {test.max_attempts}.', 'info')
     
     # استخدام طلب المحاولة الإضافية إذا كان موجودًا (بتعيين حالته إلى "used")
     if approved_retry_request:
@@ -1003,25 +1000,12 @@ def test_results(attempt_id):
     answers = TestAnswer.query.filter_by(attempt_id=attempt.id).all()
     answers_by_question = {answer.question_id: answer for answer in answers}
     
-    # حساب عدد المحاولات المكتملة للاختبار
-    all_attempts = TestAttempt.query.filter_by(
-        test_id=test.id,
-        user_id=current_user.id
-    ).all()
-    
-    # تنظيم المحاولات حسب الحالة
-    attempt_counts = {
-        'completed': len([a for a in all_attempts if a.completed_at is not None]),
-        'pending': len([a for a in all_attempts if a.completed_at is None])
-    }
-    
     return render_template(
         'student/test_results.html',
         test=test,
         attempt=attempt,
         questions=questions,
-        answers_by_question=answers_by_question,
-        attempt_counts=attempt_counts
+        answers_by_question=answers_by_question
     )
 
 @student_tests.route('/history')

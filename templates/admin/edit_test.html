@@ -93,6 +93,17 @@
                         </div>
                         
                         <div class="mb-3">
+                            {{ form.max_attempts.label(class="form-label") }}
+                            {{ form.max_attempts(class="form-control") }}
+                            {% if form.max_attempts.errors %}
+                                {% for error in form.max_attempts.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            <div class="form-text">عدد المحاولات المسموح بها</div>
+                        </div>
+                        
+                        <div class="mb-3">
                             <div class="form-check">
                                 {{ form.is_active(class="form-check-input") }}
                                 {{ form.is_active.label(class="form-check-label") }}

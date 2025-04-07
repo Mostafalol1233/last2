@@ -46,7 +46,7 @@
                         </div>
                         
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     {{ form.time_limit_minutes.label(class="form-label") }}
                                     {{ form.time_limit_minutes(class="form-control") }}
@@ -58,7 +58,7 @@
                                     <div class="form-text">مدة الاختبار بالدقائق</div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     {{ form.passing_score.label(class="form-label") }}
                                     {{ form.passing_score(class="form-control") }}
@@ -68,6 +68,18 @@
                                         {% endfor %}
                                     {% endif %}
                                     <div class="form-text">النسبة المئوية المطلوبة للنجاح</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ form.max_attempts.label(class="form-label") }}
+                                    {{ form.max_attempts(class="form-control") }}
+                                    {% if form.max_attempts.errors %}
+                                        {% for error in form.max_attempts.errors %}
+                                            <div class="text-danger">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                    <div class="form-text">عدد المحاولات المسموح بها</div>
                                 </div>
                             </div>
                         </div>

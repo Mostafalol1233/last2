@@ -70,7 +70,9 @@
                                                 <h5 class="mb-0">{{ tests[test_id].title }}</h5>
                                             </div>
                                             <div class="card-body">
-                                                <p><strong>عدد المحاولات:</strong> {{ test_attempts|length }}</p>
+                                                {% set test = tests[test_id] %}
+                                                <p><strong>عدد المحاولات:</strong> {{ test_attempts|length }} / {{ test.max_attempts }}</p>
+                                                <p><strong>المحاولات المتبقية:</strong> {{ test.max_attempts - test_attempts|length if (test.max_attempts - test_attempts|length) >= 0 else 0 }}</p>
                                                 
                                                 {% set passed_count = 0 %}
                                                 {% set best_score = 0 %}

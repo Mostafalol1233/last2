@@ -335,6 +335,7 @@ class Test(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     time_limit_minutes = db.Column(db.Integer, default=30)  # Time limit in minutes
     passing_score = db.Column(db.Integer, default=60)  # Passing score percentage
+    max_attempts = db.Column(db.Integer, default=1)  # الحد الأقصى لعدد المحاولات المسموح بها
     
     # Relationships
     questions = db.relationship('TestQuestion', backref='test', lazy='dynamic', cascade='all, delete-orphan')

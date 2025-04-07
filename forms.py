@@ -253,6 +253,10 @@ class TestCreateForm(FlaskForm):
         DataRequired(message='يجب تحديد نسبة النجاح'),
         NumberRange(min=50, max=100, message='يجب أن تكون النسبة بين 50% و 100%')
     ], default=60)
+    max_attempts = IntegerField('الحد الأقصى لعدد المحاولات', validators=[
+        DataRequired(message='يجب تحديد عدد المحاولات المسموح بها'),
+        NumberRange(min=1, max=10, message='يجب أن يكون عدد المحاولات بين 1 و 10')
+    ], default=1)
     is_active = BooleanField('نشط', default=True)
     submit = SubmitField('إنشاء الاختبار')
 
