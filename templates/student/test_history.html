@@ -74,14 +74,16 @@
                                                 
                                                 {% set passed_count = 0 %}
                                                 {% set best_score = 0 %}
-                                                {% for attempt in test_attempts %}
-                                                    {% if attempt.passed %}
-                                                        {% set passed_count = passed_count + 1 %}
-                                                    {% endif %}
-                                                    {% if attempt.score and attempt.score > best_score %}
-                                                        {% set best_score = attempt.score %}
-                                                    {% endif %}
-                                                {% endfor %}
+                                                {% if test_attempts %}
+                                                    {% for attempt in test_attempts %}
+                                                        {% if attempt.passed %}
+                                                            {% set passed_count = passed_count + 1 %}
+                                                        {% endif %}
+                                                        {% if attempt.score is not none and attempt.score > best_score %}
+                                                            {% set best_score = attempt.score %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
                                                 
                                                 <p><strong>المحاولات الناجحة:</strong> {{ passed_count }} من {{ test_attempts|length }}</p>
                                                 <p><strong>أفضل نتيجة:</strong> {{ "%.1f"|format(best_score) }}%</p>

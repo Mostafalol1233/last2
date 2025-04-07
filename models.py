@@ -391,6 +391,11 @@ class TestAttempt(db.Model):
     user = db.relationship('User', backref=db.backref('test_attempts', lazy='dynamic'))
     answers = db.relationship('TestAnswer', backref='attempt', lazy='dynamic', cascade='all, delete-orphan')
     
+    @property
+    def is_completed(self):
+        """التحقق مما إذا كانت المحاولة مكتملة"""
+        return self.completed_at is not None
+    
     def calculate_score(self):
         """Calculate the score for this attempt"""
         if not self.completed_at:

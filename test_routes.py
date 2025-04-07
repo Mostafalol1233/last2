@@ -784,7 +784,10 @@ def start_test(test_id):
     completed_attempts = TestAttempt.query.filter_by(
         test_id=test_id,
         user_id=current_user.id
-    ).filter(TestAttempt.completed_at.isnot(None)).count()
+    ).filter(TestAttempt.completed_at.isnot(None)).all()
+    
+    # نحسب عدد المحاولات المكتملة
+    completed_attempts_count = len(completed_attempts)
     
     # التحقق من أن الطلب نوعه POST (من الزر في الصفحة) وليس GET (من URL مباشرة)
     if request.method != 'POST':
@@ -798,8 +801,13 @@ def start_test(test_id):
         status='approved'
     ).first()
     
+    # نسجل المحاولة في سجل المستخدم
+    logging.info(f"الطالب {current_user.username} يحاول بدء اختبار {test_id}. عدد المحاولات المكتملة حتى الآن: {completed_attempts_count}")
+    if completed_attempts_count > 0:
+        logging.info(f"محاولات سابقة للطالب {current_user.username} للاختبار {test_id}: {completed_attempts}")
+    
     # إذا كان الطالب لديه محاولة مكتملة ولم يحصل على موافقة لمحاولة إضافية
-    if completed_attempts > 0 and not approved_retry_request:
+    if completed_attempts_count > 0 and not approved_retry_request:
         flash('لقد أنهيت هذا الاختبار مسبقًا. يمكنك طلب محاولة إضافية من المشرف.', 'warning')
         return redirect(url_for('student_tests.request_retry', test_id=test_id))
     
@@ -1008,10 +1016,16 @@ def test_history():
         flash('هذه الصفحة مخصصة للطلاب فقط.', 'warning')
         return redirect(url_for('admin.dashboard'))
     
+    # سجل دخول المستخدم للصفحة
+    logging.info(f"الطالب {current_user.username} يعرض سجل الاختبارات")
+    
     # جلب جميع محاولات الطالب المكتملة
     attempts = TestAttempt.query.filter_by(
         user_id=current_user.id
     ).filter(TestAttempt.completed_at.isnot(None)).order_by(TestAttempt.completed_at.desc()).all()
+    
+    # تسجيل عدد المحاولات المكتملة
+    logging.info(f"عدد محاولات الاختبار المكتملة للطالب {current_user.username}: {len(attempts)}")
     
     # تنظيم المحاولات حسب الاختبار
     attempts_by_test = {}
@@ -1020,10 +1034,19 @@ def test_history():
             attempts_by_test[attempt.test_id] = []
         attempts_by_test[attempt.test_id].append(attempt)
     
+    # تسجيل المحاولات حسب الاختبار
+    for test_id, test_attempts in attempts_by_test.items():
+        passed_count = sum(1 for a in test_attempts if a.passed)
+        best_score = max((a.score or 0) for a in test_attempts) if test_attempts else 0
+        logging.info(f"الاختبار {test_id}: عدد المحاولات: {len(test_attempts)}, النجاح: {passed_count}, أفضل نتيجة: {best_score}%")
+    
     # جلب الاختبارات التي تم محاولتها
     test_ids = [a.test_id for a in attempts]
-    tests = Test.query.filter(Test.id.in_(test_ids)).all()
+    tests = Test.query.filter(Test.id.in_(test_ids)).all() if test_ids else []
     tests_dict = {test.id: test for test in tests}
+    
+    # تسجيل عدد الاختبارات التي تم محاولتها
+    logging.info(f"عدد الاختبارات المختلفة التي حاولها الطالب {current_user.username}: {len(tests_dict)}")
     
     # جلب طلبات المحاولات الإضافية الحالية
     retry_requests = TestRetryRequest.query.filter_by(
