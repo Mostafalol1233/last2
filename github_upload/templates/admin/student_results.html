@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}نتائج الطلاب في الاختبارات{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">نتائج الطلاب في الاختبارات</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-chart-line"></i> إحصائيات سريعة</h5>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            عدد الطلاب
+                                            <span class="badge bg-primary rounded-pill">{{ students|length }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            عدد الاختبارات
+                                            <span class="badge bg-primary rounded-pill">{{ tests|length }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            مجموع المحاولات
+                                            <span class="badge bg-primary rounded-pill">{{ total_attempts }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            نسبة النجاح الإجمالية
+                                            <span class="badge bg-success rounded-pill">{{ '%.1f'|format(overall_success_rate) }}%</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">تصفية النتائج</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form method="GET" action="{{ url_for('admin.student_results') }}">
+                                        <div class="mb-3">
+                                            <label for="test_filter" class="form-label">اختيار اختبار محدد:</label>
+                                            <select class="form-select" id="test_filter" name="test_id">
+                                                <option value="all" {% if selected_test_id == 'all' %}selected{% endif %}>جميع الاختبارات</option>
+                                                {% for test in tests %}
+                                                    <option value="{{ test.id }}" {% if selected_test_id == test.id|string %}selected{% endif %}>{{ test.title }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100">تطبيق</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- جدول نتائج الطلاب -->
+                    {% if student_results %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>اسم الطالب</th>
+                                        <th>اسم الاختبار</th>
+                                        <th>تاريخ الأداء</th>
+                                        <th>الدرجة</th>
+                                        <th>النتيجة</th>
+                                        <th>تفاصيل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for result in student_results %}
+                                        <tr>
+                                            <td>{{ loop.index }}</td>
+                                            <td>{{ result.student_name }}</td>
+                                            <td>{{ result.test_title }}</td>
+                                            <td>{{ result.completed_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                            <td class="fw-bold">{{ result.score }}%</td>
+                                            <td>
+                                                {% if result.passed %}
+                                                    <span class="badge bg-success">ناجح</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">راسب</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('admin_tests.admin_test_results', test_id=result.test_id, attempt_id=result.attempt_id) }}" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-eye"></i> عرض التفاصيل
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            لا توجد نتائج اختبارات متاحة{% if selected_test_id != 'all' %} للاختبار المحدد{% endif %}.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- رسم بياني للأداء -->
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-chart-bar"></i> رسم بياني لأداء الطلاب</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-primary">
+                        <i class="fas fa-info-circle me-2"></i>
+                        سيتم تطوير هذا القسم ليعرض رسوماً بيانية توضح مستوى أداء الطلاب في الاختبارات المختلفة.
+                    </div>
+                </div>
+            </div>
+
+            <!-- الإجراءات -->
+            <div class="mb-4">
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i> العودة للوحة التحكم
+                </a>
+                <a href="{{ url_for('admin.manage_tests') }}" class="btn btn-primary">
+                    <i class="fas fa-clipboard-list me-2"></i> إدارة الاختبارات
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

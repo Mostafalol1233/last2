@@ -1,0 +1,9 @@
+<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="10,190 10,40 210,190" fill="none" stroke="black" stroke-width="3"/>
+  <line x1="10" y1="190" x2="35" y2="165" stroke="black" stroke-width="1"/>
+  <line x1="35" y1="165" x2="35" y2="190" stroke="black" stroke-width="1"/>
+  <line x1="35" y1="190" x2="10" y2="190" stroke="black" stroke-width="1"/>
+  <text x="100" y="125" font-family="Arial" font-size="24" fill="black">c</text>
+  <text x="5" y="110" font-family="Arial" font-size="24" fill="black">a = 3</text>
+  <text x="110" y="190" font-family="Arial" font-size="24" fill="black">b = 4</text>
+</svg>

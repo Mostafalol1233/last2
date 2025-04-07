@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}بدء اختبار: {{ test.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">بدء اختبار: {{ test.title }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="test-info mb-4">
+                        <h4>معلومات الاختبار</h4>
+                        <p>{{ test.description }}</p>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>مدة الاختبار:</strong> {{ test.time_limit_minutes }} دقيقة</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>درجة النجاح:</strong> {{ test.passing_score }}%</p>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <h5>تعليمات هامة</h5>
+                            <ul>
+                                <li>بمجرد بدء الاختبار، سيبدأ احتساب الوقت.</li>
+                                <li>إذا غادرت الصفحة، سيستمر الوقت في العد.</li>
+                                <li>تأكد من تسليم الاختبار قبل انتهاء الوقت.</li>
+                                <li>يمكنك حفظ إجاباتك أثناء الاختبار بالضغط على زر "حفظ الإجابات".</li>
+                                <li>لا تقم بتحديث الصفحة أثناء الاختبار لتجنب فقدان الإجابات.</li>
+                                <li>يحظر استخدام مواقع أخرى أو الاستعانة بأشخاص آخرين أثناء الاختبار.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('student.start_test', test_id=test.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="test_id" value="{{ test.id }}">
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="agree_terms" required>
+                            <label class="form-check-label" for="agree_terms">
+                                أوافق على تعليمات الاختبار وأتعهد بالالتزام بها
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">بدء الاختبار الآن</button>
+                            <a href="{{ url_for('student.available_tests') }}" class="btn btn-secondary">العودة إلى قائمة الاختبارات</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
