@@ -83,8 +83,13 @@ with app.app_context():
     # استيراد النماذج
     import models
     
-    # إنشاء الجداول
-    db.create_all()
+    # محاولة إنشاء الجداول مع معالجة الخطأ
+    try:
+        db.create_all()
+        logging.info("تم إنشاء الجداول بنجاح")
+    except Exception as e:
+        logging.error(f"حدث خطأ أثناء إنشاء الجداول: {str(e)}")
+        logging.warning("سيستمر التطبيق رغم فشل إنشاء الجداول - قد لا تعمل بعض الميزات بشكل صحيح")
     
     # استيراد وتسجيل البلوبرنتات
     from routes import main_bp, admin_bp, student_bp
@@ -101,31 +106,41 @@ with app.app_context():
     app.register_blueprint(payment_routes.payment_bp, url_prefix='/payment')
     app.register_blueprint(sms_routes.sms_bp, url_prefix='/sms')
     
-    # دالة تحميل المستخدم
+    # دالة تحميل المستخدم مع معالجة الأخطاء
     @login_manager.user_loader
     def load_user(user_id):
-        return models.User.query.get(int(user_id))
+        try:
+            return models.User.query.get(int(user_id))
+        except Exception as e:
+            logging.error(f"خطأ في تحميل المستخدم: {str(e)}")
+            return None
         
     # التحقق من المستخدمين النشطين
     def check_users():
-        admin_exists = models.User.query.filter_by(role='admin').first() is not None
-        student_exists = models.User.query.filter_by(role='student').first() is not None
-        
-        if not admin_exists:
-            logging.warning("تنبيه: لا يوجد مستخدم بصلاحية المشرف! استخدم create_users.py لإنشاء مستخدمين.")
-        
-        if not student_exists:
-            logging.warning("تنبيه: لا يوجد مستخدم بصلاحية الطالب! استخدم create_users.py لإنشاء مستخدمين.")
-        
-        active_users = models.User.query.all()
-        print("المستخدمون النشطون:")
-        print("==================")
-        for user in active_users:
-            print(f"- {user.full_name or user.username} ({user.username})")
-        print("==================")
+        try:
+            admin_exists = models.User.query.filter_by(role='admin').first() is not None
+            student_exists = models.User.query.filter_by(role='student').first() is not None
+            
+            if not admin_exists:
+                logging.warning("تنبيه: لا يوجد مستخدم بصلاحية المشرف! استخدم create_users.py لإنشاء مستخدمين.")
+            
+            if not student_exists:
+                logging.warning("تنبيه: لا يوجد مستخدم بصلاحية الطالب! استخدم create_users.py لإنشاء مستخدمين.")
+            
+            active_users = models.User.query.all()
+            print("المستخدمون النشطون:")
+            print("==================")
+            for user in active_users:
+                print(f"- {user.full_name or user.username} ({user.username})")
+            print("==================")
+        except Exception as e:
+            logging.error(f"خطأ في التحقق من المستخدمين: {str(e)}")
     
-    # تنفيذ التحقق
-    check_users()
+    # تنفيذ التحقق مع معالجة الأخطاء
+    try:
+        check_users()
+    except Exception as e:
+        logging.error(f"خطأ عند تنفيذ check_users: {str(e)}")
 
 def check_if_first_run():
     """Check if this is the first run by checking if an indicator file exists"""
