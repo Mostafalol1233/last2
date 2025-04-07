@@ -337,6 +337,11 @@ class Test(db.Model):
     passing_score = db.Column(db.Integer, default=60)  # Passing score percentage
     max_attempts = db.Column(db.Integer, default=1)  # الحد الأقصى لعدد المحاولات المسموح بها
     
+    # بيانات الوصول إلى الاختبار
+    access_type = db.Column(db.String(20), default='free')  # free, points, code, both
+    points_required = db.Column(db.Integer, default=0)  # النقاط المطلوبة للدخول إلى الاختبار
+    access_code = db.Column(db.String(20), nullable=True)  # كود الوصول للاختبار
+    
     # Relationships
     questions = db.relationship('TestQuestion', backref='test', lazy='dynamic', cascade='all, delete-orphan')
     attempts = db.relationship('TestAttempt', backref='test', lazy='dynamic')
