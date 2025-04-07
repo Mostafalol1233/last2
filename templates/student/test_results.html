@@ -208,7 +208,7 @@
             </div>
             
             <div class="d-grid gap-2">
-                <a href="{{ url_for('student_bp.available_tests') }}" class="btn btn-primary">العودة إلى قائمة الاختبارات</a>
+                <a href="{{ url_for('student.available_tests') }}" class="btn btn-primary">العودة إلى قائمة الاختبارات</a>
                 {% if not attempt.passed %}
                     <a href="{{ url_for('student_tests.request_retry', test_id=test.id) }}" class="btn btn-outline-primary">طلب محاولة إضافية</a>
                 {% endif %}
