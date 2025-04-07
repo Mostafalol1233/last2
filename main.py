@@ -39,29 +39,45 @@ def internal_server_error(e):
 
 # تكوين قاعدة البيانات
 # التحقق من وجود DATABASE_URL في متغيرات البيئة
-database_url = os.environ.get("DATABASE_URL")
-
-if database_url:
-    # استخدام قاعدة البيانات الخارجية (PostgreSQL)
-    logging.info("استخدام قاعدة بيانات خارجية من متغيرات البيئة DATABASE_URL")
+try:
+    database_url = os.environ.get("DATABASE_URL")
+    logging.info(f"قيمة DATABASE_URL: {database_url}")
     
-    # إصلاح رابط PostgreSQL إذا كان يبدأ بـ postgres:// بدلاً من postgresql://
-    if database_url.startswith("postgres://"):
-        database_url = database_url.replace("postgres://", "postgresql://", 1)
-    
-    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
-else:
-    # استخدام قاعدة بيانات SQLite المحلية
-    instance_db_path = os.path.join(os.getcwd(), 'instance', 'app.db')
-    root_db_path = os.path.join(os.getcwd(), 'app.db')
-    
-    if os.path.exists(instance_db_path) and os.path.getsize(instance_db_path) > 0:
-        db_path = instance_db_path
-        logging.info(f"استخدام قاعدة البيانات من مجلد instance: {instance_db_path}")
+    if database_url:
+        # استخدام قاعدة البيانات الخارجية (PostgreSQL)
+        logging.info("استخدام قاعدة بيانات خارجية من متغيرات البيئة DATABASE_URL")
+        
+        # إصلاح رابط PostgreSQL إذا كان يبدأ بـ postgres:// بدلاً من postgresql://
+        if database_url.startswith("postgres://"):
+            database_url = database_url.replace("postgres://", "postgresql://", 1)
+        
+        # التأكد من أن الرابط ليس مجرد اسم المتغير نفسه
+        if database_url == "DATABASE_URL":
+            logging.error("متغير DATABASE_URL موجود ولكنه يحتوي على 'DATABASE_URL' كقيمة نصية. يبدو أنه تم تعيينه بشكل غير صحيح.")
+            logging.info("سيتم استخدام قاعدة بيانات SQLite بدلاً من ذلك")
+            # استخدام قاعدة بيانات SQLite
+            db_path = os.path.join(os.getcwd(), 'app.db')
+            app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+        else:
+            app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     else:
-        db_path = root_db_path
-        logging.info(f"استخدام قاعدة البيانات من المجلد الرئيسي: {root_db_path}")
-    
+        # استخدام قاعدة بيانات SQLite المحلية
+        instance_db_path = os.path.join(os.getcwd(), 'instance', 'app.db')
+        root_db_path = os.path.join(os.getcwd(), 'app.db')
+        
+        if os.path.exists(instance_db_path) and os.path.getsize(instance_db_path) > 0:
+            db_path = instance_db_path
+            logging.info(f"استخدام قاعدة البيانات من مجلد instance: {instance_db_path}")
+        else:
+            db_path = root_db_path
+            logging.info(f"استخدام قاعدة البيانات من المجلد الرئيسي: {root_db_path}")
+        
+        app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+except Exception as e:
+    logging.error(f"خطأ في إعداد رابط قاعدة البيانات: {str(e)}")
+    # في حالة الخطأ، استخدام قاعدة بيانات SQLite كخيار احتياطي
+    db_path = os.path.join(os.getcwd(), 'app.db')
+    logging.warning(f"استخدام قاعدة بيانات SQLite الاحتياطية: {db_path}")
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
     
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
