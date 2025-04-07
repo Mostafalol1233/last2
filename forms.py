@@ -258,6 +258,20 @@ class TestCreateForm(FlaskForm):
         NumberRange(min=1, max=10, message='يجب أن يكون عدد المحاولات بين 1 و 10')
     ], default=1)
     is_active = BooleanField('نشط', default=True)
+    # خيارات الوصول للاختبار
+    access_type = SelectField('نوع الوصول للاختبار', choices=[
+        ('free', 'مجاني للجميع'),
+        ('points', 'يتطلب نقاط'),
+        ('code', 'يتطلب كود خاص')
+    ], default='free', validators=[DataRequired(message='يرجى اختيار نوع الوصول للاختبار')])
+    points_required = IntegerField('عدد النقاط المطلوبة', validators=[
+        Optional(),
+        NumberRange(min=0, message='يجب أن تكون النقاط المطلوبة قيمة موجبة')
+    ], default=0)
+    access_code = StringField('كود الوصول للاختبار', validators=[
+        Optional(),
+        Length(min=4, max=20, message='يجب أن يكون الكود بين 4 و 20 حرفًا')
+    ])
     submit = SubmitField('إنشاء الاختبار')
 
 class TestQuestionForm(FlaskForm):

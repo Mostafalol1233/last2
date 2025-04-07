@@ -339,7 +339,11 @@ def create_test():
             created_by=current_user.id,
             time_limit_minutes=form.time_limit_minutes.data,
             passing_score=form.passing_score.data,
-            is_active=form.is_active.data
+            is_active=form.is_active.data,
+            # إضافة خيارات الوصول للاختبار
+            access_type=form.access_type.data,
+            points_required=form.points_required.data if form.access_type.data == 'points' else 0,
+            access_code=form.access_code.data if form.access_type.data == 'code' else None
         )
         db.session.add(test)
         db.session.commit()
@@ -381,7 +385,19 @@ def edit_test(test_id):
     question_form = TestQuestionForm()
     
     if form.validate_on_submit():
-        form.populate_obj(test)
+        # تحديث الحقول الأساسية
+        test.title = form.title.data
+        test.description = form.description.data
+        test.time_limit_minutes = form.time_limit_minutes.data
+        test.passing_score = form.passing_score.data
+        test.max_attempts = form.max_attempts.data
+        test.is_active = form.is_active.data
+        
+        # تحديث خيارات الوصول
+        test.access_type = form.access_type.data
+        test.points_required = form.points_required.data if form.access_type.data == 'points' else 0
+        test.access_code = form.access_code.data if form.access_type.data == 'code' else None
+        
         db.session.commit()
         
         # معالجة الملف المرفوع إذا وجد
@@ -820,11 +836,32 @@ def start_test(test_id):
     test = Test.query.get_or_404(test_id)
     logging.info(f"الطالب {current_user.username} يحاول بدء اختبار {test.id}: {test.title}")
     logging.info(f"الحد الأقصى للمحاولات لهذا الاختبار: {test.max_attempts}")
+    logging.info(f"نوع الوصول للاختبار: {test.access_type}")
     
     # التحقق من أن الاختبار نشط
     if not test.is_active:
         flash('هذا الاختبار غير متاح حاليًا.', 'warning')
         return redirect(url_for('student_tests.available_tests'))
+    
+    # التحقق من نوع الوصول للاختبار
+    if test.access_type == 'points':
+        # التحقق من امتلاك الطالب نقاط كافية
+        if current_user.points < test.points_required:
+            flash(f'لا يمكنك الوصول لهذا الاختبار. أنت بحاجة إلى {test.points_required} نقطة، ولديك فقط {current_user.points} نقطة.', 'danger')
+            return redirect(url_for('student_tests.available_tests'))
+    
+    # التحقق من كود الوصول إذا كان الاختبار يتطلب ذلك
+    if test.access_type == 'code':
+        # إذا كان الوصول بكود ولم يتم توفير كود في النموذج
+        access_code = request.form.get('access_code')
+        if not access_code:
+            flash('هذا الاختبار يتطلب كود وصول.', 'warning')
+            return redirect(url_for('student_tests.available_tests'))
+        
+        # التحقق من صحة الكود
+        if access_code != test.access_code:
+            flash('كود الوصول غير صحيح.', 'danger')
+            return redirect(url_for('student_tests.available_tests'))
     
     # التحقق من وجود محاولة غير مكتملة للطالب
     existing_attempt = TestAttempt.query.filter_by(
@@ -896,6 +933,13 @@ def start_test(test_id):
         started_at=datetime.utcnow()
     )
     db.session.add(attempt)
+    
+    # خصم النقاط إذا كان الاختبار يتطلب ذلك
+    if test.access_type == 'points':
+        current_user.points -= test.points_required
+        logging.info(f"تم خصم {test.points_required} نقطة من رصيد الطالب {current_user.username}. الرصيد الجديد: {current_user.points}")
+        flash(f'تم خصم {test.points_required} نقطة من رصيدك. رصيدك الحالي هو {current_user.points} نقطة.', 'info')
+    
     db.session.commit()
     logging.info(f"تم إنشاء محاولة جديدة للطالب {current_user.username} للاختبار {test_id} - معرف المحاولة: {attempt.id}")
     
