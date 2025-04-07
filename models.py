@@ -24,6 +24,7 @@ class User(UserMixin, db.Model):
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     video_views = db.relationship('VideoView', backref='viewer', lazy='dynamic')
+    liked_videos = db.relationship('VideoLike', foreign_keys='VideoLike.user_id', backref='liker', lazy='dynamic')
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -140,7 +141,6 @@ class VideoLike(db.Model):
     
     # العلاقات مع الجداول الأخرى
     video = db.relationship('Video', backref=db.backref('likes', lazy='dynamic'))
-    user = db.relationship('User', backref=db.backref('liked_videos', lazy='dynamic'))
     
     # ضمان أن كل مستخدم يمكنه عمل لايك واحد فقط لكل فيديو
     __table_args__ = (db.UniqueConstraint('video_id', 'user_id', name='_video_user_like_uc'),)

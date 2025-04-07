@@ -862,16 +862,23 @@ def start_test(test_id):
         status='approved'
     ).first()
     
+    # التحقق من عدم وجود محاولة سابقة تم استخدامها (لأن المشرف قد أعطى محاولة إضافية)
+    has_used_retry = TestRetryRequest.query.filter_by(
+        test_id=test_id,
+        user_id=current_user.id,
+        status='used'
+    ).first()
+    
     if approved_retry_request:
         logging.info(f"وجدت طلب محاولة إضافية معتمد للطالب {current_user.username} للاختبار {test_id}")
     
-    # التحقق من عدد المحاولات المسموح بها
-    if completed_attempts_count >= test.max_attempts and not approved_retry_request:
+    # التحقق من عدد المحاولات المسموح بها وطلبات المحاولة الإضافية
+    if completed_attempts_count >= test.max_attempts and not approved_retry_request and not has_used_retry:
         logging.warning(f"الطالب {current_user.username} حاول بدء اختبار {test_id} ولكنه استنفد الحد الأقصى للمحاولات ({test.max_attempts})")
         flash(f'لقد استنفذت الحد الأقصى لعدد المحاولات المسموح بها ({test.max_attempts}). يمكنك طلب محاولة إضافية من المشرف.', 'warning')
         return redirect(url_for('student_tests.request_retry', test_id=test_id))
     
-    if completed_attempts_count > 0 and not approved_retry_request:
+    if completed_attempts_count > 0 and not approved_retry_request and not has_used_retry:
         remaining_attempts = test.max_attempts - completed_attempts_count
         logging.info(f"الطالب {current_user.username} لديه {remaining_attempts} محاولات متبقية للاختبار {test_id}")
         flash(f'لديك {remaining_attempts} محاولات متبقية لهذا الاختبار من أصل {test.max_attempts}.', 'info')
@@ -1118,10 +1125,10 @@ def test_history():
     # تسجيل عدد المحاولات المكتملة
     logging.info(f"عدد محاولات الاختبار المكتملة للطالب {current_user.username}: {len(attempts)}")
     
-    # جلب طلبات المحاولات الإضافية المعتمدة
-    approved_retry_requests = {r.test_id: r for r in TestRetryRequest.query.filter_by(
-        user_id=current_user.id,
-        status='approved'
+    # جلب طلبات المحاولات الإضافية المعتمدة والمستخدمة
+    approved_retry_requests = {r.test_id: r for r in TestRetryRequest.query.filter(
+        TestRetryRequest.user_id == current_user.id,
+        TestRetryRequest.status.in_(['approved', 'used'])
     ).all()}
     
     # تنظيم المحاولات حسب الاختبار
@@ -1223,16 +1230,20 @@ def request_retry(test_id):
         flash('لديك بالفعل طلب محاولة إضافية قيد الانتظار لهذا الاختبار.', 'info')
         return redirect(url_for('student_tests.test_history'))
     
-    # التحقق من وجود طلب معتمد
-    approved_request = TestRetryRequest.query.filter_by(
-        test_id=test_id,
-        user_id=current_user.id,
-        status='approved'
+    # التحقق من وجود طلب معتمد أو تم استخدامه
+    approved_request = TestRetryRequest.query.filter(
+        TestRetryRequest.test_id == test_id,
+        TestRetryRequest.user_id == current_user.id,
+        TestRetryRequest.status.in_(['approved', 'used'])
     ).first()
     
     if approved_request:
-        flash('تمت الموافقة على طلب محاولة إضافية لهذا الاختبار بالفعل. يمكنك بدء الاختبار الآن.', 'success')
-        return redirect(url_for('student_tests.start_test', test_id=test_id))
+        if approved_request.status == 'used':
+            flash('لقد استخدمت بالفعل المحاولة الإضافية التي تمت الموافقة عليها لهذا الاختبار. يمكنك تقديم طلب جديد إذا كنت بحاجة إلى محاولة أخرى.', 'info')
+            return redirect(url_for('student_tests.test_history'))
+        else:
+            flash('تمت الموافقة على طلب محاولة إضافية لهذا الاختبار بالفعل. يمكنك بدء الاختبار الآن.', 'success')
+            return redirect(url_for('student_tests.start_test', test_id=test_id))
     
     form = TestRetryRequestForm()
     form.test_id.data = test_id
