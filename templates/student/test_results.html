@@ -104,9 +104,9 @@
                                     <div class="card-body">
                                         <h5>المحاولات المتبقية</h5>
                                         <p class="h3">
-                                            {% set completed_attempts = result.attempt_counts.completed if result.attempt_counts is defined else 0 %}
-                                            {% set remaining_attempts = test.max_attempts - completed_attempts if test.max_attempts is defined else 0 %}
-                                            {{ remaining_attempts if remaining_attempts >= 0 else 0 }} / {{ test.max_attempts }}
+                                            {% set completed_attempts = attempt.user.test_attempts.filter_by(test_id=test.id, completed_at=not None).count() %}
+                                            {% set remaining_attempts = test.max_attempts - completed_attempts if test.max_attempts else 0 %}
+                                            {{ remaining_attempts if remaining_attempts >= 0 else 0 }} / {{ test.max_attempts if test.max_attempts else "∞" }}
                                         </p>
                                     </div>
                                 </div>
