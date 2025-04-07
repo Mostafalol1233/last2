@@ -185,20 +185,30 @@
                             
                             {% if answer %}
                                 {% if question.question_type in ['multiple_choice', 'true_false'] %}
-                                    {% for choice in question.choices.all() %}
-                                        <p class="choice-text 
-                                            {% if choice.id == answer.selected_choice_id %}choice-selected{% endif %}
-                                            {% if choice.is_correct %}choice-correct{% endif %}">
-                                            {{ choice.choice_text }}
-                                            {% if choice.id == answer.selected_choice_id and choice.is_correct %}
-                                                <i class="fas fa-check-circle text-success"></i>
-                                            {% elif choice.id == answer.selected_choice_id and not choice.is_correct %}
-                                                <i class="fas fa-times-circle text-danger"></i>
-                                            {% elif choice.is_correct %}
-                                                <i class="fas fa-check-circle text-success"></i>
-                                            {% endif %}
-                                        </p>
-                                    {% endfor %}
+                                    <!-- استخدام استعلام SQL مباشر لجلب الخيارات -->
+                                    {% set question_choices = question.choices.all() %}
+                                    {% if question_choices %}
+                                        <div class="choices-list">
+                                            {% for choice in question_choices %}
+                                                <p class="choice-text 
+                                                    {% if answer.selected_choice_id == choice.id %}choice-selected{% endif %}
+                                                    {% if choice.is_correct %}choice-correct{% endif %}">
+                                                    {{ choice.choice_text }}
+                                                    {% if answer.selected_choice_id == choice.id and choice.is_correct %}
+                                                        <i class="fas fa-check-circle text-success"></i> (إجابتك صحيحة)
+                                                    {% elif answer.selected_choice_id == choice.id and not choice.is_correct %}
+                                                        <i class="fas fa-times-circle text-danger"></i> (إجابتك خاطئة)
+                                                    {% elif choice.is_correct %}
+                                                        <i class="fas fa-check-circle text-success"></i> (الإجابة الصحيحة)
+                                                    {% endif %}
+                                                </p>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <div class="alert alert-warning">
+                                            عذراً، لا يمكن عرض خيارات هذا السؤال.
+                                        </div>
+                                    {% endif %}
                                 {% elif question.question_type == 'short_answer' %}
                                     <div class="short-answer-container">
                                         <p><strong>إجابتك:</strong> {{ answer.text_answer }}</p>

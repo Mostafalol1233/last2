@@ -1003,6 +1003,16 @@ def test_results(attempt_id):
     answers = TestAnswer.query.filter_by(attempt_id=attempt.id).all()
     answers_by_question = {answer.question_id: answer for answer in answers}
     
+    # مزيد من المعلومات للتصحيح في حالة عدم ظهور الإجابات
+    logging.info(f"عدد الأسئلة التي تم استرجاعها: {len(questions)}")
+    logging.info(f"عدد الإجابات التي تم استرجاعها: {len(answers)}")
+    
+    # التأكد من أن كل سؤال له خيارات مرتبطة به إذا كان من نوع متعدد الاختيارات
+    for question in questions:
+        if question.question_type in ['multiple_choice', 'true_false']:
+            choices_count = len(question.choices.all()) if hasattr(question, 'choices') else 0
+            logging.info(f"السؤال {question.id}: نوعه {question.question_type}، عدد الخيارات: {choices_count}")
+    
     # حساب عدد المحاولات المكتملة للاختبار
     all_attempts = TestAttempt.query.filter_by(
         test_id=test.id,
@@ -1043,6 +1053,12 @@ def test_history():
     # تسجيل عدد المحاولات المكتملة
     logging.info(f"عدد محاولات الاختبار المكتملة للطالب {current_user.username}: {len(attempts)}")
     
+    # جلب طلبات المحاولات الإضافية المعتمدة
+    approved_retry_requests = {r.test_id: r for r in TestRetryRequest.query.filter_by(
+        user_id=current_user.id,
+        status='approved'
+    ).all()}
+    
     # تنظيم المحاولات حسب الاختبار
     attempts_by_test = {}
     for attempt in attempts:
@@ -1050,21 +1066,47 @@ def test_history():
             attempts_by_test[attempt.test_id] = []
         attempts_by_test[attempt.test_id].append(attempt)
     
-    # تسجيل المحاولات حسب الاختبار
-    for test_id, test_attempts in attempts_by_test.items():
-        passed_count = sum(1 for a in test_attempts if a.passed)
-        best_score = max((a.score or 0) for a in test_attempts) if test_attempts else 0
-        logging.info(f"الاختبار {test_id}: عدد المحاولات: {len(test_attempts)}, النجاح: {passed_count}, أفضل نتيجة: {best_score}%")
-    
     # جلب الاختبارات التي تم محاولتها
-    test_ids = [a.test_id for a in attempts]
+    test_ids = list(set([a.test_id for a in attempts]))
     tests = Test.query.filter(Test.id.in_(test_ids)).all() if test_ids else []
     tests_dict = {test.id: test for test in tests}
+    
+    # تخزين معلومات الحالة لكل اختبار
+    test_status = {}
+    for test_id, test_attempts in attempts_by_test.items():
+        if test_id not in tests_dict:
+            continue
+            
+        test = tests_dict[test_id]
+        passed_count = sum(1 for a in test_attempts if a.passed)
+        best_score = max((a.score or 0) for a in test_attempts) if test_attempts else 0
+        completed_count = len(test_attempts)
+        
+        # التحقق من طلبات محاولة إضافية معتمدة
+        has_approved_retry = test_id in approved_retry_requests
+        
+        # حساب المحاولات المتبقية
+        remaining_attempts = test.max_attempts - completed_count
+        if has_approved_retry:
+            remaining_attempts += 1  # إضافة محاولة إضافية إذا كان هناك طلب معتمد
+        
+        test_status[test_id] = {
+            'completed_count': completed_count,
+            'passed_count': passed_count,
+            'best_score': best_score,
+            'remaining_attempts': max(0, remaining_attempts),  # التأكد من أنها لا تقل عن صفر
+            'has_approved_retry': has_approved_retry,
+            'max_attempts': test.max_attempts
+        }
+        
+        logging.info(f"الاختبار {test_id}: عدد المحاولات: {completed_count}/{test.max_attempts}, "
+                    f"النجاح: {passed_count}, أفضل نتيجة: {best_score}%, "
+                    f"المتبقي: {max(0, remaining_attempts)}")
     
     # تسجيل عدد الاختبارات التي تم محاولتها
     logging.info(f"عدد الاختبارات المختلفة التي حاولها الطالب {current_user.username}: {len(tests_dict)}")
     
-    # جلب طلبات المحاولات الإضافية الحالية
+    # جلب جميع طلبات المحاولات الإضافية
     retry_requests = TestRetryRequest.query.filter_by(
         user_id=current_user.id
     ).order_by(TestRetryRequest.request_date.desc()).all()
@@ -1074,7 +1116,8 @@ def test_history():
         attempts=attempts,
         attempts_by_test=attempts_by_test,
         tests=tests_dict,
-        retry_requests=retry_requests
+        retry_requests=retry_requests,
+        test_status=test_status  # إرسال معلومات الحالة الإضافية
     )
     
 @student_tests.route('/<int:test_id>/request_retry', methods=['GET', 'POST'])
@@ -1087,14 +1130,21 @@ def request_retry(test_id):
     
     test = Test.query.get_or_404(test_id)
     
-    # التحقق من أن الطالب قد أنهى اختبارًا سابقًا بالفعل
-    completed_attempt = TestAttempt.query.filter_by(
+    # جلب جميع المحاولات المكتملة للطالب في هذا الاختبار
+    completed_attempts = TestAttempt.query.filter_by(
         test_id=test_id,
         user_id=current_user.id
-    ).filter(TestAttempt.completed_at.isnot(None)).first()
+    ).filter(TestAttempt.completed_at.isnot(None)).all()
     
-    if not completed_attempt:
+    completed_attempts_count = len(completed_attempts)
+    if completed_attempts_count == 0:
         flash('لم تقم بإجراء هذا الاختبار بعد. يجب عليك إكمال الاختبار أولاً قبل طلب محاولة إضافية.', 'warning')
+        return redirect(url_for('student_tests.available_tests'))
+    
+    # التحقق من أن الطالب قد استنفد الحد الأقصى من المحاولات المسموح بها
+    if completed_attempts_count < test.max_attempts:
+        remaining_attempts = test.max_attempts - completed_attempts_count
+        flash(f'لا يمكنك طلب محاولة إضافية لأنك لم تستنفد عدد المحاولات المسموح بها بعد. لديك {remaining_attempts} محاولات متبقية.', 'warning')
         return redirect(url_for('student_tests.available_tests'))
     
     # التحقق من وجود طلب قيد الانتظار
@@ -1134,14 +1184,24 @@ def request_retry(test_id):
         db.session.add(retry_request)
         db.session.commit()
         
+        # تسجيل بيانات الطلب
+        logging.info(f"تم إنشاء طلب محاولة إضافية جديد: الطالب {current_user.username} للاختبار {test.title}, المعرف {retry_request.id}")
+        
         flash('تم إرسال طلب المحاولة الإضافية بنجاح. سيتم إعلامك بالرد قريبًا.', 'success')
         return redirect(url_for('student_tests.test_history'))
+    
+    # جلب آخر محاولة للعرض في الطلب
+    latest_attempt = TestAttempt.query.filter_by(
+        test_id=test_id,
+        user_id=current_user.id
+    ).filter(TestAttempt.completed_at.isnot(None)).order_by(TestAttempt.completed_at.desc()).first()
     
     return render_template(
         'student/request_retry.html',
         test=test,
         form=form,
-        completed_attempt=completed_attempt
+        completed_attempt=latest_attempt,
+        completed_attempts_count=completed_attempts_count
     )
 @admin_tests.route('/admin/tests/create_manual', methods=['GET', 'POST'])
 @login_required

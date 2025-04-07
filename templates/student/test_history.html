@@ -71,30 +71,21 @@
                                             </div>
                                             <div class="card-body">
                                                 {% set test = tests[test_id] %}
-                                                <p><strong>عدد المحاولات:</strong> {{ test_attempts|length }} / {{ test.max_attempts }}</p>
-                                                <p><strong>المحاولات المتبقية:</strong> {{ test.max_attempts - test_attempts|length if (test.max_attempts - test_attempts|length) >= 0 else 0 }}</p>
+                                                <p><strong>عدد المحاولات:</strong> {{ test_status[test_id].completed_count }} / {{ test_status[test_id].max_attempts }}</p>
+                                                <p><strong>المحاولات المتبقية:</strong> {{ test_status[test_id].remaining_attempts }}
+                                                    {% if test_status[test_id].has_approved_retry %}
+                                                    <span class="badge bg-success">+1 محاولة إضافية معتمدة</span>
+                                                    {% endif %}
+                                                </p>
                                                 
-                                                {% set passed_count = 0 %}
-                                                {% set best_score = 0 %}
-                                                {% if test_attempts %}
-                                                    {% for attempt in test_attempts %}
-                                                        {% if attempt.passed %}
-                                                            {% set passed_count = passed_count + 1 %}
-                                                        {% endif %}
-                                                        {% if attempt.score is not none and attempt.score > best_score %}
-                                                            {% set best_score = attempt.score %}
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                {% endif %}
-                                                
-                                                <p><strong>المحاولات الناجحة:</strong> {{ passed_count }} من {{ test_attempts|length }}</p>
-                                                <p><strong>أفضل نتيجة:</strong> {{ "%.1f"|format(best_score) }}%</p>
+                                                <p><strong>المحاولات الناجحة:</strong> {{ test_status[test_id].passed_count }} من {{ test_status[test_id].completed_count }}</p>
+                                                <p><strong>أفضل نتيجة:</strong> {{ "%.1f"|format(test_status[test_id].best_score) }}%</p>
                                                 
                                                 <div class="progress">
-                                                    <div class="progress-bar bg-success" role="progressbar" 
-                                                        style="width: {{ best_score }}%;" 
-                                                        aria-valuenow="{{ best_score }}" aria-valuemin="0" aria-valuemax="100">
-                                                        {{ "%.1f"|format(best_score) }}%
+                                                    <div class="progress-bar {% if test_status[test_id].best_score >= tests[test_id].passing_score %}bg-success{% else %}bg-warning{% endif %}" role="progressbar" 
+                                                        style="width: {{ test_status[test_id].best_score }}%;" 
+                                                        aria-valuenow="{{ test_status[test_id].best_score }}" aria-valuemin="0" aria-valuemax="100">
+                                                        {{ "%.1f"|format(test_status[test_id].best_score) }}%
                                                     </div>
                                                 </div>
                                             </div>
