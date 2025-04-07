@@ -572,6 +572,20 @@ def student_results():
         test = Test.query.get(attempt.test_id)
         
         if student and test:
+            # حساب عدد المحاولات لهذا الطالب في هذا الاختبار
+            attempt_counts = {
+                'completed': TestAttempt.query.filter_by(
+                    test_id=test.id,
+                    user_id=student.id,
+                    completed_at=not None
+                ).count(),
+                'in_progress': TestAttempt.query.filter_by(
+                    test_id=test.id,
+                    user_id=student.id,
+                    completed_at=None
+                ).count()
+            }
+            
             student_results.append({
                 'attempt_id': attempt.id,
                 'student_id': student.id,
@@ -580,7 +594,8 @@ def student_results():
                 'test_title': test.title,
                 'completed_at': attempt.completed_at,
                 'score': attempt.score,
-                'passed': attempt.passed
+                'passed': attempt.passed,
+                'attempt_counts': attempt_counts
             })
     
     # حساب الإحصائيات الإجمالية
