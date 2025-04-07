@@ -783,9 +783,8 @@ def start_test(test_id):
     # التحقق من وجود محاولة سابقة مكتملة لهذا الاختبار
     completed_attempts = TestAttempt.query.filter_by(
         test_id=test_id,
-        user_id=current_user.id,
-        completed_at=db.cast(db.literal(True), db.Boolean)  # completed_at NOT NULL
-    ).count()
+        user_id=current_user.id
+    ).filter(TestAttempt.completed_at.isnot(None)).count()
     
     # التحقق من أن الطلب نوعه POST (من الزر في الصفحة) وليس GET (من URL مباشرة)
     if request.method != 'POST':
@@ -832,7 +831,6 @@ def start_test(test_id):
     flash('تم بدء الاختبار. ستظهر لك الأسئلة الآن. أحسن استخدام وقت الاختبار!', 'info')
     return redirect(url_for('student_tests.take_test', attempt_id=attempt.id))
 
-@student_tests.route('/attempt/<int:attempt_id>/results')
 @student_tests.route('/attempt/<int:attempt_id>', methods=['GET', 'POST'])
 @login_required
 def take_test(attempt_id):
@@ -945,7 +943,7 @@ def take_test(attempt_id):
                 
                 db.session.commit()
                 flash('تم تسليم الاختبار بنجاح. يمكنك الآن عرض نتائجك.', 'success')
-                return redirect(url_for('student.test_results', attempt_id=attempt.id))
+                return redirect(url_for('student_tests.test_results', attempt_id=attempt.id))
             except Exception as e:
                 db.session.rollback()
                 logging.error(f"Error calculating score or submitting test: {str(e)}")
@@ -965,6 +963,7 @@ def take_test(attempt_id):
         seconds_remaining=seconds_remaining,
         form=form
     )
+@student_tests.route('/attempt/<int:attempt_id>/results')
 @login_required
 def test_results(attempt_id):
     """عرض نتائج محاولة اختبار"""
@@ -1011,9 +1010,8 @@ def test_history():
     
     # جلب جميع محاولات الطالب المكتملة
     attempts = TestAttempt.query.filter_by(
-        user_id=current_user.id, 
-        completed_at=not None
-    ).order_by(TestAttempt.completed_at.desc()).all()
+        user_id=current_user.id
+    ).filter(TestAttempt.completed_at.isnot(None)).order_by(TestAttempt.completed_at.desc()).all()
     
     # تنظيم المحاولات حسب الاختبار
     attempts_by_test = {}
@@ -1053,9 +1051,8 @@ def request_retry(test_id):
     # التحقق من أن الطالب قد أنهى اختبارًا سابقًا بالفعل
     completed_attempt = TestAttempt.query.filter_by(
         test_id=test_id,
-        user_id=current_user.id,
-        completed_at=db.cast(db.literal(True), db.Boolean)  # completed_at NOT NULL
-    ).first()
+        user_id=current_user.id
+    ).filter(TestAttempt.completed_at.isnot(None)).first()
     
     if not completed_attempt:
         flash('لم تقم بإجراء هذا الاختبار بعد. يجب عليك إكمال الاختبار أولاً قبل طلب محاولة إضافية.', 'warning')
