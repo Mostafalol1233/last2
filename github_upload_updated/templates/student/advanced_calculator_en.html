@@ -1,0 +1,957 @@
+{% extends 'base.html' %}
+
+{% block title %}Advanced Calculator - Educational Platform{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-dark mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4><i class="fas fa-calculator me-2"></i>Advanced Calculator</h4>
+                <a href="{{ url_for('student.advanced_calculator') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-language me-1"></i>العربية
+                </a>
+            </div>
+            <div class="card-body">
+                <p class="lead">
+                    Advanced calculator with support for complex mathematical operations, graphing functions, and solving equations.
+                </p>
+                <div class="d-flex justify-content-end">
+                    <a href="{{ url_for('student.algebra_formulas_en') }}" class="btn btn-primary">
+                        <i class="fas fa-book me-2"></i>Algebra Formulas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h5><i class="fas fa-calculator me-2"></i>Scientific Calculator</h5>
+            </div>
+            <div class="card-body">
+                <div class="calculator-container">
+                    <div class="mb-3">
+                        <input type="text" id="display" class="form-control mb-2 text-end" readonly>
+                        <div id="result" class="alert alert-info mb-3 text-end" style="min-height: 60px;"></div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('sin(')">sin</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('cos(')">cos</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('tan(')">tan</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('π')">π</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-danger w-100" onclick="clearDisplay()">C</button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('asin(')">sin⁻¹</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('acos(')">cos⁻¹</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('atan(')">tan⁻¹</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('abs(')">|x|</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('!')">&excl;</button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('√(')">√</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('^2')">x²</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('^')">x^y</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('log(')">log</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('ln(')">ln</button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col">
+                            <button class="btn btn-outline-light w-100" onclick="addToDisplay('7')">7</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-light w-100" onclick="addToDisplay('8')">8</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-light w-100" onclick="addToDisplay('9')">9</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('/')">/</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('(')">(</button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col">
+                            <button class="btn btn-outline-light w-100" onclick="addToDisplay('4')">4</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-light w-100" onclick="addToDisplay('5')">5</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-light w-100" onclick="addToDisplay('6')">6</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('*')">×</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay(')')">)</button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col">
+                            <button class="btn btn-outline-light w-100" onclick="addToDisplay('1')">1</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-light w-100" onclick="addToDisplay('2')">2</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-light w-100" onclick="addToDisplay('3')">3</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('-')">-</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-warning w-100" onclick="backspace()">⌫</button>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                        <div class="col">
+                            <button class="btn btn-outline-light w-100" onclick="addToDisplay('0')">0</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-light w-100" onclick="addToDisplay('.')">.</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('e')">e</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-secondary w-100" onclick="addToDisplay('+')">+</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-success w-100" onclick="calculate()">=</button>
+                        </div>
+                    </div>
+                    
+                    <div class="calculator-history mt-4">
+                        <h6>History</h6>
+                        <div id="history" class="p-2 bg-dark border" style="height: 100px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-line me-2"></i>Function Graph</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group mb-3">
+                    <label for="function-input">Function Equation</label>
+                    <div class="input-group">
+                        <span class="input-group-text">f(x) =</span>
+                        <input type="text" id="function-input" class="form-control" placeholder="Example: 2*x^2 + 3*x - 4">
+                        <button class="btn btn-primary" onclick="plotFunction()">Plot</button>
+                    </div>
+                    <small class="form-text text-muted">Use x as variable, examples: sin(x), x^2, 2*x+1</small>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="x-min">X Min Value</label>
+                            <input type="number" id="x-min" class="form-control" value="-10">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="x-max">X Max Value</label>
+                            <input type="number" id="x-max" class="form-control" value="10">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="function-graph" style="width: 100%; height: 300px;" class="border mb-3"></div>
+                
+                <div class="function-tools mt-3">
+                    <h6>Function Information</h6>
+                    <div id="function-info" class="alert alert-info"></div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button class="btn btn-sm btn-info w-100 mb-2" onclick="findZeros()">Find Zeros</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-sm btn-info w-100 mb-2" onclick="findExtremum()">Find Extrema</button>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button class="btn btn-sm btn-info w-100 mb-2" onclick="findDerivative()">Find Derivative</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-sm btn-info w-100 mb-2" onclick="findIntegral()">Find Integral</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h5><i class="fas fa-square-root-alt me-2"></i>Equation Solver</h5>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs" id="equationTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="linear-tab" data-bs-toggle="tab" data-bs-target="#linear-eq" type="button" role="tab">Linear Equation</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="quadratic-tab" data-bs-toggle="tab" data-bs-target="#quadratic-eq" type="button" role="tab">Quadratic Equation</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="system-tab" data-bs-toggle="tab" data-bs-target="#system-eq" type="button" role="tab">System of Equations</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content py-3" id="equationTabsContent">
+                    <!-- Linear Equation -->
+                    <div class="tab-pane fade show active" id="linear-eq" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label>Linear Equation: ax + b = 0</label>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="input-group mb-2">
+                                                <span class="input-group-text">a =</span>
+                                                <input type="number" id="linear-a" class="form-control" value="1">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="input-group mb-2">
+                                                <span class="input-group-text">b =</span>
+                                                <input type="number" id="linear-b" class="form-control" value="2">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="solveLinear()">Solve Equation</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="linear-result" class="alert alert-info" style="min-height: 100px;">
+                                    Results will appear here
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quadratic Equation -->
+                    <div class="tab-pane fade" id="quadratic-eq" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label>Quadratic Equation: ax² + bx + c = 0</label>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="input-group mb-2">
+                                                <span class="input-group-text">a =</span>
+                                                <input type="number" id="quadratic-a" class="form-control" value="1">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="input-group mb-2">
+                                                <span class="input-group-text">b =</span>
+                                                <input type="number" id="quadratic-b" class="form-control" value="-3">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="input-group mb-2">
+                                                <span class="input-group-text">c =</span>
+                                                <input type="number" id="quadratic-c" class="form-control" value="2">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="solveQuadratic()">Solve Equation</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="quadratic-result" class="alert alert-info" style="min-height: 100px;">
+                                    Results will appear here
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- System of Equations -->
+                    <div class="tab-pane fade" id="system-eq" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label>System of Linear Equations:</label>
+                                    <div class="mb-2">
+                                        <div class="input-group mb-2">
+                                            <input type="number" id="system-a11" class="form-control" value="1">
+                                            <span class="input-group-text">x +</span>
+                                            <input type="number" id="system-a12" class="form-control" value="2">
+                                            <span class="input-group-text">y =</span>
+                                            <input type="number" id="system-b1" class="form-control" value="5">
+                                        </div>
+                                        <div class="input-group mb-2">
+                                            <input type="number" id="system-a21" class="form-control" value="3">
+                                            <span class="input-group-text">x +</span>
+                                            <input type="number" id="system-a22" class="form-control" value="4">
+                                            <span class="input-group-text">y =</span>
+                                            <input type="number" id="system-b2" class="form-control" value="11">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="solveSystem()">Solve System</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="system-result" class="alert alert-info" style="min-height: 100px;">
+                                    Results will appear here
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark h-100">
+            <div class="card-header">
+                <h5><i class="fas fa-percent me-2"></i>Additional Calculations</h5>
+            </div>
+            <div class="card-body">
+                <div class="accordion" id="calculationsAccordion">
+                    <!-- Unit Converter -->
+                    <div class="accordion-item bg-dark">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                Unit Converter
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#calculationsAccordion">
+                            <div class="accordion-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <select id="unit-type" class="form-select mb-2">
+                                            <option value="length">Length</option>
+                                            <option value="weight">Weight</option>
+                                            <option value="area">Area</option>
+                                            <option value="volume">Volume</option>
+                                            <option value="temperature">Temperature</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="input-group mb-2">
+                                            <input type="number" id="unit-value" class="form-control" value="1">
+                                            <select id="unit-from" class="form-select"></select>
+                                            <span class="input-group-text">to</span>
+                                            <select id="unit-to" class="form-select"></select>
+                                            <button class="btn btn-primary" onclick="convertUnit()">Convert</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="unit-result" class="alert alert-info">Results will appear here</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Calculus -->
+                    <div class="accordion-item bg-dark">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                Calculus
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#calculationsAccordion">
+                            <div class="accordion-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text">f(x) =</span>
+                                            <input type="text" id="calculus-function" class="form-control" placeholder="Example: x^2 + 3*x">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select id="calculus-operation" class="form-select">
+                                            <option value="derivative">Derivative d/dx</option>
+                                            <option value="integral">Integral ∫dx</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" onclick="calculateCalculus()">Calculate</button>
+                                <div id="calculus-result" class="alert alert-info mt-3">Results will appear here</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Matrix Calculator -->
+                    <div class="accordion-item bg-dark">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                                Matrix Calculator
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#calculationsAccordion">
+                            <div class="accordion-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label>Matrix A</label>
+                                        <textarea id="matrix-a" class="form-control" rows="3" placeholder="Enter matrix, example:&#10;1 2 3&#10;4 5 6&#10;7 8 9"></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Matrix B (optional)</label>
+                                        <textarea id="matrix-b" class="form-control" rows="3" placeholder="Enter matrix, example:&#10;9 8 7&#10;6 5 4&#10;3 2 1"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col">
+                                        <select id="matrix-operation" class="form-select">
+                                            <option value="det">Determinant (det A)</option>
+                                            <option value="inverse">Inverse (A^-1)</option>
+                                            <option value="transpose">Transpose (A^T)</option>
+                                            <option value="add">Addition (A + B)</option>
+                                            <option value="multiply">Multiplication (A × B)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <button class="btn btn-primary w-100" onclick="calculateMatrix()">Calculate</button>
+                                    </div>
+                                </div>
+                                <div id="matrix-result" class="alert alert-info">Results will appear here</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark h-100">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle me-2"></i>Shortcuts & Tips</h5>
+            </div>
+            <div class="card-body">
+                <h6>Calculator Shortcuts</h6>
+                <ul>
+                    <li><strong>sin(), cos(), tan()</strong> - Trigonometric functions</li>
+                    <li><strong>√()</strong> - Square root</li>
+                    <li><strong>^</strong> - Power (example: 2^3 = 8)</li>
+                    <li><strong>log()</strong> - Logarithm base 10</li>
+                    <li><strong>ln()</strong> - Natural logarithm (base e)</li>
+                    <li><strong>π</strong> - Pi constant (3.14159...)</li>
+                    <li><strong>e</strong> - Euler's constant (2.71828...)</li>
+                </ul>
+                
+                <h6>Graph Plotting Tips</h6>
+                <ul>
+                    <li>Drag and drop to navigate the graph</li>
+                    <li>Use the mouse wheel to zoom in and out</li>
+                    <li>You can plot multiple functions separated by commas</li>
+                    <li>Format: <code>2*x^2+3*x-4, sin(x), x^2-4</code></li>
+                </ul>
+                
+                <h6>Additional Information</h6>
+                <ul>
+                    <li>The calculator uses JavaScript for high-precision calculations</li>
+                    <li>The graphing function uses math.js and plotly.js libraries</li>
+                    <li>All operations are performed locally on your device; no data is sent to the server</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center mt-4 mb-5">
+    <a href="{{ url_for('student.dashboard_en') }}" class="btn btn-secondary me-2">
+        <i class="fas fa-home me-1"></i>Return to Dashboard
+    </a>
+    <a href="{{ url_for('student.math_formulas_en') }}" class="btn btn-primary">
+        <i class="fas fa-book me-1"></i>View Math Formulas
+    </a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Add math.js library for mathematical calculations -->
+<script src="https://cdn.jsdelivr.net/npm/mathjs@11.5.0/lib/browser/math.min.js"></script>
+
+<!-- Add plotly.js library for graphing -->
+<script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
+
+<script>
+    // ===== Calculator =====
+    let displayValue = '';
+    const display = document.getElementById('display');
+    const result = document.getElementById('result');
+    const history = document.getElementById('history');
+    
+    function addToDisplay(value) {
+        displayValue += value;
+        display.value = displayValue;
+    }
+    
+    function clearDisplay() {
+        displayValue = '';
+        display.value = '';
+        result.innerHTML = '';
+    }
+    
+    function backspace() {
+        displayValue = displayValue.slice(0, -1);
+        display.value = displayValue;
+    }
+    
+    function calculate() {
+        try {
+            // Replace some symbols and expressions to be compatible with math.js
+            let expression = displayValue
+                .replace(/π/g, 'pi')
+                .replace(/√\(/g, 'sqrt(')
+                .replace(/\^/g, '**')
+                .replace(/asin\(/g, 'asin(')  // Inverse trigonometric functions
+                .replace(/acos\(/g, 'acos(')
+                .replace(/atan\(/g, 'atan(')
+                .replace(/abs\(/g, 'abs(')    // Absolute value
+                .replace(/(\d+)!/g, 'factorial($1)'); // Factorial
+            
+            // Calculate the result
+            const answer = math.evaluate(expression);
+            result.innerHTML = `<strong>Result:</strong> ${answer}`;
+            
+            // Add operation to history
+            history.innerHTML += `<div>${displayValue} = ${answer}</div>`;
+            
+            // Make the result the new value
+            displayValue = answer.toString();
+            display.value = displayValue;
+        } catch (error) {
+            result.innerHTML = `<span class="text-danger">Error: ${error.message}</span>`;
+        }
+    }
+    
+    // ===== Function Graph =====
+    // Setup the graph
+    const graphDiv = document.getElementById('function-graph');
+    let currentPlot = null;
+    
+    // Graph plotting function
+    function plotFunction() {
+        try {
+            const functionText = document.getElementById('function-input').value;
+            const xMin = parseFloat(document.getElementById('x-min').value);
+            const xMax = parseFloat(document.getElementById('x-max').value);
+            
+            // Verify inputs
+            if (!functionText) {
+                alert('Please enter a function equation');
+                return;
+            }
+            
+            if (xMin >= xMax) {
+                alert('X min must be less than X max');
+                return;
+            }
+            
+            // Create array of x values
+            const xValues = [];
+            const step = (xMax - xMin) / 1000;
+            for (let x = xMin; x <= xMax; x += step) {
+                xValues.push(x);
+            }
+            
+            // Convert function equation to be compatible with math.js
+            const functionExpr = functionText
+                .replace(/\^/g, '**')
+                .replace(/sin\(/g, 'Math.sin(')
+                .replace(/cos\(/g, 'Math.cos(')
+                .replace(/tan\(/g, 'Math.tan(')
+                .replace(/sqrt\(/g, 'Math.sqrt(')
+                .replace(/log\(/g, 'Math.log10(')
+                .replace(/ln\(/g, 'Math.log(')
+                .replace(/π/g, 'Math.PI')
+                .replace(/pi/g, 'Math.PI')
+                .replace(/e(?!\w)/g, 'Math.E');
+            
+            // Calculate function values
+            const yValues = xValues.map(x => {
+                try {
+                    // Use eval to evaluate the expression (with caution)
+                    return eval(functionExpr.replace(/x/g, `(${x})`));
+                } catch (e) {
+                    return null; // Return null for undefined values
+                }
+            });
+            
+            // Create data for plotting
+            const trace = {
+                x: xValues,
+                y: yValues,
+                type: 'scatter',
+                mode: 'lines',
+                line: { color: '#1f77b4', width: 2 }
+            };
+            
+            // Setup plot layout
+            const layout = {
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { color: '#fff' },
+                xaxis: {
+                    title: 'x',
+                    gridcolor: '#444',
+                    zerolinecolor: '#666'
+                },
+                yaxis: {
+                    title: 'y',
+                    gridcolor: '#444',
+                    zerolinecolor: '#666'
+                },
+                margin: { t: 10, b: 40, l: 60, r: 10 }
+            };
+            
+            // Create or update the plot
+            if (currentPlot) {
+                Plotly.react(graphDiv, [trace], layout);
+            } else {
+                Plotly.newPlot(graphDiv, [trace], layout);
+                currentPlot = true;
+            }
+            
+            // Show basic information about the function
+            const functionInfo = document.getElementById('function-info');
+            functionInfo.innerHTML = `<strong>Function:</strong> f(x) = ${functionText}<br>
+                                      <strong>Domain:</strong> [${xMin}, ${xMax}]`;
+        } catch (error) {
+            console.error('Error plotting function:', error);
+            alert('Error plotting function. Please check your equation format.');
+        }
+    }
+    
+    // Equation solving functions
+    function solveLinear() {
+        try {
+            const a = parseFloat(document.getElementById('linear-a').value);
+            const b = parseFloat(document.getElementById('linear-b').value);
+            
+            if (a === 0) {
+                if (b === 0) {
+                    document.getElementById('linear-result').innerHTML = 'The equation has infinitely many solutions.';
+                } else {
+                    document.getElementById('linear-result').innerHTML = 'The equation has no solution.';
+                }
+            } else {
+                const x = -b / a;
+                document.getElementById('linear-result').innerHTML = `<strong>Solution:</strong> x = ${x}`;
+            }
+        } catch (error) {
+            document.getElementById('linear-result').innerHTML = `<span class="text-danger">Error: ${error.message}</span>`;
+        }
+    }
+    
+    function solveQuadratic() {
+        try {
+            const a = parseFloat(document.getElementById('quadratic-a').value);
+            const b = parseFloat(document.getElementById('quadratic-b').value);
+            const c = parseFloat(document.getElementById('quadratic-c').value);
+            
+            if (a === 0) {
+                // Linear equation
+                solveLinear(b, c);
+                return;
+            }
+            
+            const discriminant = b * b - 4 * a * c;
+            let result = '';
+            
+            if (discriminant > 0) {
+                // Two distinct real roots
+                const x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                const x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                result = `<strong>Discriminant:</strong> Δ = ${discriminant} > 0<br>
+                          <strong>Two real roots:</strong><br>
+                          x₁ = ${x1}<br>
+                          x₂ = ${x2}`;
+            } else if (discriminant === 0) {
+                // One repeated real root
+                const x = -b / (2 * a);
+                result = `<strong>Discriminant:</strong> Δ = 0<br>
+                          <strong>One repeated real root:</strong><br>
+                          x = ${x}`;
+            } else {
+                // Complex conjugate roots
+                const realPart = -b / (2 * a);
+                const imagPart = Math.sqrt(-discriminant) / (2 * a);
+                result = `<strong>Discriminant:</strong> Δ = ${discriminant} < 0<br>
+                          <strong>Complex conjugate roots:</strong><br>
+                          x₁ = ${realPart} + ${imagPart}i<br>
+                          x₂ = ${realPart} - ${imagPart}i`;
+            }
+            
+            document.getElementById('quadratic-result').innerHTML = result;
+        } catch (error) {
+            document.getElementById('quadratic-result').innerHTML = `<span class="text-danger">Error: ${error.message}</span>`;
+        }
+    }
+    
+    function solveSystem() {
+        try {
+            const a11 = parseFloat(document.getElementById('system-a11').value);
+            const a12 = parseFloat(document.getElementById('system-a12').value);
+            const b1 = parseFloat(document.getElementById('system-b1').value);
+            const a21 = parseFloat(document.getElementById('system-a21').value);
+            const a22 = parseFloat(document.getElementById('system-a22').value);
+            const b2 = parseFloat(document.getElementById('system-b2').value);
+            
+            // Calculate determinant
+            const determinant = a11 * a22 - a12 * a21;
+            
+            if (determinant === 0) {
+                // Zero determinant, system is either inconsistent or has infinitely many solutions
+                // Check special cases
+                const det1 = b1 * a22 - b2 * a12;
+                const det2 = a11 * b2 - a21 * b1;
+                
+                if (det1 === 0 && det2 === 0) {
+                    document.getElementById('system-result').innerHTML = 'The system has infinitely many solutions.';
+                } else {
+                    document.getElementById('system-result').innerHTML = 'The system has no solution (inconsistent).';
+                }
+            } else {
+                // Calculate x and y using Cramer's rule
+                const x = (b1 * a22 - b2 * a12) / determinant;
+                const y = (a11 * b2 - a21 * b1) / determinant;
+                
+                document.getElementById('system-result').innerHTML = `<strong>Solution:</strong><br>
+                                                                    x = ${x}<br>
+                                                                    y = ${y}`;
+            }
+        } catch (error) {
+            document.getElementById('system-result').innerHTML = `<span class="text-danger">Error: ${error.message}</span>`;
+        }
+    }
+    
+    // Additional graph functions
+    function findZeros() {
+        const functionText = document.getElementById('function-input').value;
+        if (!functionText) {
+            alert('Please enter a function equation first');
+            return;
+        }
+        
+        const functionInfo = document.getElementById('function-info');
+        functionInfo.innerHTML += '<br><strong>Zeros:</strong> Please use the calculator to find zeros accurately.';
+    }
+    
+    function findExtremum() {
+        const functionText = document.getElementById('function-input').value;
+        if (!functionText) {
+            alert('Please enter a function equation first');
+            return;
+        }
+        
+        const functionInfo = document.getElementById('function-info');
+        functionInfo.innerHTML += '<br><strong>Extrema:</strong> Can be found using the first and second derivatives.';
+    }
+    
+    function findDerivative() {
+        const functionText = document.getElementById('function-input').value;
+        if (!functionText) {
+            alert('Please enter a function equation first');
+            return;
+        }
+        
+        const functionInfo = document.getElementById('function-info');
+        functionInfo.innerHTML += '<br><strong>Derivative:</strong> Use appropriate differentiation rules.';
+    }
+    
+    function findIntegral() {
+        const functionText = document.getElementById('function-input').value;
+        if (!functionText) {
+            alert('Please enter a function equation first');
+            return;
+        }
+        
+        const functionInfo = document.getElementById('function-info');
+        functionInfo.innerHTML += '<br><strong>Integral:</strong> Use appropriate integration rules.';
+    }
+    
+    // Initialize page on load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize unit converter
+        const unitTypes = {
+            length: [
+                { value: 'mm', label: 'Millimeter (mm)' },
+                { value: 'cm', label: 'Centimeter (cm)' },
+                { value: 'm', label: 'Meter (m)' },
+                { value: 'km', label: 'Kilometer (km)' },
+                { value: 'in', label: 'Inch (in)' },
+                { value: 'ft', label: 'Foot (ft)' },
+                { value: 'yd', label: 'Yard (yd)' },
+                { value: 'mi', label: 'Mile (mi)' }
+            ],
+            weight: [
+                { value: 'mg', label: 'Milligram (mg)' },
+                { value: 'g', label: 'Gram (g)' },
+                { value: 'kg', label: 'Kilogram (kg)' },
+                { value: 't', label: 'Ton (t)' },
+                { value: 'oz', label: 'Ounce (oz)' },
+                { value: 'lb', label: 'Pound (lb)' }
+            ],
+            area: [
+                { value: 'mm2', label: 'Square millimeter (mm²)' },
+                { value: 'cm2', label: 'Square centimeter (cm²)' },
+                { value: 'm2', label: 'Square meter (m²)' },
+                { value: 'ha', label: 'Hectare (ha)' },
+                { value: 'km2', label: 'Square kilometer (km²)' },
+                { value: 'in2', label: 'Square inch (in²)' },
+                { value: 'ft2', label: 'Square foot (ft²)' },
+                { value: 'ac', label: 'Acre (ac)' },
+                { value: 'mi2', label: 'Square mile (mi²)' }
+            ],
+            volume: [
+                { value: 'ml', label: 'Milliliter (ml)' },
+                { value: 'l', label: 'Liter (l)' },
+                { value: 'm3', label: 'Cubic meter (m³)' },
+                { value: 'floz', label: 'Fluid ounce (fl oz)' },
+                { value: 'gal', label: 'Gallon (gal)' },
+                { value: 'in3', label: 'Cubic inch (in³)' },
+                { value: 'ft3', label: 'Cubic foot (ft³)' }
+            ],
+            temperature: [
+                { value: 'c', label: 'Celsius (°C)' },
+                { value: 'f', label: 'Fahrenheit (°F)' },
+                { value: 'k', label: 'Kelvin (K)' }
+            ]
+        };
+        
+        function updateUnitOptions() {
+            const unitType = document.getElementById('unit-type').value;
+            const units = unitTypes[unitType];
+            
+            const fromSelect = document.getElementById('unit-from');
+            const toSelect = document.getElementById('unit-to');
+            
+            // Clear current options
+            fromSelect.innerHTML = '';
+            toSelect.innerHTML = '';
+            
+            // Add new units
+            units.forEach(unit => {
+                fromSelect.add(new Option(unit.label, unit.value));
+                toSelect.add(new Option(unit.label, unit.value));
+            });
+            
+            // Select second option by default
+            if (toSelect.options.length > 1) {
+                toSelect.selectedIndex = 1;
+            }
+        }
+        
+        // Initialize unit converter
+        document.getElementById('unit-type').addEventListener('change', updateUnitOptions);
+        updateUnitOptions();
+    });
+</script>
+
+<!-- Matrix result display styles -->
+<style>
+    .matrix-result-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .matrix-row {
+        display: flex;
+        justify-content: center;
+        margin: 2px 0;
+    }
+    .matrix-cell {
+        display: inline-block;
+        width: 50px;
+        text-align: center;
+        padding: 5px;
+        background-color: #f8f9fa;
+        color: #000;
+        margin: 0 2px;
+        border-radius: 3px;
+    }
+</style>
+
+<script src="{{ url_for('static', filename='js/advanced-calculator.js') }}"></script>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .calculator-container {
+        max-width: 100%;
+    }
+    
+    button {
+        font-weight: bold;
+    }
+    
+    .formula-container {
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+    }
+    
+    /* Graph styles */
+    #function-graph {
+        background-color: #222;
+        border-radius: 5px;
+    }
+    
+    /* Matrix styles */
+    #matrix-a, #matrix-b {
+        font-family: 'Courier New', monospace;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,416 @@
+/* Custom styles to complement Bootstrap */
+/* Enhanced animations and effects */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(0, 123, 255, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); }
+}
+
+/* Eye-friendly color scheme with softer colors */
+:root {
+    --primary-color: #1a4c78;
+    --primary-light: #2c6ca8;
+    --primary-dark: #0f3251;
+    --secondary-color: #27ae60;
+    --secondary-light: #4cc482;
+    --secondary-dark: #208e4e;
+    --accent-color: #e67e22;
+    --accent-light: #f4a261;
+    --accent-dark: #c26620;
+    --danger-color: #e74c3c;
+    --text-light: #f8f9fa;
+    --text-dark: #343a40;
+    --bg-light: #ffffff;
+    --bg-dark: #111111; /* تغيير لون الخلفية الداكنة إلى أسود */
+    --bg-card: #2d3436;
+    --bg-card-dark: #222;
+    --header-height: 80px;
+}
+
+body {
+    direction: rtl;
+    text-align: right;
+    font-family: 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: var(--bg-light);
+    transition: background-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Dark mode styles for main content */
+main {
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    border-radius: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    padding: 20px 0;
+    flex: 1;
+}
+
+main a:not(.btn) {
+    color: var(--primary-light);
+}
+
+/* White style for header and footer */
+header, footer {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+}
+
+.navbar-custom .nav-link {
+    color: var(--text-dark) !important;
+    margin-right: 15px;
+    padding: 8px 15px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.navbar-custom .nav-link:hover {
+    background-color: #f8f9fa;
+    color: var(--primary-color) !important;
+}
+
+/* القائمة السفلية */
+.bottom-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 1rem 0;
+    background-color: var(--bg-light);
+    border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.bottom-links a {
+    color: var(--text-dark);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.bottom-links a:hover {
+    background-color: #e9ecef;
+    color: var(--primary-color);
+}
+
+@media (max-width: 576px) {
+    .bottom-links a {
+        padding: 0.5rem 0.5rem;
+        margin: 0 0.25rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* الألوان في القوائم المنسدلة */
+.dropdown-menu {
+    background-color: var(--bg-light);
+}
+
+.dropdown-item {
+    color: var(--text-dark);
+    font-weight: bold;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: var(--primary-color);
+}
+
+/* Apply animations to elements */
+.card {
+    animation: fadeIn 0.6s ease-out;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    background-color: var(--bg-card);
+    color: var(--text-light);
+}
+
+.card .card-header {
+    background-color: var(--bg-card-dark);
+    color: var(--text-light);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn {
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--primary-dark), var(--primary-color));
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+}
+
+.btn-success {
+    background: linear-gradient(45deg, var(--secondary-dark), var(--secondary-color));
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(45deg, var(--secondary-color), var(--secondary-light));
+}
+
+.btn-danger {
+    background: linear-gradient(45deg, var(--danger-color), #f16156);
+    border: none;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(45deg, #d44637, var(--danger-color));
+}
+
+.btn-warning {
+    background: linear-gradient(45deg, var(--accent-dark), var(--accent-color));
+    border: none;
+    color: var(--text-light);
+}
+
+.btn-warning:hover {
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-light));
+    color: var(--text-light);
+}
+
+/* Better contrast for text lines */
+.list-group-item {
+    background-color: var(--bg-card);
+    color: var(--text-light);
+    border-color: rgba(255,255,255,0.1);
+}
+
+/* Dashboard Stats */
+.dashboard-stats {
+    text-align: center;
+    padding: 1.2rem;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-stats .stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.dashboard-stats h3 {
+    color: var(--text-light);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+}
+
+.dashboard-stats p {
+    color: var(--text-light);
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+/* Video list */
+.video-list .card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.video-list .card-text {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+/* Post list */
+.post-list .list-group-item {
+    color: var(--text-light);
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.post-list .list-group-item:hover {
+    transform: translateX(-8px);
+    border-left: 3px solid var(--primary-color);
+}
+
+.post-list h6 {
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.post-list p {
+    font-size: 0.85rem;
+    margin-bottom: 0;
+    color: var(--text-light);
+    opacity: 0.8;
+}
+
+/* Math tools section styling */
+.math-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.math-tools .btn {
+    flex: 1;
+    min-width: 150px;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+/* Main welcome message */
+.lead {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard-stats {
+        padding: 1rem;
+    }
+    
+    .dashboard-stats .stat-icon {
+        font-size: 2rem;
+    }
+    
+    .dashboard-stats h3 {
+        font-size: 1.5rem;
+    }
+    
+    .navbar-brand span {
+        font-size: 1.1rem;
+    }
+    
+    .navbar-brand small {
+        display: none;
+    }
+    
+    .card-hover:hover {
+        transform: translateY(-3px);
+    }
+
+    .navbar-nav {
+        margin-top: 15px;
+    }
+
+    .navbar-nav .nav-item {
+        margin-bottom: 8px;
+    }
+}
+
+/* Customized scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* Footer styling */
+footer {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    padding: 2rem 0;
+}
+
+.footer-logo {
+    max-width: 120px;
+    margin-bottom: 1rem;
+}
+
+footer a {
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+footer a:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+/* Card hover effect */
+.card-hover:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-5px);
+}
+
+/* Badge styling */
+.badge-new {
+    animation: pulse 1.5s infinite;
+}
+
+/* تصغير حجم اللوجو */
+.navbar-brand img {
+    max-height: 40px;
+}
+
+/* تعديل حجم الخط في القائمة */
+.navbar-custom .nav-link {
+    font-weight: bold;
+}
+
+/* تنبيه الصور غير الظاهرة */
+.image-alert {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.image-alert i {
+    color: var(--warning-color);
+    margin-right: 5px;
+}

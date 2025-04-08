@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+
+{% block title %}Calculus, Trigonometry, Mechanics & Dynamics - Educational Platform{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-dark">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4><i class="fas fa-integral me-2"></i>Advanced Mathematics Formulas</h4>
+                <a href="{{ url_for('student.advanced_formulas') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-language me-1"></i>العربية
+                </a>
+            </div>
+            <div class="card-body">
+                <p class="lead">
+                    Comprehensive collection of calculus, trigonometry, mechanics, and dynamics formulas for secondary school students.
+                </p>
+                
+                <div class="row mt-3">
+                    <div class="col-md-3 mb-2">
+                        <a href="#calculus" class="btn btn-warning w-100">
+                            <i class="fas fa-integral me-1"></i>Calculus
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#trigonometry" class="btn btn-warning w-100">
+                            <i class="fas fa-draw-polygon me-1"></i>Trigonometry
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#mechanics" class="btn btn-warning w-100">
+                            <i class="fas fa-cogs me-1"></i>Mechanics
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#dynamics" class="btn btn-warning w-100">
+                            <i class="fas fa-atom me-1"></i>Dynamics
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-end mt-3">
+                    <a href="{{ url_for('student.advanced_calculator_en') }}" class="btn btn-primary">
+                        <i class="fas fa-calculator me-2"></i>Advanced Calculator
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Calculus Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-dark">
+            <div class="card-header" id="calculus">
+                <h5><i class="fas fa-integral me-2"></i>Calculus</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Basic Derivatives
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">$\frac{d}{dx}(c) = 0$ (constant rule)</li>
+                                    <li class="list-group-item bg-dark">$\frac{d}{dx}(x^n) = nx^{n-1}$ (power rule)</li>
+                                    <li class="list-group-item bg-dark">$\frac{d}{dx}(e^x) = e^x$ (exponential rule)</li>
+                                    <li class="list-group-item bg-dark">$\frac{d}{dx}(\ln x) = \frac{1}{x}$ (natural logarithm)</li>
+                                    <li class="list-group-item bg-dark">$\frac{d}{dx}(\sin x) = \cos x$ (sine)</li>
+                                    <li class="list-group-item bg-dark">$\frac{d}{dx}(\cos x) = -\sin x$ (cosine)</li>
+                                    <li class="list-group-item bg-dark">$\frac{d}{dx}(\tan x) = \sec^2 x$ (tangent)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Basic Integrals
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">$\int x^n dx = \frac{x^{n+1}}{n+1} + C$ (for $n \neq -1$)</li>
+                                    <li class="list-group-item bg-dark">$\int \frac{1}{x} dx = \ln|x| + C$</li>
+                                    <li class="list-group-item bg-dark">$\int e^x dx = e^x + C$</li>
+                                    <li class="list-group-item bg-dark">$\int \sin x dx = -\cos x + C$</li>
+                                    <li class="list-group-item bg-dark">$\int \cos x dx = \sin x + C$</li>
+                                    <li class="list-group-item bg-dark">$\int \sec^2 x dx = \tan x + C$</li>
+                                    <li class="list-group-item bg-dark">$\int \frac{1}{1+x^2} dx = \tan^{-1} x + C$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Derivative Rules
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">Sum Rule: $\frac{d}{dx}(f(x) + g(x)) = \frac{d}{dx}f(x) + \frac{d}{dx}g(x)$</li>
+                                    <li class="list-group-item bg-dark">Product Rule: $\frac{d}{dx}(f(x) \cdot g(x)) = f'(x)g(x) + f(x)g'(x)$</li>
+                                    <li class="list-group-item bg-dark">Quotient Rule: $\frac{d}{dx}(\frac{f(x)}{g(x)}) = \frac{f'(x)g(x) - f(x)g'(x)}{g(x)^2}$</li>
+                                    <li class="list-group-item bg-dark">Chain Rule: $\frac{d}{dx}(f(g(x))) = f'(g(x)) \cdot g'(x)$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Applications of Calculus
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">Maximum: If $f'(c) = 0$ and $f''(c) < 0$, $f(c)$ is a maximum</li>
+                                    <li class="list-group-item bg-dark">Minimum: If $f'(c) = 0$ and $f''(c) > 0$, $f(c)$ is a minimum</li>
+                                    <li class="list-group-item bg-dark">Inflection Point: If $f''(c) = 0$ and $f'''(c) \neq 0$, $(c, f(c))$ is an inflection point</li>
+                                    <li class="list-group-item bg-dark">Area under curve from $a$ to $b$: $\int_a^b f(x)dx$</li>
+                                    <li class="list-group-item bg-dark">Arc Length: $L = \int_a^b \sqrt{1 + [f'(x)]^2} dx$</li>
+                                    <li class="list-group-item bg-dark">Volume of Revolution about x-axis: $V = \pi \int_a^b [f(x)]^2 dx$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trigonometry Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-dark">
+            <div class="card-header" id="trigonometry">
+                <h5><i class="fas fa-draw-polygon me-2"></i>Trigonometry</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Fundamental Identities
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">$\sin^2 \theta + \cos^2 \theta = 1$</li>
+                                    <li class="list-group-item bg-dark">$\tan \theta = \frac{\sin \theta}{\cos \theta}$</li>
+                                    <li class="list-group-item bg-dark">$\cot \theta = \frac{\cos \theta}{\sin \theta} = \frac{1}{\tan \theta}$</li>
+                                    <li class="list-group-item bg-dark">$\sec \theta = \frac{1}{\cos \theta}$</li>
+                                    <li class="list-group-item bg-dark">$\csc \theta = \frac{1}{\sin \theta}$</li>
+                                    <li class="list-group-item bg-dark">$1 + \tan^2 \theta = \sec^2 \theta$</li>
+                                    <li class="list-group-item bg-dark">$1 + \cot^2 \theta = \csc^2 \theta$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Angle Addition Formulas
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">$\sin(\alpha \pm \beta) = \sin \alpha \cos \beta \pm \cos \alpha \sin \beta$</li>
+                                    <li class="list-group-item bg-dark">$\cos(\alpha \pm \beta) = \cos \alpha \cos \beta \mp \sin \alpha \sin \beta$</li>
+                                    <li class="list-group-item bg-dark">$\tan(\alpha \pm \beta) = \frac{\tan \alpha \pm \tan \beta}{1 \mp \tan \alpha \tan \beta}$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Double Angle Formulas
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">$\sin 2\theta = 2\sin \theta \cos \theta$</li>
+                                    <li class="list-group-item bg-dark">$\cos 2\theta = \cos^2 \theta - \sin^2 \theta = 2\cos^2 \theta - 1 = 1 - 2\sin^2 \theta$</li>
+                                    <li class="list-group-item bg-dark">$\tan 2\theta = \frac{2\tan \theta}{1 - \tan^2 \theta}$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Laws of Triangles
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">Law of Sines: $\frac{\sin A}{a} = \frac{\sin B}{b} = \frac{\sin C}{c}$</li>
+                                    <li class="list-group-item bg-dark">Law of Cosines: $c^2 = a^2 + b^2 - 2ab\cos C$</li>
+                                    <li class="list-group-item bg-dark">Area of Triangle: $\text{Area} = \frac{1}{2}ab\sin C$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Half-Angle Formulas
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">$\sin \frac{\theta}{2} = \pm\sqrt{\frac{1-\cos \theta}{2}}$</li>
+                                    <li class="list-group-item bg-dark">$\cos \frac{\theta}{2} = \pm\sqrt{\frac{1+\cos \theta}{2}}$</li>
+                                    <li class="list-group-item bg-dark">$\tan \frac{\theta}{2} = \frac{\sin \theta}{1+\cos \theta} = \frac{1-\cos \theta}{\sin \theta}$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Product-to-Sum Formulas
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">$\sin \alpha \sin \beta = \frac{1}{2}[\cos(\alpha-\beta) - \cos(\alpha+\beta)]$</li>
+                                    <li class="list-group-item bg-dark">$\cos \alpha \cos \beta = \frac{1}{2}[\cos(\alpha-\beta) + \cos(\alpha+\beta)]$</li>
+                                    <li class="list-group-item bg-dark">$\sin \alpha \cos \beta = \frac{1}{2}[\sin(\alpha+\beta) + \sin(\alpha-\beta)]$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mechanics Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-dark">
+            <div class="card-header" id="mechanics">
+                <h5><i class="fas fa-cogs me-2"></i>Mechanics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Linear Kinematics
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">Average Velocity: $\bar{v} = \frac{\Delta x}{\Delta t}$</li>
+                                    <li class="list-group-item bg-dark">Instantaneous Velocity: $v = \frac{dx}{dt}$</li>
+                                    <li class="list-group-item bg-dark">Average Acceleration: $\bar{a} = \frac{\Delta v}{\Delta t}$</li>
+                                    <li class="list-group-item bg-dark">Instantaneous Acceleration: $a = \frac{dv}{dt} = \frac{d^2x}{dt^2}$</li>
+                                    <li class="list-group-item bg-dark">Velocity with Constant Acceleration: $v = v_0 + at$</li>
+                                    <li class="list-group-item bg-dark">Position with Constant Acceleration: $x = x_0 + v_0t + \frac{1}{2}at^2$</li>
+                                    <li class="list-group-item bg-dark">Velocity-Position Relation: $v^2 = v_0^2 + 2a(x - x_0)$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Forces and Motion
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">Newton's Second Law: $F = ma$</li>
+                                    <li class="list-group-item bg-dark">Weight: $W = mg$</li>
+                                    <li class="list-group-item bg-dark">Friction Force: $F_f = \mu N$ (where $\mu$ is coefficient of friction)</li>
+                                    <li class="list-group-item bg-dark">Work: $W = F \cdot d \cdot \cos\theta$</li>
+                                    <li class="list-group-item bg-dark">Kinetic Energy: $KE = \frac{1}{2}mv^2$</li>
+                                    <li class="list-group-item bg-dark">Potential Energy (gravitational): $PE = mgh$</li>
+                                    <li class="list-group-item bg-dark">Conservation of Energy: $KE_1 + PE_1 = KE_2 + PE_2$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Circular Motion
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">Angular Velocity: $\omega = \frac{\Delta \theta}{\Delta t}$</li>
+                                    <li class="list-group-item bg-dark">Linear Speed in Circular Motion: $v = r\omega$</li>
+                                    <li class="list-group-item bg-dark">Centripetal Acceleration: $a_c = \frac{v^2}{r} = r\omega^2$</li>
+                                    <li class="list-group-item bg-dark">Centripetal Force: $F_c = \frac{mv^2}{r} = mr\omega^2$</li>
+                                    <li class="list-group-item bg-dark">Angular Momentum: $L = I\omega$ (where $I$ is moment of inertia)</li>
+                                    <li class="list-group-item bg-dark">Torque: $\tau = r \times F = rF\sin\theta$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Fluid Mechanics
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">Density: $\rho = \frac{m}{V}$</li>
+                                    <li class="list-group-item bg-dark">Pressure: $P = \frac{F}{A}$</li>
+                                    <li class="list-group-item bg-dark">Hydrostatic Pressure: $P = P_0 + \rho gh$</li>
+                                    <li class="list-group-item bg-dark">Buoyant Force: $F_B = \rho_f gV$ (Archimedes' Principle)</li>
+                                    <li class="list-group-item bg-dark">Continuity Equation: $A_1v_1 = A_2v_2$</li>
+                                    <li class="list-group-item bg-dark">Bernoulli's Equation: $P_1 + \frac{1}{2}\rho v_1^2 + \rho gh_1 = P_2 + \frac{1}{2}\rho v_2^2 + \rho gh_2$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dynamics Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-dark">
+            <div class="card-header" id="dynamics">
+                <h5><i class="fas fa-atom me-2"></i>Dynamics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Impulse and Momentum
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">Linear Momentum: $p = mv$</li>
+                                    <li class="list-group-item bg-dark">Impulse: $J = F \Delta t$</li>
+                                    <li class="list-group-item bg-dark">Impulse-Momentum Theorem: $J = \Delta p$</li>
+                                    <li class="list-group-item bg-dark">Conservation of Momentum: $m_1v_{1i} + m_2v_{2i} = m_1v_{1f} + m_2v_{2f}$</li>
+                                    <li class="list-group-item bg-dark">Coefficient of Restitution: $e = \frac{v_{2f} - v_{1f}}{v_{1i} - v_{2i}}$</li>
+                                    <li class="list-group-item bg-dark">Perfectly Elastic Collision: $e = 1$</li>
+                                    <li class="list-group-item bg-dark">Perfectly Inelastic Collision: $e = 0$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Rotational Dynamics
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">Moment of Inertia of a Point Mass: $I = mr^2$</li>
+                                    <li class="list-group-item bg-dark">Moment of Inertia of a Thin Rod: $I = \frac{1}{12}mL^2$ (about center)</li>
+                                    <li class="list-group-item bg-dark">Moment of Inertia of a Disk: $I = \frac{1}{2}mR^2$ (about center)</li>
+                                    <li class="list-group-item bg-dark">Moment of Inertia of a Hollow Sphere: $I = \frac{2}{3}mR^2$ (about center)</li>
+                                    <li class="list-group-item bg-dark">Moment of Inertia of a Solid Sphere: $I = \frac{2}{5}mR^2$ (about center)</li>
+                                    <li class="list-group-item bg-dark">Rotational Kinetic Energy: $KE_{rot} = \frac{1}{2}I\omega^2$</li>
+                                    <li class="list-group-item bg-dark">Parallel Axis Theorem: $I = I_{cm} + md^2$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Oscillations and Simple Harmonic Motion
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">Position Equation: $x(t) = A\cos(\omega t + \phi)$</li>
+                                    <li class="list-group-item bg-dark">Angular Frequency: $\omega = 2\pi f = \sqrt{\frac{k}{m}}$</li>
+                                    <li class="list-group-item bg-dark">Period: $T = \frac{2\pi}{\omega} = 2\pi\sqrt{\frac{m}{k}}$</li>
+                                    <li class="list-group-item bg-dark">Frequency: $f = \frac{1}{T} = \frac{\omega}{2\pi} = \frac{1}{2\pi}\sqrt{\frac{k}{m}}$</li>
+                                    <li class="list-group-item bg-dark">Spring Constant: $k = \frac{F}{x}$</li>
+                                    <li class="list-group-item bg-dark">Energy in SHM: $E = \frac{1}{2}kA^2$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-dark mb-3">
+                            <div class="card-header">
+                                Electrodynamics
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush bg-dark">
+                                    <li class="list-group-item bg-dark">Coulomb's Law: $F = k\frac{q_1q_2}{r^2}$</li>
+                                    <li class="list-group-item bg-dark">Electric Field: $E = \frac{F}{q} = k\frac{Q}{r^2}$</li>
+                                    <li class="list-group-item bg-dark">Electric Potential: $V = \frac{U}{q} = k\frac{Q}{r}$</li>
+                                    <li class="list-group-item bg-dark">Ohm's Law: $V = IR$</li>
+                                    <li class="list-group-item bg-dark">Electric Power: $P = VI = I^2R = \frac{V^2}{R}$</li>
+                                    <li class="list-group-item bg-dark">Lorentz Force: $F = qvB\sin\theta$</li>
+                                    <li class="list-group-item bg-dark">Faraday's Law: $\varepsilon = -\frac{d\Phi_B}{dt}$</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center mt-4 mb-5">
+    <a href="{{ url_for('student.dashboard_en') }}" class="btn btn-secondary me-2">
+        <i class="fas fa-home me-1"></i>Return to Dashboard
+    </a>
+    <a href="{{ url_for('student.advanced_calculator_en') }}" class="btn btn-primary">
+        <i class="fas fa-calculator me-1"></i>Use Advanced Calculator
+    </a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Include MathJax for rendering mathematical formulas -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .card-header {
+        font-weight: bold;
+    }
+    
+    .list-group-item {
+        border-radius: 0;
+        border-color: #333;
+    }
+    
+    .list-group-item-action:hover {
+        background-color: #2a2a2a;
+    }
+</style>
+{% endblock %}

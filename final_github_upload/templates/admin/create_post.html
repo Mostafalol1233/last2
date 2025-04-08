@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Post - Educational Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h4><i class="fas fa-edit me-2"></i>Create Post</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.create_post') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.title.label(class="form-label") }}
+                        {% if form.title.errors %}
+                            {{ form.title(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.title.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.title(class="form-control", placeholder="Enter post title") }}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.content.label(class="form-label") }}
+                        {% if form.content.errors %}
+                            {{ form.content(class="form-control is-invalid", rows=10) }}
+                            <div class="invalid-feedback">
+                                {% for error in form.content.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.content(class="form-control", rows=10, placeholder="Enter post content") }}
+                        {% endif %}
+                        <small class="form-text text-muted">
+                            You can use markdown formatting for rich text.
+                        </small>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary") }}
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="alert alert-info mt-4">
+            <h5><i class="fas fa-info-circle me-2"></i>Post Writing Guidelines</h5>
+            <ul>
+                <li>Use clear and concise titles that accurately reflect the content</li>
+                <li>Structure your post with headings, paragraphs, and lists for readability</li>
+                <li>Include relevant information that supplements the video content</li>
+                <li>Proofread your post before publishing to ensure accuracy</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

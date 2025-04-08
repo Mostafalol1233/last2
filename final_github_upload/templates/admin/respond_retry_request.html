@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}الرد على طلب محاولة إضافية{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">الرد على طلب محاولة إضافية للاختبار</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>معلومات الاختبار</h5>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6>{{ test.title }}</h6>
+                                    <p class="text-muted">{{ test.description }}</p>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><strong>درجة النجاح:</strong> {{ test.passing_score }}%</li>
+                                        <li class="list-group-item"><strong>مدة الاختبار:</strong> {{ test.time_limit_minutes }} دقيقة</li>
+                                        <li class="list-group-item"><strong>الحالة:</strong> {% if test.is_active %}نشط{% else %}غير نشط{% endif %}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>معلومات الطالب</h5>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6>{{ student.username }}</h6>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><strong>الاسم:</strong> {{ student.full_name or 'غير محدد' }}</li>
+                                        <li class="list-group-item"><strong>البريد الإلكتروني:</strong> {{ student.email or 'غير محدد' }}</li>
+                                        <li class="list-group-item"><strong>تاريخ التسجيل:</strong> {{ student.created_at.strftime('%Y-%m-%d') }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">طلب الطالب</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>تاريخ الطلب:</strong> {{ retry_request.request_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                            <div class="alert alert-secondary">
+                                {{ retry_request.reason or 'لم يذكر سبب الطلب.' }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">الرد على الطلب</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                {{ form.hidden_tag() }}
+                                {{ form.request_id }}
+                                
+                                <div class="form-group mb-3">
+                                    <label for="{{ form.status.id }}" class="form-label">{{ form.status.label }}</label>
+                                    {{ form.status(class="form-select") }}
+                                    {% if form.status.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.status.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="{{ form.admin_response.id }}" class="form-label">{{ form.admin_response.label }}</label>
+                                    {{ form.admin_response(class="form-control", rows=5) }}
+                                    {% if form.admin_response.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.admin_response.errors %}
+                                        {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <small class="form-text text-muted">يرجى كتابة رد واضح للطالب يشرح سبب قبول أو رفض طلبه.</small>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mt-4">
+                                    <a href="{{ url_for('admin_tests.retry_requests') }}" class="btn btn-secondary">رجوع</a>
+                                    {{ form.submit(class="btn btn-primary") }}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

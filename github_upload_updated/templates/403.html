@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}غير مصرح بالوصول - منصة الأستاذ أحمد حلي التعليمية{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <div class="mb-4">
+        <i class="fas fa-ban text-danger" style="font-size: 5rem;"></i>
+    </div>
+    <h1 class="display-1 fw-bold">403</h1>
+    <h2 class="mb-4">غير مصرح بالوصول</h2>
+    <p class="lead">عذراً، ليس لديك صلاحية للوصول إلى هذه الصفحة.</p>
+    <div class="mt-5">
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-home me-2"></i>عودة إلى الصفحة الرئيسية
+        </a>
+    </div>
+</div>
+{% endblock %}

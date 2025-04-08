@@ -1,0 +1,1141 @@
+{% extends 'base.html' %}
+
+{% block title %}قوانين الجبر للمرحلة الثانوية - المنصة التعليمية{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-dark mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4><i class="fas fa-superscript me-2"></i>قوانين الجبر للمرحلة الثانوية</h4>
+                <a href="{{ url_for('student.algebra_formulas_en') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-language me-1"></i>English
+                </a>
+            </div>
+            <div class="card-body">
+                <p class="lead">
+                    مجموعة شاملة من قوانين الجبر للصف الثاني الثانوي وباقي المراحل التعليمية.
+                </p>
+                <div class="d-flex justify-content-end">
+                    <a href="{{ url_for('student.advanced_calculator') }}" class="btn btn-success">
+                        <i class="fas fa-calculator me-2"></i>الآلة الحاسبة المتقدمة
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h5>محتويات الصفحة</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="#basic-algebra" class="btn btn-outline-light btn-sm w-100">القوانين الأساسية</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#exponents" class="btn btn-outline-light btn-sm w-100">الأسس والجذور</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#polynomials" class="btn btn-outline-light btn-sm w-100">كثيرات الحدود</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#factoring" class="btn btn-outline-light btn-sm w-100">التحليل إلى عوامل</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#equations" class="btn btn-outline-light btn-sm w-100">المعادلات</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#inequalities" class="btn btn-outline-light btn-sm w-100">المتباينات</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#functions" class="btn btn-outline-light btn-sm w-100">الدوال</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#logarithms" class="btn btn-outline-light btn-sm w-100">اللوغاريتمات</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#complex" class="btn btn-outline-light btn-sm w-100">الأعداد المركبة</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#matrices" class="btn btn-outline-light btn-sm w-100">المصفوفات</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#sequences" class="btn btn-outline-light btn-sm w-100">المتسلسلات</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#limits" class="btn btn-outline-light btn-sm w-100">النهايات</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== القوانين الأساسية ====== -->
+<div class="row" id="basic-algebra">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-plus-minus me-2"></i>القوانين الأساسية للجبر</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">قوانين الجمع والطرح</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a + b = b + a</p>
+                                        </div>
+                                        <p>خاصية التبديل للجمع: ترتيب الجمع لا يغير من النتيجة</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b) + c = a + (b + c)</p>
+                                        </div>
+                                        <p>خاصية التجميع للجمع: يمكن تجميع الحدود بأي ترتيب</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a + 0 = a</p>
+                                        </div>
+                                        <p>العنصر المحايد للجمع: إضافة الصفر لا تغير القيمة</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a + (-a) = 0</p>
+                                        </div>
+                                        <p>النظير الجمعي: مجموع أي عدد ونظيره الجمعي يساوي صفر</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">قوانين الضرب والقسمة</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a × b = b × a</p>
+                                        </div>
+                                        <p>خاصية التبديل للضرب: ترتيب الضرب لا يغير من النتيجة</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a × b) × c = a × (b × c)</p>
+                                        </div>
+                                        <p>خاصية التجميع للضرب: يمكن تجميع العوامل بأي ترتيب</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a × 1 = a</p>
+                                        </div>
+                                        <p>العنصر المحايد للضرب: الضرب في واحد لا يغير القيمة</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a × (1/a) = 1, where a ≠ 0</p>
+                                        </div>
+                                        <p>النظير الضربي: حاصل ضرب أي عدد غير صفر في مقلوبه يساوي واحد</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">خاصية التوزيع</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a(b + c) = ab + ac</p>
+                                        </div>
+                                        <p>خاصية توزيع الضرب على الجمع: الضرب في مجموع يساوي مجموع نواتج الضرب</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a(b - c) = ab - ac</p>
+                                        </div>
+                                        <p>خاصية توزيع الضرب على الطرح: الضرب في الفرق يساوي الفرق بين نواتج الضرب</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">قوانين الكسور</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">\( \frac{a}{b} + \frac{c}{d} = \frac{ad + bc}{bd} \)</p>
+                                        </div>
+                                        <p>جمع الكسور</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">\( \frac{a}{b} - \frac{c}{d} = \frac{ad - bc}{bd} \)</p>
+                                        </div>
+                                        <p>طرح الكسور</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">\( \frac{a}{b} \times \frac{c}{d} = \frac{ac}{bd} \)</p>
+                                        </div>
+                                        <p>ضرب الكسور</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">\( \frac{a}{b} \div \frac{c}{d} = \frac{a}{b} \times \frac{d}{c} = \frac{ad}{bc} \)</p>
+                                        </div>
+                                        <p>قسمة الكسور</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== الأسس والجذور ====== -->
+<div class="row" id="exponents">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-superscript me-2"></i>الأسس والجذور</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">قوانين الأسس</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^m × a^n = a^(m+n)</p>
+                                        </div>
+                                        <p>ضرب قوى متماثلة الأساس: نجمع الأسس</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^m ÷ a^n = a^(m-n)</p>
+                                        </div>
+                                        <p>قسمة قوى متماثلة الأساس: نطرح الأسس</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a^m)^n = a^(m×n)</p>
+                                        </div>
+                                        <p>قوة القوة: نضرب الأسس</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a×b)^n = a^n × b^n</p>
+                                        </div>
+                                        <p>قوة الضرب: نوزع الأس على كل عامل</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a/b)^n = a^n / b^n</p>
+                                        </div>
+                                        <p>قوة القسمة: نوزع الأس على البسط والمقام</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^0 = 1 (a ≠ 0)</p>
+                                        </div>
+                                        <p>أي عدد غير صفري مرفوع للقوة صفر يساوي واحد</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^(-n) = 1/(a^n)</p>
+                                        </div>
+                                        <p>الأس السالب: مقلوب القوة الموجبة</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">قوانين الأسس الكسرية والجذور</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^(1/n) = ∛a</p>
+                                        </div>
+                                        <p>الأس المقلوب: الجذر</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^(m/n) = (∛a)^m = ∛(a^m)</p>
+                                        </div>
+                                        <p>الأس الكسري العام</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">√(a × b) = √a × √b</p>
+                                        </div>
+                                        <p>جذر حاصل الضرب</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">√(a / b) = √a / √b</p>
+                                        </div>
+                                        <p>جذر حاصل القسمة</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(√a)^n = a^(n/2)</p>
+                                        </div>
+                                        <p>قوة الجذر التربيعي</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">∛(a × b) = ∛a × ∛b</p>
+                                        </div>
+                                        <p>جذر التكعيب</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== كثيرات الحدود ====== -->
+<div class="row" id="polynomials">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-subscript me-2"></i>كثيرات الحدود</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">صيغ المربعات والمكعبات</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b)² = a² + 2ab + b²</p>
+                                        </div>
+                                        <p>مربع ثنائي الحد (المجموع)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a - b)² = a² - 2ab + b²</p>
+                                        </div>
+                                        <p>مربع ثنائي الحد (الفرق)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b)(a - b) = a² - b²</p>
+                                        </div>
+                                        <p>مجموع × فرق (فرق المربعين)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b)³ = a³ + 3a²b + 3ab² + b³</p>
+                                        </div>
+                                        <p>مكعب المجموع</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a - b)³ = a³ - 3a²b + 3ab² - b³</p>
+                                        </div>
+                                        <p>مكعب الفرق</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">صيغ إضافية للأجزاء</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a³ + b³ = (a + b)(a² - ab + b²)</p>
+                                        </div>
+                                        <p>مجموع المكعبات</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a³ - b³ = (a - b)(a² + ab + b²)</p>
+                                        </div>
+                                        <p>فرق المكعبات</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b + c)² = a² + b² + c² + 2ab + 2ac + 2bc</p>
+                                        </div>
+                                        <p>مربع ثلاثي الحد</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b)(c + d) = ac + ad + bc + bd</p>
+                                        </div>
+                                        <p>ضرب ثنائيين</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b)(a² - ab + b²) = a³ + b³</p>
+                                        </div>
+                                        <p>مجموع المكعبات بصيغة أخرى</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== التحليل إلى عوامل ====== -->
+<div class="row" id="factoring">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-project-diagram me-2"></i>التحليل إلى عوامل</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">القوانين الأساسية للتحليل</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a² - b² = (a + b)(a - b)</p>
+                                        </div>
+                                        <p>فرق المربعين</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a² + 2ab + b² = (a + b)²</p>
+                                        </div>
+                                        <p>المربع الكامل (المجموع)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a² - 2ab + b² = (a - b)²</p>
+                                        </div>
+                                        <p>المربع الكامل (الفرق)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a³ - b³ = (a - b)(a² + ab + b²)</p>
+                                        </div>
+                                        <p>فرق المكعبات</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a³ + b³ = (a + b)(a² - ab + b²)</p>
+                                        </div>
+                                        <p>مجموع المكعبات</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">تحليل كثيرات الحدود من الدرجة الثانية</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">ax² + bx + c = a(x - r₁)(x - r₂)</p>
+                                        </div>
+                                        <p>الصيغة العامة (r₁, r₂ هما جذور المعادلة)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">x² + bx + c = (x + p)(x + q), where p + q = b and p × q = c</p>
+                                        </div>
+                                        <p>طريقة التجربة والخطأ (مجموع المعاملات = معامل x، حاصل الضرب = الثابت)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">ax² + bx + c = a(x + b/2a)² + (c - b²/4a)</p>
+                                        </div>
+                                        <p>إكمال المربع</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">تحليل متعدد الحدود</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">P(x) = a(x - r₁)(x - r₂)...(x - rₙ)</p>
+                                        </div>
+                                        <p>الصيغة العامة (r₁, r₂, ... rₙ هي الجذور)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">P(r) = 0 ⟺ (x - r) is a factor of P(x)</p>
+                                        </div>
+                                        <p>نظرية الباقي: إذا كان P(r) = 0، فإن (x - r) هو أحد عوامل P(x)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">If P(x) = (x - r)Q(x) + R, then P(r) = R</p>
+                                        </div>
+                                        <p>نظرية الباقي العامة</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">المعاملات الحدية</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">If P(x) = aₙxⁿ + ... + a₁x + a₀, and r is a root, then r divides a₀</p>
+                                        </div>
+                                        <p>نظرية المعامل الثابت: جذور كثير الحدود P(x) هي من بين عوامل المعامل الثابت a₀</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">If P(x) = aₙxⁿ + ... + a₁x + a₀, and r = p/q in lowest form, then p divides a₀ and q divides aₙ</p>
+                                        </div>
+                                        <p>نظرية الجذور النسبية</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== المعادلات ====== -->
+<div class="row" id="equations">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-equals me-2"></i>المعادلات</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">معادلات الدرجة الأولى</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">ax + b = 0</p>
+                                            <p class="mb-0">x = -b/a</p>
+                                        </div>
+                                        <p>الصيغة العامة والحل</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a₁x + b₁ = a₂x + b₂</p>
+                                            <p class="mb-0">x = (b₂ - b₁)/(a₁ - a₂)</p>
+                                        </div>
+                                        <p>معادلة بمتغير واحد على الطرفين</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">معادلات الدرجة الثانية</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">ax² + bx + c = 0</p>
+                                            <p class="mb-0">x = (-b ± √(b² - 4ac)) / 2a</p>
+                                        </div>
+                                        <p>الصيغة القياسية وقانون حل المعادلة التربيعية (القانون العام)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Discriminant (Δ) = b² - 4ac</p>
+                                            <p class="mb-0">Δ > 0: two real roots</p>
+                                            <p class="mb-0">Δ = 0: one repeated real root</p>
+                                            <p class="mb-0">Δ < 0: two complex conjugate roots</p>
+                                        </div>
+                                        <p>المميز وطبيعة الجذور</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">For ax² + bx + c = 0 with roots r and s:</p>
+                                            <p class="mb-0">Sum of roots: r + s = -b/a</p>
+                                            <p class="mb-0">Product of roots: r × s = c/a</p>
+                                        </div>
+                                        <p>علاقة الجذور بالمعاملات</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">أنظمة المعادلات</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">For a system of two linear equations:</p>
+                                            <p class="mb-0">a₁x + b₁y = c₁</p>
+                                            <p class="mb-0">a₂x + b₂y = c₂</p>
+                                            <p class="mb-0">The solution is:</p>
+                                            <p class="mb-0">x = (c₁b₂ - c₂b₁)/(a₁b₂ - a₂b₁)</p>
+                                            <p class="mb-0">y = (a₁c₂ - a₂c₁)/(a₁b₂ - a₂b₁)</p>
+                                        </div>
+                                        <p>حل نظام معادلتين خطيتين بمتغيرين (طريقة كرامر)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Determinant (D) = a₁b₂ - a₂b₁</p>
+                                            <p class="mb-0">D ≠ 0: unique solution</p>
+                                            <p class="mb-0">D = 0: no solution or infinitely many solutions</p>
+                                        </div>
+                                        <p>المحدد ونوع الحل</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">معادلات إضافية</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^x = b</p>
+                                            <p class="mb-0">x = log_a(b)</p>
+                                        </div>
+                                        <p>المعادلات الأسية</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">log_a(x) = b</p>
+                                            <p class="mb-0">x = a^b</p>
+                                        </div>
+                                        <p>المعادلات اللوغاريتمية</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">|ax + b| = c</p>
+                                            <p class="mb-0">ax + b = c or ax + b = -c</p>
+                                        </div>
+                                        <p>معادلات القيمة المطلقة</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== المتباينات ====== -->
+<div class="row" id="inequalities">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-less-than-equal me-2"></i>المتباينات</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">قواعد المتباينات</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">If a < b, then a + c < b + c</p>
+                                        </div>
+                                        <p>إضافة نفس العدد للطرفين لا تغير اتجاه المتباينة</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">If a < b and c > 0, then a × c < b × c</p>
+                                        </div>
+                                        <p>ضرب الطرفين بعدد موجب لا يغير اتجاه المتباينة</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">If a < b and c < 0, then a × c > b × c</p>
+                                        </div>
+                                        <p>ضرب الطرفين بعدد سالب يعكس اتجاه المتباينة</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">If a < b and c < d, then a + c < b + d</p>
+                                        </div>
+                                        <p>جمع متباينتين متجهتين في نفس الاتجاه</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">حل المتباينات</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">ax + b < 0</p>
+                                            <p class="mb-0">x < -b/a (if a > 0)</p>
+                                            <p class="mb-0">x > -b/a (if a < 0)</p>
+                                        </div>
+                                        <p>متباينة من الدرجة الأولى</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">ax² + bx + c > 0</p>
+                                        </div>
+                                        <p>لحل هذه المتباينة، نحدد أولاً جذور المعادلة ax² + bx + c = 0، ثم نحدد فترات الموجب والسالب اعتماداً على إشارة a.</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">|ax + b| < c (where c > 0)</p>
+                                            <p class="mb-0">-c < ax + b < c</p>
+                                            <p class="mb-0">-c - b < ax < c - b</p>
+                                            <p class="mb-0">(-c - b)/a < x < (c - b)/a (if a > 0)</p>
+                                            <p class="mb-0">(c - b)/a < x < (-c - b)/a (if a < 0)</p>
+                                        </div>
+                                        <p>متباينة القيمة المطلقة</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== الدوال ====== -->
+<div class="row" id="functions">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-function me-2"></i>الدوال</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">الدوال الأساسية</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Linear: f(x) = mx + b</p>
+                                            <p class="mb-0">Domain: ℝ, Range: ℝ</p>
+                                        </div>
+                                        <p>الدالة الخطية: m هو الميل، b هو نقطة التقاطع مع المحور الصادي</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Quadratic: f(x) = ax² + bx + c</p>
+                                            <p class="mb-0">Domain: ℝ</p>
+                                            <p class="mb-0">Range: [vertex value, ∞) or (-∞, vertex value]</p>
+                                            <p class="mb-0">Vertex: (-b/2a, f(-b/2a))</p>
+                                        </div>
+                                        <p>الدالة التربيعية: القطع المكافئ</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Cubic: f(x) = ax³ + bx² + cx + d</p>
+                                            <p class="mb-0">Domain: ℝ, Range: ℝ</p>
+                                        </div>
+                                        <p>الدالة التكعيبية</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Exponential: f(x) = a•b^x, where b > 0, b ≠ 1</p>
+                                            <p class="mb-0">Domain: ℝ</p>
+                                            <p class="mb-0">Range: (0, ∞) if a > 0; (-∞, 0) if a < 0</p>
+                                        </div>
+                                        <p>الدالة الأسية</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Logarithmic: f(x) = log_b(x), where b > 0, b ≠ 1</p>
+                                            <p class="mb-0">Domain: (0, ∞)</p>
+                                            <p class="mb-0">Range: ℝ</p>
+                                        </div>
+                                        <p>الدالة اللوغاريتمية</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">الدوال المثلثية</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Sine: f(x) = sin(x)</p>
+                                            <p class="mb-0">Domain: ℝ, Range: [-1, 1]</p>
+                                            <p class="mb-0">Period: 2π</p>
+                                        </div>
+                                        <p>دالة الجيب</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Cosine: f(x) = cos(x)</p>
+                                            <p class="mb-0">Domain: ℝ, Range: [-1, 1]</p>
+                                            <p class="mb-0">Period: 2π</p>
+                                        </div>
+                                        <p>دالة جيب التمام</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Tangent: f(x) = tan(x)</p>
+                                            <p class="mb-0">Domain: x ≠ (n + 1/2)π, n ∈ ℤ</p>
+                                            <p class="mb-0">Range: ℝ</p>
+                                            <p class="mb-0">Period: π</p>
+                                        </div>
+                                        <p>دالة الظل</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Cotangent: f(x) = cot(x)</p>
+                                            <p class="mb-0">Domain: x ≠ nπ, n ∈ ℤ</p>
+                                            <p class="mb-0">Range: ℝ</p>
+                                            <p class="mb-0">Period: π</p>
+                                        </div>
+                                        <p>دالة ظل التمام</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">General form: f(x) = A•sin(B(x-C)) + D or A•cos(B(x-C)) + D</p>
+                                            <p class="mb-0">A: amplitude</p>
+                                            <p class="mb-0">B: related to period (period = 2π/|B|)</p>
+                                            <p class="mb-0">C: phase shift</p>
+                                            <p class="mb-0">D: vertical shift</p>
+                                        </div>
+                                        <p>الصيغة العامة للدوال المثلثية</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">العمليات على الدوال</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(f + g)(x) = f(x) + g(x)</p>
+                                        </div>
+                                        <p>مجموع دالتين</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(f - g)(x) = f(x) - g(x)</p>
+                                        </div>
+                                        <p>فرق دالتين</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(f × g)(x) = f(x) × g(x)</p>
+                                        </div>
+                                        <p>جداء دالتين</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(f/g)(x) = f(x)/g(x), where g(x) ≠ 0</p>
+                                        </div>
+                                        <p>قسمة دالتين</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(f ∘ g)(x) = f(g(x))</p>
+                                        </div>
+                                        <p>تركيب دالتين</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">الدالة العكسية</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">If f(x) = y, then f^(-1)(y) = x</p>
+                                            <p class="mb-0">A function has an inverse iff it is one-to-one</p>
+                                        </div>
+                                        <p>تعريف الدالة العكسية</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">f(f^(-1)(x)) = x and f^(-1)(f(x)) = x</p>
+                                        </div>
+                                        <p>خاصية التعويض المتبادل</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Domain of f^(-1) = Range of f</p>
+                                            <p class="mb-0">Range of f^(-1) = Domain of f</p>
+                                        </div>
+                                        <p>مجال ومدى الدالة العكسية</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">If (a, b) is a point on f, then (b, a) is a point on f^(-1)</p>
+                                        </div>
+                                        <p>النقاط على الدالة العكسية</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== اللوغاريتمات ====== -->
+<div class="row" id="logarithms">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-calculator me-2"></i>اللوغاريتمات</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">قوانين اللوغاريتمات الأساسية</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">log_a(MN) = log_a(M) + log_a(N)</p>
+                                        </div>
+                                        <p>لوغاريتم حاصل الضرب يساوي مجموع اللوغاريتمات</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">log_a(M/N) = log_a(M) - log_a(N)</p>
+                                        </div>
+                                        <p>لوغاريتم حاصل القسمة يساوي الفرق بين اللوغاريتمات</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">log_a(M^n) = n•log_a(M)</p>
+                                        </div>
+                                        <p>لوغاريتم القوة يساوي الأس مضروباً في اللوغاريتم</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">log_a(1) = 0</p>
+                                        </div>
+                                        <p>لوغاريتم الواحد</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">log_a(a) = 1</p>
+                                        </div>
+                                        <p>لوغاريتم الأساس</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">تحويل الأساس</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">log_a(M) = log_b(M)/log_b(a)</p>
+                                        </div>
+                                        <p>صيغة تغيير أساس اللوغاريتم</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">log_a(M) = ln(M)/ln(a)</p>
+                                        </div>
+                                        <p>التحويل إلى اللوغاريتم الطبيعي</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">log_a(M) = log_10(M)/log_10(a)</p>
+                                        </div>
+                                        <p>التحويل إلى اللوغاريتم العشري</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">اللوغاريتمات الخاصة</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">ln(x) = log_e(x), where e ≈ 2.71828...</p>
+                                        </div>
+                                        <p>اللوغاريتم الطبيعي (أساسه العدد e)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">ln(e^x) = x</p>
+                                        </div>
+                                        <p>خاصية الدالة العكسية للوغاريتم الطبيعي</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">e^(ln(x)) = x</p>
+                                        </div>
+                                        <p>خاصية الدالة العكسية للدالة الأسية</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">log(x) = log_10(x)</p>
+                                        </div>
+                                        <p>اللوغاريتم العشري (أساسه 10)</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">تطبيقات اللوغاريتمات</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">P = P₀ × e^(rt)</p>
+                                            <p class="mb-0">t = ln(P/P₀)/r</p>
+                                        </div>
+                                        <p>النمو الأسي، حيث P هي القيمة النهائية، P₀ هي القيمة الأولية، r هو معدل النمو، t هو الزمن</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">A = P(1 + r/n)^(nt)</p>
+                                            <p class="mb-0">t = ln(A/P)/(n•ln(1 + r/n))</p>
+                                        </div>
+                                        <p>فائدة مركبة، حيث A هي القيمة النهائية، P هي القيمة الأولية، r هو معدل الفائدة السنوي، n هو عدد مرات التركيب في السنة، t هو عدد السنوات</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center mt-4 mb-5">
+    <a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary me-2">
+        <i class="fas fa-home me-1"></i>العودة للوحة التحكم
+    </a>
+    <a href="{{ url_for('student.advanced_calculator') }}" class="btn btn-success">
+        <i class="fas fa-calculator me-1"></i>الآلة الحاسبة المتقدمة
+    </a>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+    .formula-container {
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+    }
+    
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<!-- إضافة مكتبة MathJax لعرض المعادلات الرياضية -->
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+{% endblock %}

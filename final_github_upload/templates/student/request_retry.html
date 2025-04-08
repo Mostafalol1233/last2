@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}طلب محاولة إضافية للاختبار{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">طلب محاولة إضافية للاختبار</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ test.title }}</h5>
+                    <p class="card-text text-muted">{{ test.description }}</p>
+                    
+                    <div class="alert alert-info">
+                        <h6>معلومات المحاولة السابقة:</h6>
+                        <ul>
+                            <li>تاريخ الاختبار: {{ completed_attempt.completed_at.strftime('%Y-%m-%d %H:%M') }}</li>
+                            <li>النتيجة: {{ completed_attempt.score }}%</li>
+                            <li>الحالة: {% if completed_attempt.passed %}ناجح{% else %}راسب{% endif %}</li>
+                        </ul>
+                    </div>
+                    
+                    <form method="POST" class="mt-4">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.reason.id }}" class="form-label">{{ form.reason.label }}</label>
+                            {{ form.reason(class="form-control", rows=5) }}
+                            {% if form.reason.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.reason.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="form-text text-muted">يرجى ذكر سبب طلب المحاولة الإضافية بوضوح.</small>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('student_tests.test_history') }}" class="btn btn-secondary">رجوع</a>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

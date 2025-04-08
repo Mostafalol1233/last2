@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /setup
+Disallow: /admin
+Disallow: /login
+Disallow: /logout
+Disallow: /profile
+Disallow: /messages
+Disallow: /ai_chat
+Disallow: /static/uploads/
+
+Sitemap: https://your-domain.com/static/sitemap.xml

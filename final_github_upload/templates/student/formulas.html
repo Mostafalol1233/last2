@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block title %}القوانين الرياضية - المنصة التعليمية{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-dark mb-4">
+            <div class="card-header">
+                <h4><i class="fas fa-calculator me-2"></i>القوانين الرياضية</h4>
+            </div>
+            <div class="card-body">
+                <p class="lead">
+                    مجموعة من أهم القوانين الرياضية والفيزيائية للمساعدة في دراستك.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark h-100">
+            <div class="card-header">
+                <h5><i class="fas fa-square-root-alt me-2"></i>Pythagorean Theorem - نظرية فيثاغورس</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">In a right-angled triangle, the square of the hypotenuse is equal to the sum of squares of the other two sides.</p>
+                <div class="formula-container bg-light text-dark p-3 rounded mb-3">
+                    <p class="mb-0 text-center formula">c² = a² + b²</p>
+                </div>
+                <p><strong>Where:</strong></p>
+                <ul>
+                    <li>c is the length of the hypotenuse</li>
+                    <li>a and b are the lengths of the other two sides</li>
+                </ul>
+                <div class="bg-secondary p-2 rounded mt-3">
+                    <p class="mb-0"><strong>Example:</strong> If a = 3 and b = 4, then c² = 3² + 4² = 9 + 16 = 25, therefore c = 5</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark h-100">
+            <div class="card-header">
+                <h5><i class="fas fa-draw-polygon me-2"></i>Area Formulas - صيغ المساحة</h5>
+            </div>
+            <div class="card-body">
+                <h6>Triangle Area:</h6>
+                <div class="formula-container bg-light text-dark p-3 rounded mb-3">
+                    <p class="mb-0 text-center formula">Area = (1/2) × base × height</p>
+                </div>
+                
+                <h6>Using Three Sides (Heron's Formula):</h6>
+                <div class="formula-container bg-light text-dark p-3 rounded mb-3">
+                    <p class="mb-0 text-center formula">Area = √(s(s-a)(s-b)(s-c))</p>
+                    <p class="mb-0 text-center">Where s = (a + b + c)/2</p>
+                </div>
+
+                <h6>Rectangle:</h6>
+                <div class="formula-container bg-light text-dark p-3 rounded mb-3">
+                    <p class="mb-0 text-center formula">Area = length × width</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark h-100">
+            <div class="card-header">
+                <h5><i class="fas fa-circle me-2"></i>Circle Formulas - صيغ الدائرة</h5>
+            </div>
+            <div class="card-body">
+                <h6>Area:</h6>
+                <div class="formula-container bg-light text-dark p-3 rounded mb-3">
+                    <p class="mb-0 text-center formula">Area = π × r²</p>
+                </div>
+                
+                <h6>Circumference:</h6>
+                <div class="formula-container bg-light text-dark p-3 rounded mb-3">
+                    <p class="mb-0 text-center formula">Circumference = 2π × r</p>
+                </div>
+
+                <p><strong>Where:</strong></p>
+                <ul>
+                    <li>r is the radius of the circle</li>
+                    <li>π (pi) is approximately 3.14159</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark h-100">
+            <div class="card-header">
+                <h5><i class="fas fa-superscript me-2"></i>Quadratic Formula - المعادلة التربيعية</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">For a quadratic equation in the form: ax² + bx + c = 0</p>
+                <div class="formula-container bg-light text-dark p-3 rounded mb-3">
+                    <p class="mb-0 text-center formula">x = (-b ± √(b² - 4ac)) / 2a</p>
+                </div>
+                <p><strong>Where:</strong></p>
+                <ul>
+                    <li>a, b, and c are coefficients</li>
+                    <li>The discriminant b² - 4ac determines the nature of the roots:
+                        <ul>
+                            <li>If b² - 4ac > 0: Two real and distinct roots</li>
+                            <li>If b² - 4ac = 0: One real root (repeated)</li>
+                            <li>If b² - 4ac < 0: Two complex conjugate roots</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark h-100">
+            <div class="card-header">
+                <h5><i class="fas fa-sync me-2"></i>Trigonometric Formulas - صيغ المثلثات</h5>
+            </div>
+            <div class="card-body">
+                <h6>Basic Ratios in Right Triangles:</h6>
+                <div class="formula-container bg-light text-dark p-3 rounded mb-3">
+                    <p class="mb-0">sin(θ) = opposite/hypotenuse</p>
+                    <p class="mb-0">cos(θ) = adjacent/hypotenuse</p>
+                    <p class="mb-0">tan(θ) = opposite/adjacent</p>
+                </div>
+                
+                <h6>Pythagorean Identities:</h6>
+                <div class="formula-container bg-light text-dark p-3 rounded mb-3">
+                    <p class="mb-0">sin²(θ) + cos²(θ) = 1</p>
+                    <p class="mb-0">1 + tan²(θ) = sec²(θ)</p>
+                </div>
+
+                <h6>Law of Sines:</h6>
+                <div class="formula-container bg-light text-dark p-3 rounded mb-3">
+                    <p class="mb-0 text-center">sin(A)/a = sin(B)/b = sin(C)/c</p>
+                </div>
+
+                <h6>Law of Cosines:</h6>
+                <div class="formula-container bg-light text-dark p-3 rounded mb-3">
+                    <p class="mb-0 text-center">c² = a² + b² - 2ab·cos(C)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card bg-dark h-100">
+            <div class="card-header">
+                <h5><i class="fas fa-cube me-2"></i>Volume Formulas - صيغ الحجم</h5>
+            </div>
+            <div class="card-body">
+                <h6>Cube:</h6>
+                <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                    <p class="mb-0">Volume = s³</p>
+                    <p class="mb-0">Surface Area = 6s²</p>
+                    <p class="mb-0 small">Where s is the side length</p>
+                </div>
+                
+                <h6>Sphere:</h6>
+                <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                    <p class="mb-0">Volume = (4/3)πr³</p>
+                    <p class="mb-0">Surface Area = 4πr²</p>
+                    <p class="mb-0 small">Where r is the radius</p>
+                </div>
+
+                <h6>Cylinder:</h6>
+                <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                    <p class="mb-0">Volume = πr²h</p>
+                    <p class="mb-0">Surface Area = 2πr² + 2πrh</p>
+                    <p class="mb-0 small">Where r is the radius and h is the height</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h5><i class="fas fa-robot me-2"></i>المساعد الذكي</h5>
+            </div>
+            <div class="card-body">
+                <p class="lead">
+                    يمكنك أيضاً سؤال المساعد الذكي عن القوانين الرياضية مثل:
+                </p>
+                <ul>
+                    <li>نظرية فيثاغورس</li>
+                    <li>مساحة المثلث</li>
+                    <li>قوانين المثلثات (trigonometry)</li>
+                    <li>التفاضل والتكامل (calculus)</li>
+                    <li>وغيرها الكثير من القوانين الرياضية</li>
+                </ul>
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('student.ai_chat') }}" class="btn btn-success btn-lg">
+                        <i class="fas fa-robot me-2"></i>الذهاب إلى المساعد الذكي
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .formula-container {
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+    }
+    
+    .formula {
+        font-size: 1.2rem;
+    }
+</style>
+{% endblock %}

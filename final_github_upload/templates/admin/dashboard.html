@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}لوحة تحكم المشرف{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-right">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">لوحة تحكم المشرف - {{ current_user.full_name }}</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a href="{{ url_for('admin.upload_video') }}" class="btn btn-success btn-block">
+                                <i class="fa fa-upload"></i> رفع فيديو جديد
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{{ url_for('admin.create_post') }}" class="btn btn-info btn-block">
+                                <i class="fa fa-pencil"></i> إنشاء منشور جديد
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{{ url_for('admin.lecture_codes') }}" class="btn btn-warning btn-block">
+                                <i class="fa fa-key"></i> إدارة أكواد المحاضرات
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('admin.users_list') }}" class="btn btn-info btn-block">
+                                <i class="fas fa-users"></i> قائمة المستخدمين
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('admin.manage_tests') }}" class="btn btn-danger btn-block">
+                                <i class="fas fa-clipboard-list"></i> إدارة الاختبارات
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('admin.student_results') }}" class="btn btn-warning btn-block">
+                                <i class="fas fa-chart-bar"></i> نتائج الطلاب
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('admin.transfer_points') }}" class="btn btn-success btn-block">
+                                <i class="fas fa-exchange-alt"></i> تحويل النقاط
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- قائمة الفيديوهات -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0">الفيديوهات المرفوعة</h3>
+                </div>
+                <div class="card-body p-0">
+                    {% if videos %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>العنوان</th>
+                                    <th>تاريخ الرفع</th>
+                                    <th>المشاهدات</th>
+                                    <th>حالة الكود</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for video in videos %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ video.title }}</td>
+                                    <td>{{ video.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ video_stats[video.id]['views_count'] }} مشاهدة</td>
+                                    <td>
+                                        {% if video.requires_code %}
+                                            <span class="badge bg-dark">يتطلب كود</span>
+                                            {% if video_stats[video.id]['active_codes'] %}
+                                                <span class="badge bg-dark">{{ video_stats[video.id]['active_codes']|length }} أكواد نشطة</span>
+                                            {% else %}
+                                                <span class="badge bg-dark">لا توجد أكواد نشطة</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="badge bg-dark">متاح للجميع</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('student.view_video', video_id=video.id) }}" class="btn btn-sm btn-info">
+                                            <i class="fa fa-eye"></i> عرض
+                                        </a>
+                                        <a href="{{ url_for('admin.edit_video', video_id=video.id) }}" class="btn btn-sm btn-primary">
+                                            <i class="fa fa-edit"></i> تعديل
+                                        </a>
+                                        {% if video.requires_code %}
+                                            <a href="{{ url_for('admin.lecture_codes') }}" class="btn btn-sm btn-warning">
+                                                <i class="fa fa-key"></i> إدارة الأكواد
+                                            </a>
+                                            <form method="POST" action="{{ url_for('admin.create_lecture_code', video_id=video.id) }}" class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit" class="btn btn-sm btn-warning">
+                                                    <i class="fa fa-key"></i> توليد كود سريع
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                        <a href="{{ url_for('admin.delete_video', video_id=video.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من حذف هذا الفيديو؟');">
+                                            <i class="fa fa-trash"></i> حذف
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info m-3">لا يوجد فيديوهات مرفوعة بعد.</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- قائمة المنشورات -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">المنشورات</h3>
+                </div>
+                <div class="card-body p-0">
+                    {% if posts %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>العنوان</th>
+                                    <th>تاريخ النشر</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for post in posts %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ post.title }}</td>
+                                    <td>{{ post.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('student.view_post', post_id=post.id) }}" class="btn btn-sm btn-info">
+                                            <i class="fa fa-eye"></i> عرض
+                                        </a>
+                                        <a href="{{ url_for('admin.delete_post', post_id=post.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من حذف هذا المنشور؟');">
+                                            <i class="fa fa-trash"></i> حذف
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info m-3">لا يوجد منشورات بعد.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

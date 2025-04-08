@@ -1,0 +1,725 @@
+{% extends 'base.html' %}
+
+{% block title %}Algebra Formulas - Educational Platform{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-dark">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4><i class="fas fa-superscript me-2"></i>Algebra Formulas</h4>
+                <a href="{{ url_for('student.algebra_formulas') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-language me-1"></i>العربية
+                </a>
+            </div>
+            <div class="card-body">
+                <p class="lead">
+                    Comprehensive list of algebra formulas for secondary school mathematics, covering key concepts and rules.
+                </p>
+                <div class="d-flex justify-content-end">
+                    <a href="{{ url_for('student.advanced_calculator_en') }}" class="btn btn-primary">
+                        <i class="fas fa-calculator me-2"></i>Advanced Calculator
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header">
+                <h5>Page Contents</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="#basic-algebra" class="btn btn-outline-light btn-sm w-100">Basic Algebra</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#exponents" class="btn btn-outline-light btn-sm w-100">Exponents & Roots</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#polynomials" class="btn btn-outline-light btn-sm w-100">Polynomials</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#factoring" class="btn btn-outline-light btn-sm w-100">Factoring</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#equations" class="btn btn-outline-light btn-sm w-100">Equations</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#inequalities" class="btn btn-outline-light btn-sm w-100">Inequalities</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#functions" class="btn btn-outline-light btn-sm w-100">Functions</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#logarithms" class="btn btn-outline-light btn-sm w-100">Logarithms</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#complex" class="btn btn-outline-light btn-sm w-100">Complex Numbers</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#matrices" class="btn btn-outline-light btn-sm w-100">Matrices</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#sequences" class="btn btn-outline-light btn-sm w-100">Sequences</a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="#limits" class="btn btn-outline-light btn-sm w-100">Limits</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== Basic Algebra ====== -->
+<div class="row" id="basic-algebra">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-plus-minus me-2"></i>Basic Algebra Rules</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Addition and Subtraction Rules</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a + b = b + a</p>
+                                        </div>
+                                        <p>Commutative Property of Addition: The order of addition does not change the result</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b) + c = a + (b + c)</p>
+                                        </div>
+                                        <p>Associative Property of Addition: Terms can be grouped in any order</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a + 0 = a</p>
+                                        </div>
+                                        <p>Identity Element of Addition: Adding zero does not change the value</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a + (-a) = 0</p>
+                                        </div>
+                                        <p>Additive Inverse: The sum of any number and its additive inverse equals zero</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Multiplication and Division Rules</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a × b = b × a</p>
+                                        </div>
+                                        <p>Commutative Property of Multiplication: The order of multiplication does not change the result</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a × b) × c = a × (b × c)</p>
+                                        </div>
+                                        <p>Associative Property of Multiplication: Factors can be grouped in any order</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a × 1 = a</p>
+                                        </div>
+                                        <p>Identity Element of Multiplication: Multiplying by one does not change the value</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a × (1/a) = 1, where a ≠ 0</p>
+                                        </div>
+                                        <p>Multiplicative Inverse: The product of any non-zero number and its reciprocal equals one</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Distributive Property</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a(b + c) = ab + ac</p>
+                                        </div>
+                                        <p>Distributive Property of Multiplication over Addition: Multiplying a sum equals the sum of products</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a(b - c) = ab - ac</p>
+                                        </div>
+                                        <p>Distributive Property of Multiplication over Subtraction: Multiplying a difference equals the difference of products</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Fraction Rules</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">$\frac{a}{b} + \frac{c}{d} = \frac{ad + bc}{bd}$</p>
+                                        </div>
+                                        <p>Addition of Fractions</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">$\frac{a}{b} - \frac{c}{d} = \frac{ad - bc}{bd}$</p>
+                                        </div>
+                                        <p>Subtraction of Fractions</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">$\frac{a}{b} \times \frac{c}{d} = \frac{ac}{bd}$</p>
+                                        </div>
+                                        <p>Multiplication of Fractions</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">$\frac{a}{b} \div \frac{c}{d} = \frac{a}{b} \times \frac{d}{c} = \frac{ad}{bc}$</p>
+                                        </div>
+                                        <p>Division of Fractions</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== Exponents and Roots ====== -->
+<div class="row" id="exponents">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-superscript me-2"></i>Exponents and Roots</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Laws of Exponents</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^m × a^n = a^(m+n)</p>
+                                        </div>
+                                        <p>Product of Powers with Same Base: Add the exponents</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^m ÷ a^n = a^(m-n)</p>
+                                        </div>
+                                        <p>Quotient of Powers with Same Base: Subtract the exponents</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a^m)^n = a^(m×n)</p>
+                                        </div>
+                                        <p>Power of a Power: Multiply the exponents</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a×b)^n = a^n × b^n</p>
+                                        </div>
+                                        <p>Power of a Product: Distribute the exponent to each factor</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a/b)^n = a^n / b^n</p>
+                                        </div>
+                                        <p>Power of a Quotient: Distribute the exponent to numerator and denominator</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^0 = 1 (a ≠ 0)</p>
+                                        </div>
+                                        <p>Zero Exponent: Any non-zero number raised to the power of zero equals one</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^(-n) = 1/(a^n)</p>
+                                        </div>
+                                        <p>Negative Exponent: Reciprocal of the positive power</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Fractional Exponents and Roots</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^(1/n) = $\sqrt[n]{a}$</p>
+                                        </div>
+                                        <p>Reciprocal Exponent: The nth root</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^(m/n) = $(\sqrt[n]{a})^m = \sqrt[n]{a^m}$</p>
+                                        </div>
+                                        <p>General Fractional Exponent</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">$\sqrt{a \times b} = \sqrt{a} \times \sqrt{b}$</p>
+                                        </div>
+                                        <p>Root of a Product</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">$\sqrt{a / b} = \sqrt{a} / \sqrt{b}$</p>
+                                        </div>
+                                        <p>Root of a Quotient</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">$(\sqrt{a})^n = a^{n/2}$</p>
+                                        </div>
+                                        <p>Power of a Square Root</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">$\sqrt[3]{a \times b} = \sqrt[3]{a} \times \sqrt[3]{b}$</p>
+                                        </div>
+                                        <p>Cube Root Properties</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== Polynomials ====== -->
+<div class="row" id="polynomials">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-chart-line me-2"></i>Polynomials</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Square and Cube Formulas</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b)² = a² + 2ab + b²</p>
+                                        </div>
+                                        <p>Square of a Binomial (Sum)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a - b)² = a² - 2ab + b²</p>
+                                        </div>
+                                        <p>Square of a Binomial (Difference)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b)(a - b) = a² - b²</p>
+                                        </div>
+                                        <p>Product of Sum and Difference (Difference of Squares)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b)³ = a³ + 3a²b + 3ab² + b³</p>
+                                        </div>
+                                        <p>Cube of a Sum</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a - b)³ = a³ - 3a²b + 3ab² - b³</p>
+                                        </div>
+                                        <p>Cube of a Difference</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Additional Formulas</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a³ + b³ = (a + b)(a² - ab + b²)</p>
+                                        </div>
+                                        <p>Sum of Cubes</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a³ - b³ = (a - b)(a² + ab + b²)</p>
+                                        </div>
+                                        <p>Difference of Cubes</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b + c)² = a² + b² + c² + 2ab + 2ac + 2bc</p>
+                                        </div>
+                                        <p>Square of a Trinomial</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b)(c + d) = ac + ad + bc + bd</p>
+                                        </div>
+                                        <p>Product of Two Binomials</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">(a + b)(a² - ab + b²) = a³ + b³</p>
+                                        </div>
+                                        <p>Alternative Form for Sum of Cubes</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== Factoring ====== -->
+<div class="row" id="factoring">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-divide me-2"></i>Factoring</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Basic Factoring Rules</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a² - b² = (a + b)(a - b)</p>
+                                        </div>
+                                        <p>Difference of Squares</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a² + 2ab + b² = (a + b)²</p>
+                                        </div>
+                                        <p>Perfect Square Trinomial (Sum)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a² - 2ab + b² = (a - b)²</p>
+                                        </div>
+                                        <p>Perfect Square Trinomial (Difference)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a³ - b³ = (a - b)(a² + ab + b²)</p>
+                                        </div>
+                                        <p>Difference of Cubes</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a³ + b³ = (a + b)(a² - ab + b²)</p>
+                                        </div>
+                                        <p>Sum of Cubes</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Factoring Quadratic Polynomials</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">ax² + bx + c = a(x - r₁)(x - r₂)</p>
+                                        </div>
+                                        <p>General Form (r₁, r₂ are the roots of the equation)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">x² + bx + c = (x + p)(x + q), where p + q = b and p × q = c</p>
+                                        </div>
+                                        <p>Trial and Error Method (sum of coefficients = coefficient of x, product = constant)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">ax² + bx + c = a(x + b/2a)² + (c - b²/4a)</p>
+                                        </div>
+                                        <p>Completing the Square</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Factoring Polynomials</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">P(x) = a(x - r₁)(x - r₂)...(x - rₙ)</p>
+                                        </div>
+                                        <p>General Form (r₁, r₂, ... rₙ are the roots)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">P(r) = 0 ⟺ (x - r) is a factor of P(x)</p>
+                                        </div>
+                                        <p>Remainder Theorem: If P(r) = 0, then (x - r) is a factor of P(x)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">If P(x) = (x - r)Q(x) + R, then P(r) = R</p>
+                                        </div>
+                                        <p>General Remainder Theorem</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Rational Root Theorems</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">If P(x) = aₙxⁿ + ... + a₁x + a₀, and r is a root, then r divides a₀</p>
+                                        </div>
+                                        <p>Constant Term Theorem: Roots of P(x) are among the factors of the constant term a₀</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">If P(x) = aₙxⁿ + ... + a₁x + a₀, and r = p/q in lowest form, then p divides a₀ and q divides aₙ</p>
+                                        </div>
+                                        <p>Rational Roots Theorem</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== Equations ====== -->
+<div class="row" id="equations">
+    <div class="col-12 mb-4">
+        <div class="card bg-dark">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-equals me-2"></i>Equations</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Linear Equations</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">ax + b = 0</p>
+                                            <p class="mb-0">x = -b/a</p>
+                                        </div>
+                                        <p>General Form and Solution</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a₁x + b₁ = a₂x + b₂</p>
+                                            <p class="mb-0">x = (b₂ - b₁)/(a₁ - a₂)</p>
+                                        </div>
+                                        <p>Equation with Variable on Both Sides</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Quadratic Equations</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">ax² + bx + c = 0</p>
+                                            <p class="mb-0">x = (-b ± √(b² - 4ac)) / 2a</p>
+                                        </div>
+                                        <p>Standard Form and Quadratic Formula (General Formula)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Discriminant (Δ) = b² - 4ac</p>
+                                            <p class="mb-0">Δ > 0: two real roots</p>
+                                            <p class="mb-0">Δ = 0: one repeated real root</p>
+                                            <p class="mb-0">Δ < 0: two complex conjugate roots</p>
+                                        </div>
+                                        <p>Discriminant and Nature of Roots</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">For ax² + bx + c = 0 with roots r and s:</p>
+                                            <p class="mb-0">Sum of roots: r + s = -b/a</p>
+                                            <p class="mb-0">Product of roots: r × s = c/a</p>
+                                        </div>
+                                        <p>Relationship Between Roots and Coefficients</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Systems of Equations</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">For a system of two linear equations:</p>
+                                            <p class="mb-0">a₁x + b₁y = c₁</p>
+                                            <p class="mb-0">a₂x + b₂y = c₂</p>
+                                            <p class="mb-0">The solution is:</p>
+                                            <p class="mb-0">x = (c₁b₂ - c₂b₁)/(a₁b₂ - a₂b₁)</p>
+                                            <p class="mb-0">y = (a₁c₂ - a₂c₁)/(a₁b₂ - a₂b₁)</p>
+                                        </div>
+                                        <p>Solving a System of Two Linear Equations (Cramer's Rule)</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">Determinant (D) = a₁b₂ - a₂b₁</p>
+                                            <p class="mb-0">D ≠ 0: unique solution</p>
+                                            <p class="mb-0">D = 0: no solution or infinitely many solutions</p>
+                                        </div>
+                                        <p>Determinant and Type of Solution</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark h-100">
+                            <div class="card-header">Additional Equations</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">a^x = b</p>
+                                            <p class="mb-0">x = log_a(b)</p>
+                                        </div>
+                                        <p>Exponential Equations</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">log_a(x) = b</p>
+                                            <p class="mb-0">x = a^b</p>
+                                        </div>
+                                        <p>Logarithmic Equations</p>
+                                    </li>
+                                    <li class="list-group-item bg-dark">
+                                        <div class="formula-container bg-light text-dark p-2 rounded mb-2">
+                                            <p class="mb-0">|ax + b| = c</p>
+                                            <p class="mb-0">ax + b = c or ax + b = -c</p>
+                                        </div>
+                                        <p>Absolute Value Equations</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center mt-4 mb-5">
+    <a href="{{ url_for('student.dashboard_en') }}" class="btn btn-secondary me-2">
+        <i class="fas fa-home me-1"></i>Return to Dashboard
+    </a>
+    <a href="{{ url_for('student.advanced_calculator_en') }}" class="btn btn-success">
+        <i class="fas fa-calculator me-1"></i>Advanced Calculator
+    </a>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .formula-container {
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+    }
+    
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<!-- Include MathJax for rendering mathematical formulas -->
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+{% endblock %}

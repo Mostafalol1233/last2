@@ -1,0 +1,29 @@
+<div class="test-status mb-4">
+    <div class="card">
+        <div class="card-header {% if test.is_active %}bg-success{% else %}bg-warning{% endif %} text-white">
+            <h4 class="mb-0">حالة الاختبار: 
+                {% if test.is_active %}
+                    <span class="badge bg-light text-dark"><i class="fas fa-lock"></i> مفعل (الإجابات مخفية للطلاب)</span>
+                {% else %}
+                    <span class="badge bg-light text-dark"><i class="fas fa-unlock"></i> غير مفعل (الإجابات ظاهرة للطلاب)</span>
+                {% endif %}
+            </h4>
+        </div>
+        <div class="card-body">
+            <p>
+                {% if test.is_active %}
+                عندما يكون الاختبار مفعلاً، لا يمكن للطلاب مشاهدة الإجابات الصحيحة لأسئلتهم.
+                {% else %}
+                عندما يكون الاختبار غير مفعل، يمكن للطلاب مشاهدة الإجابات الصحيحة وتفاصيل أسئلتهم.
+                {% endif %}
+            </p>
+            <a href="{{ url_for('admin_tests.toggle_test_status', test_id=test.id) }}" class="btn {% if test.is_active %}btn-warning{% else %}btn-success{% endif %} btn-lg">
+                {% if test.is_active %}
+                    <i class="fas fa-unlock me-2"></i> إلغاء تفعيل الاختبار (إظهار الإجابات للطلاب)
+                {% else %}
+                    <i class="fas fa-lock me-2"></i> تفعيل الاختبار (إخفاء الإجابات من الطلاب)
+                {% endif %}
+            </a>
+        </div>
+    </div>
+</div>
