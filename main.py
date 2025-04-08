@@ -39,10 +39,10 @@ def internal_server_error(e):
 
 # تكوين قاعدة البيانات - استخدام SQLite المحلية مباشرة
 try:
-    # استخدام قاعدة بيانات SQLite المحلية
-    root_db_path = os.path.join(os.getcwd(), 'app.db')
-    db_path = root_db_path
-    logging.info(f"تم تعطيل قاعدة البيانات الخارجية - استخدام قاعدة البيانات المحلية: {root_db_path}")
+    # استخدام قاعدة بيانات SQLite من مجلد instance
+    instance_db_path = os.path.join(os.getcwd(), 'instance', 'app.db')
+    db_path = instance_db_path
+    logging.info(f"استخدام قاعدة البيانات من مجلد instance: {instance_db_path}")
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
 except Exception as e:
     logging.error(f"خطأ في إعداد رابط قاعدة البيانات: {str(e)}")
