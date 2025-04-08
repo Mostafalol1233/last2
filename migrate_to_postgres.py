@@ -11,13 +11,29 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # تعريف مسارات قواعد البيانات
 SQLITE_DB_PATH = os.path.join(os.getcwd(), 'instance', 'app.db')
 
-# تعريف بيانات اتصال PostgreSQL
-PG_HOST = os.environ.get('PGHOST', 'ep-wild-forest-a4zr1zo7-pooler.us-east-1.aws.neon.tech')
+# تعريف بيانات اتصال PostgreSQL - استخدام متغيرات البيئة فقط
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+# استخدام متغيرات البيئة للاتصال بـ PostgreSQL
+PG_HOST = os.environ.get('PGHOST')
 PG_PORT = os.environ.get('PGPORT', '5432')
-PG_DATABASE = os.environ.get('PGDATABASE', 'neondb')
-PG_USER = os.environ.get('PGUSER', 'neondb_owner')
-PG_PASSWORD = os.environ.get('PGPASSWORD', 'npg_WqBr4uDCbNL8')
-DATABASE_URL = os.environ.get('DATABASE_URL', f'postgresql://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_DATABASE}?sslmode=require')
+PG_DATABASE = os.environ.get('PGDATABASE')
+PG_USER = os.environ.get('PGUSER')
+PG_PASSWORD = os.environ.get('PGPASSWORD')
+
+# التأكد من توفر متغيرات الاتصال
+if not DATABASE_URL and (not PG_HOST or not PG_DATABASE or not PG_USER or not PG_PASSWORD):
+    logging.error("يجب توفير إما DATABASE_URL أو متغيرات PGHOST, PGDATABASE, PGUSER و PGPASSWORD في متغيرات البيئة")
+    sys.exit(1)
+    
+# بناء رابط الاتصال إذا لم يتم توفير DATABASE_URL
+if not DATABASE_URL:
+    DATABASE_URL = f'postgresql://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_DATABASE}'
+    # إضافة sslmode=require إذا كان الاتصال بقاعدة بيانات سحابية
+    if 'amazonaws.com' in PG_HOST or 'neon.tech' in PG_HOST:
+        DATABASE_URL += '?sslmode=require'
+
+logging.info(f"استخدام رابط قاعدة البيانات: {DATABASE_URL.replace(PG_PASSWORD, '********') if PG_PASSWORD else DATABASE_URL}")
 
 # التحقق من وجود قاعدة بيانات SQLite
 if not os.path.exists(SQLITE_DB_PATH):

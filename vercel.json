@@ -14,11 +14,6 @@
   ],
   "env": {
     "PYTHONUNBUFFERED": "1",
-    "DATABASE_URL": "postgresql://neondb_owner:npg_WqBr4uDCbNL8@ep-wild-forest-a4zr1zo7-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require",
-    "PGHOST": "ep-wild-forest-a4zr1zo7-pooler.us-east-1.aws.neon.tech",
-    "PGPORT": "5432",
-    "PGDATABASE": "neondb",
-    "PGUSER": "neondb_owner",
-    "PGPASSWORD": "npg_WqBr4uDCbNL8"
+    "VERCEL": "1"
   }
 }

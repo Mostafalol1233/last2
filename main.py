@@ -37,13 +37,33 @@ def internal_server_error(e):
     logging.error(f"500 Internal server error: {str(e)}")
     return render_template('500.html'), 500
 
-# تكوين قاعدة البيانات - استخدام SQLite المحلية مباشرة
+# تكوين قاعدة البيانات - استخدام SQLite محليًا والتبديل لـ PostgreSQL في بيئة Vercel
 try:
-    # استخدام قاعدة بيانات SQLite من مجلد instance لاسترجاع الفيديوهات والاختبارات
-    instance_db_path = os.path.join(os.getcwd(), 'instance', 'app.db')
-    db_path = instance_db_path
-    logging.info(f"استخدام قاعدة البيانات من مجلد instance: {instance_db_path}")
-    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+    # فحص ما إذا كنا في بيئة Vercel
+    is_vercel = os.environ.get("VERCEL") == "1"
+    
+    # في بيئة التطوير المحلية - استخدام قاعدة بيانات SQLite
+    if not is_vercel:
+        # استخدام قاعدة بيانات SQLite من مجلد instance محليًا
+        instance_db_path = os.path.join(os.getcwd(), 'instance', 'app.db')
+        db_path = instance_db_path
+        logging.info(f"استخدام قاعدة البيانات المحلية من مجلد instance: {instance_db_path}")
+        app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+    # في بيئة Vercel - استخدام PostgreSQL
+    else:
+        database_url = os.environ.get("DATABASE_URL")
+        if database_url:
+            logging.info(f"قيمة DATABASE_URL: {database_url}")
+            
+            # إصلاح رابط PostgreSQL إذا كان يبدأ بـ postgres:// بدلاً من postgresql://
+            if database_url.startswith("postgres://"):
+                database_url = database_url.replace("postgres://", "postgresql://", 1)
+            
+            app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+            logging.info("استخدام قاعدة بيانات PostgreSQL في بيئة Vercel")
+        else:
+            logging.error("نحن على Vercel ولكن لم يتم توفير رابط قاعدة بيانات")
+            raise Exception("DATABASE_URL غير موجود في بيئة Vercel")
 except Exception as e:
     logging.error(f"خطأ في إعداد رابط قاعدة البيانات: {str(e)}")
     # في حالة الخطأ، استخدام قاعدة بيانات SQLite كخيار احتياطي
