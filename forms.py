@@ -100,8 +100,11 @@ class RegistrationForm(FlaskForm):
         DataRequired(message='يجب تأكيد كلمة المرور'),
         EqualTo('password', message='كلمة المرور غير متطابقة')
     ])
-    role = SelectField('نوع الحساب', choices=[('student', 'طالب')], validators=[
+    role = SelectField('نوع الحساب', choices=[('student', 'طالب'), ('admin', 'مشرف')], validators=[
         DataRequired(message='يجب اختيار نوع الحساب')
+    ])
+    admin_secret = PasswordField('كلمة المرور السرية للمشرف', validators=[
+        Optional()
     ])
     submit = SubmitField('تسجيل')
 
@@ -111,6 +114,13 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
             raise ValidationError('هذا الاسم مستخدم بالفعل، يرجى اختيار اسم آخر')
+    
+    def validate_role(self, role):
+        # التحقق من صلاحية دور المشرف
+        if role.data == 'admin' and not self.admin_secret.data:
+            raise ValidationError('يجب إدخال كلمة المرور السرية لحسابات المشرفين')
+        elif role.data == 'admin' and self.admin_secret.data != 'Ahmedhelly123@#':
+            raise ValidationError('كلمة المرور السرية للمشرف غير صحيحة')
 
 class ForgotPasswordForm(FlaskForm):
     username = StringField('اسم المستخدم', validators=[

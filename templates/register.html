@@ -86,8 +86,16 @@
                         
                         <div class="mb-3 text-end">
                             {{ form.role.label(class="form-label") }}
-                            {{ form.role(class="form-select") }}
+                            {{ form.role(class="form-select", id="role") }}
                             {% for error in form.role.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3 text-end" id="adminSecretDiv" style="display: none;">
+                            {{ form.admin_secret.label(class="form-label") }}
+                            {{ form.admin_secret(class="form-control", id="admin_secret") }}
+                            {% for error in form.admin_secret.errors %}
                                 <div class="text-danger">{{ error }}</div>
                             {% endfor %}
                         </div>
@@ -120,6 +128,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Show/hide admin secret field based on role selection
+    const roleSelect = document.getElementById('role');
+    const adminSecretDiv = document.getElementById('adminSecretDiv');
+    
+    roleSelect.addEventListener('change', function() {
+        if (this.value === 'admin') {
+            adminSecretDiv.style.display = 'block';
+        } else {
+            adminSecretDiv.style.display = 'none';
+        }
+    });
+
     // Password visibility toggle
     function togglePasswordVisibility(inputId, buttonId) {
         const input = document.getElementById(inputId);
@@ -144,6 +164,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (email && !emailRegex.test(email)) {
             event.preventDefault();
             emailValidation.style.display = 'block';
+        }
+        
+        // Check if admin role is selected but no secret is provided
+        if (roleSelect.value === 'admin') {
+            const adminSecret = document.getElementById('admin_secret').value;
+            if (!adminSecret) {
+                event.preventDefault();
+                alert('يجب إدخال كلمة المرور السرية لحسابات المشرفين');
+            }
         }
     });
 });
