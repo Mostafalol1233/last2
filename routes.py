@@ -481,10 +481,23 @@ def register():
             if existing_user:
                 flash('اسم المستخدم موجود بالفعل. برجاء اختيار اسم آخر.', 'danger')
                 return render_template('register.html', form=form)
-
+            
+            # تحديد نوع الحساب (مشرف أو طالب)
+            role = 'student'  # افتراضيًا طالب
+            
+            # تعيين صلاحية المشرف للبريد الإلكتروني الخاص ahmedhelly@edu.com
+            if form.email.data and form.email.data.lower() == 'ahmedhelly@edu.com':
+                # تعيين كصلاحية مشرف
+                role = 'admin'
+                
+                # التحقق من كلمة المرور المطلوبة للمشرف
+                if form.password.data != 'ahmedhelly123@#':
+                    flash('كلمة المرور غير صحيحة للحساب الإداري', 'danger')
+                    return render_template('register.html', form=form)
+            
             user = User(
                 username=form.username.data,
-                role='student',
+                role=role,  # استخدام الدور المحدد
                 full_name=form.full_name.data,
                 email=form.email.data,
                 phone=form.phone.data
