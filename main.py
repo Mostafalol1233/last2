@@ -37,13 +37,26 @@ def internal_server_error(e):
     logging.error(f"500 Internal server error: {str(e)}")
     return render_template('500.html'), 500
 
-# تكوين قاعدة البيانات - استخدام SQLite المحلية مباشرة
+# تكوين قاعدة البيانات
 try:
-    # استخدام قاعدة بيانات SQLite من مجلد instance
-    instance_db_path = os.path.join(os.getcwd(), 'instance', 'app.db')
-    db_path = instance_db_path
-    logging.info(f"استخدام قاعدة البيانات من مجلد instance: {instance_db_path}")
-    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
+    database_url = os.environ.get("DATABASE_URL")
+    logging.info(f"قيمة DATABASE_URL: {database_url}")
+    
+    if database_url:
+        # استخدام قاعدة البيانات الخارجية (PostgreSQL)
+        logging.info("استخدام قاعدة بيانات خارجية من متغيرات البيئة DATABASE_URL")
+        
+        # إصلاح رابط PostgreSQL إذا كان يبدأ بـ postgres:// بدلاً من postgresql://
+        if database_url.startswith("postgres://"):
+            database_url = database_url.replace("postgres://", "postgresql://", 1)
+        
+        app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+    else:
+        # استخدام قاعدة بيانات SQLite من مجلد instance
+        instance_db_path = os.path.join(os.getcwd(), 'instance', 'app.db')
+        db_path = instance_db_path
+        logging.info(f"استخدام قاعدة البيانات من مجلد instance: {instance_db_path}")
+        app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
 except Exception as e:
     logging.error(f"خطأ في إعداد رابط قاعدة البيانات: {str(e)}")
     # في حالة الخطأ، استخدام قاعدة بيانات SQLite كخيار احتياطي
