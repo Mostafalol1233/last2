@@ -704,7 +704,7 @@ def delete_choice(choice_id):
 @admin_tests.route('/admin/tests/<int:test_id>/results')
 @login_required
 def admin_test_results(test_id):
-    """عرض نتائج الاختبار للمسؤول"""
+    """عرض نتائج الاختبار للمسؤول مع إمكانية تفعيل/إلغاء تفعيل الاختبار"""
     if not current_user.is_admin():
         flash('ليس لديك صلاحية للوصول إلى هذه الصفحة', 'danger')
         return redirect(url_for('home'))
@@ -743,6 +743,12 @@ def admin_test_results(test_id):
         answers = TestAnswer.query.filter_by(attempt_id=attempt.id).all()
         answers_by_question = {answer.question_id: answer for answer in answers}
         
+        # تسجيل معلومات للتصحيح
+        logging.info(f"المسؤول {current_user.username} يعرض نتائج الاختبار: {test.title}")
+        logging.info(f"معرف المحاولة: {attempt_id}, الطالب: {student.username}")
+        logging.info(f"حالة الاختبار: {'مفعل' if test.is_active else 'غير مفعل'}")
+        logging.info(f"عدد الأسئلة: {len(questions)}, عدد الإجابات: {len(answers)}")
+        
         return render_template(
             'admin/test_results.html',
             test=test,
@@ -750,7 +756,8 @@ def admin_test_results(test_id):
             student=student,
             questions=questions,
             answers=answers,
-            answers_by_question=answers_by_question
+            answers_by_question=answers_by_question,
+            show_toggle_controls=True  # إظهار أزرار التحكم في حالة الاختبار
         )
     else:
         # عرض قائمة المحاولات للاختبار
@@ -1151,7 +1158,7 @@ def take_test(attempt_id):
 @student_tests.route('/attempt/<int:attempt_id>/results')
 @login_required
 def test_results(attempt_id):
-    """عرض نتائج محاولة اختبار"""
+    """عرض نتائج محاولة اختبار للطالب"""
     if current_user.is_admin():
         flash('هذه الصفحة مخصصة للطلاب فقط.', 'warning')
         return redirect(url_for('admin.dashboard'))
@@ -1177,9 +1184,11 @@ def test_results(attempt_id):
     answers = TestAnswer.query.filter_by(attempt_id=attempt.id).all()
     answers_by_question = {answer.question_id: answer for answer in answers}
     
-    # مزيد من المعلومات للتصحيح في حالة عدم ظهور الإجابات
-    logging.info(f"عدد الأسئلة التي تم استرجاعها: {len(questions)}")
-    logging.info(f"عدد الإجابات التي تم استرجاعها: {len(answers)}")
+    # تسجيل المعلومات للتصحيح
+    logging.info(f"عرض نتائج الاختبار للطالب {current_user.username}")
+    logging.info(f"معرف المحاولة: {attempt_id}, نتيجة: {attempt.score}%, اجتياز: {attempt.passed}")
+    logging.info(f"حالة الاختبار: {'مفعل' if test.is_active else 'غير مفعل'}")
+    logging.info(f"عدد الأسئلة: {len(questions)}, عدد الإجابات: {len(answers)}")
     
     # التأكد من أن كل سؤال له خيارات مرتبطة به إذا كان من نوع متعدد الاختيارات
     for question in questions:
@@ -1213,6 +1222,8 @@ def test_results(attempt_id):
     if approved_retry_request:
         remaining_attempts += 1
     
+    # تمرير معلومات حالة الاختبار (مفعل أم لا) للقالب
+    # عندما يكون الاختبار غير مفعل، يمكن للطلاب رؤية الإجابات الصحيحة والخاطئة
     return render_template(
         'student/test_results.html',
         test=test,
@@ -1221,7 +1232,8 @@ def test_results(attempt_id):
         answers=answers,
         answers_by_question=answers_by_question,
         attempt_counts=attempt_counts,
-        remaining_attempts=remaining_attempts
+        remaining_attempts=remaining_attempts,
+        show_answers=not test.is_active  # إظهار الإجابات للطلاب فقط عندما يكون الاختبار غير مفعل
     )
 
 @student_tests.route('/history')

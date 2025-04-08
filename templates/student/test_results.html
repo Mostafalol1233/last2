@@ -151,13 +151,13 @@
                             </div>
                         </div>
 
-                        {% if not test.is_active %}
+                        {% if show_answers %}
                         <!-- عرض تفاصيل الأسئلة والإجابات في حالة عدم تفعيل الاختبار -->
                         <div class="mt-4">
                             <h4>تفاصيل الأسئلة والإجابات</h4>
                             {% for question in questions %}
                                 {% set answer = answers_by_question.get(question.id) %}
-                                <div class="card mb-3">
+                                <div class="card mb-3 shadow-sm">
                                     <div class="card-header d-flex justify-content-between {% if answer and answer.is_correct %}bg-success-subtle{% else %}bg-danger-subtle{% endif %}">
                                         <h5 class="mb-0">السؤال {{ loop.index }}</h5>
                                         <div>
@@ -170,12 +170,12 @@
                                     </div>
                                     <div class="card-body">
                                         <!-- نص السؤال -->
-                                        <p class="mb-3">{{ question.question_text }}</p>
+                                        <p class="mb-3 fw-bold">{{ question.question_text }}</p>
                                         
                                         <!-- صورة السؤال إن وجدت -->
                                         {% if question.image_path %}
                                             <div class="text-center mb-3">
-                                                <img src="{{ url_for('static', filename='uploads/' + question.image_path) }}" style="max-width: 100%; max-height: 300px;" alt="صورة السؤال">
+                                                <img src="{{ url_for('static', filename='uploads/' + question.image_path) }}" style="max-width: 100%; max-height: 300px;" alt="صورة السؤال" class="img-fluid rounded">
                                             </div>
                                         {% endif %}
                                         
@@ -188,10 +188,10 @@
                                                             <span>{{ choice.choice_text }}</span>
                                                             <div class="ms-auto">
                                                                 {% if choice.is_correct %}
-                                                                    <span class="badge bg-success ms-2">الإجابة الصحيحة</span>
+                                                                    <span class="badge bg-success ms-2"><i class="fas fa-check"></i> الإجابة الصحيحة</span>
                                                                 {% endif %}
                                                                 {% if answer and answer.selected_choice_id == choice.id %}
-                                                                    <span class="badge bg-primary">إجابتك</span>
+                                                                    <span class="badge bg-primary"><i class="fas fa-user"></i> إجابتك</span>
                                                                 {% endif %}
                                                             </div>
                                                         </div>
@@ -206,10 +206,10 @@
                                                             <span>{{ choice.choice_text }}</span>
                                                             <div class="ms-auto">
                                                                 {% if choice.is_correct %}
-                                                                    <span class="badge bg-success ms-2">الإجابة الصحيحة</span>
+                                                                    <span class="badge bg-success ms-2"><i class="fas fa-check"></i> الإجابة الصحيحة</span>
                                                                 {% endif %}
                                                                 {% if answer and answer.selected_choice_id == choice.id %}
-                                                                    <span class="badge bg-primary">إجابتك</span>
+                                                                    <span class="badge bg-primary"><i class="fas fa-user"></i> إجابتك</span>
                                                                 {% endif %}
                                                             </div>
                                                         </div>
@@ -219,14 +219,14 @@
                                         {% elif question.question_type == 'short_answer' %}
                                             <div class="mb-3">
                                                 <h6>إجابتك:</h6>
-                                                <div class="p-2 border rounded {% if answer and answer.is_correct %}bg-success-subtle{% else %}bg-danger-subtle{% endif %}">
+                                                <div class="p-3 border rounded {% if answer and answer.is_correct %}bg-success-subtle{% else %}bg-danger-subtle{% endif %}">
                                                     {{ answer.text_answer if answer and answer.text_answer else 'لم تقم بالإجابة' }}
                                                 </div>
                                             </div>
                                             
                                             <div class="mb-3">
                                                 <h6>الإجابة الصحيحة:</h6>
-                                                <div class="p-2 border rounded bg-success-subtle">
+                                                <div class="p-3 border rounded bg-success-subtle">
                                                     {% for choice in question.choices %}
                                                         {% if choice.is_correct %}
                                                             {{ choice.choice_text }}
@@ -241,8 +241,9 @@
                         </div>
                         {% else %}
                         <div class="alert alert-info mt-3">
-                            <i class="fas fa-info-circle"></i>
-                            لمزيد من التفاصيل حول الاختبار، يرجى التواصل مع المشرف. ستظهر تفاصيل الإجابات عند إيقاف تفعيل الاختبار.
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>لماذا لا يمكنني رؤية الإجابات الصحيحة؟</strong>
+                            <p class="mb-0 mt-2">لا يمكن عرض الإجابات التفصيلية حاليًا لأن الاختبار مازال مفعل. سيقوم المشرف بإلغاء تفعيل الاختبار عندما يريد السماح للطلاب بمشاهدة الإجابات الصحيحة وتفاصيل الأسئلة.</p>
                         </div>
                         {% endif %}
                     </div>
