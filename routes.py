@@ -1851,9 +1851,9 @@ def profile():
         return redirect(url_for('main.profile'))
         
     # جلب محاولات الاختبارات المكتملة للمستخدم
-    completed_attempts = TestAttempt.query.filter(
-        TestAttempt.user_id==current_user.id, 
-        TestAttempt.completed_at.isnot(None)
+    completed_attempts = TestAttempt.query.filter_by(
+        user_id=current_user.id, 
+        completed_at=not None
     ).order_by(TestAttempt.completed_at.desc()).all()
     
     # جلب تفاصيل الاختبارات المرتبطة بالمحاولات

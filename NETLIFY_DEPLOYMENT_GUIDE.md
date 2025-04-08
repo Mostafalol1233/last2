@@ -63,30 +63,11 @@ const handler = serverless(flask);
 module.exports = { handler };
 ```
 
-## Step 2: Set up a PostgreSQL Database with Neon
+## Step 2: Set up a Database
 
-Neon PostgreSQL is recommended for this application due to its scalability and generous free tier.
-
-1. **Create a Neon Account and Project**:
-   - Visit [Neon](https://neon.tech/) and sign up or log in
-   - Create a new project with a meaningful name (e.g., "educational-platform")
-   - After project creation, you will get a connection string in this format:
-     `postgresql://[username]:[password]@[endpoint]/[database]?sslmode=require`
-
-2. **Save the Connection Information**:
-   - Keep the database connection string secure
-   - You will need this for the Netlify environment variables setup
-   - The connection string includes all required credentials to connect to your database
-
-3. **Verify the Connection**:
-   - You can test the connection by running:
-     ```
-     psql "postgresql://[username]:[password]@[endpoint]/[database]?sslmode=require"
-     ```
-   - Or using our included test script:
-     ```
-     export DATABASE_URL="your_connection_string" && python test_neon_db.py
-     ```
+1. Create a PostgreSQL database with your preferred provider (e.g., Railway, Supabase, Neon)
+2. Get the database connection URL in the format:
+   `postgresql://username:password@host:port/database`
 
 ## Step 3: Deploy to Netlify
 
@@ -141,49 +122,32 @@ Neon PostgreSQL is recommended for this application due to its scalability and g
 
 After deployment, initialize your database using one of these methods:
 
-1. **Using the Provided Database Setup Script**:
-   
-   We've created a special script to set up the database schema without dealing with import issues:
+1. **Using Netlify Environment & CLI**:
    ```
-   # Download the script to your local machine
    netlify env:pull .env
    source .env
-   python setup_neon_db.py
+   python db_migrate.py create
    ```
 
-   This script will:
-   - Connect directly to your Neon PostgreSQL database
-   - Create all necessary tables with proper relationships
-   - Set up default admin and student users if none exist
-
-2. **Using Netlify Functions**:
-   
-   Create a new Netlify function in `netlify/functions/setup-db.js`:
-   ```javascript
-   const { execSync } = require('child_process');
-   
-   exports.handler = async function(event, context) {
-     try {
-       // Execute the database setup script
-       const result = execSync('python setup_neon_db.py').toString();
-       
-       return {
-         statusCode: 200,
-         body: JSON.stringify({ message: 'Database setup complete', details: result })
-       };
-     } catch (error) {
-       return {
-         statusCode: 500,
-         body: JSON.stringify({ message: 'Error setting up database', error: error.toString() })
-       };
-     }
-   };
+2. **Create a Database Setup Endpoint**:
+   Add a temporary endpoint to your Flask app that runs the database migrations:
+   ```
+   @app.route('/setup-database', methods=['GET'])
+   def setup_database():
+       try:
+           # Import your models
+           from models import db
+           # Create all tables
+           db.create_all()
+           return 'Database setup complete!', 200
+       except Exception as e:
+           return f'Error: {str(e)}', 500
    ```
    
-   Then visit:
-   `https://your-netlify-site.netlify.app/.netlify/functions/setup-db`
+   Visit this URL once after deployment:
+   `https://your-netlify-site.netlify.app/setup-database`
    
-   Remember to secure or remove this function after use.
+   Remember to remove this endpoint after use.
 
 ## Troubleshooting
 
@@ -191,10 +155,8 @@ After deployment, initialize your database using one of these methods:
 
 1. **Database Connection Errors**:
    - Check that your `DATABASE_URL` is correctly formatted
-   - For Neon PostgreSQL, ensure your connection string follows this format:
-     `postgresql://[username]:[password]@[endpoint]/[database]?sslmode=require`
-   - If using a free Neon tier, verify that the database is not in sleep mode (you may need to ping it first)
-   - You can use the included `test_neon_db.py` script to verify your connection works
+   - Ensure your database provider allows connections from Netlify IP addresses
+   - If using a free database tier, check for connection limitations
 
 2. **Function Timeout Issues**:
    - Netlify Functions have a default timeout of 10 seconds
