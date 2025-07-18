@@ -1,0 +1,37 @@
+{
+  "name": "game-cards-website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "lint": "next lint",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@remix-run/react": "latest",
+    "@supabase/supabase-js": "latest",
+    "@sveltejs/kit": "latest",
+    "@vercel/analytics": "latest",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "jsonwebtoken": "latest",
+    "lucide-react": "^0.454.0",
+    "next": "14.2.16",
+    "next-themes": "latest",
+    "react": "^18",
+    "react-dom": "^18",
+    "svelte": "latest",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss-animate": "^1.0.7",
+    "vue": "latest",
+    "vue-router": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "postcss": "^8.5",
+    "typescript": "^5"
+  }
+}
