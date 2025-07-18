@@ -66,7 +66,15 @@
 
   body {
     @apply bg-background text-foreground;
-    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%) !important;
+    /* خلفية الموقع مع الصورة المرجعة بشفافية أقل */
+    background: linear-gradient(
+        135deg,
+        rgba(15, 23, 42, 0.95) 0%,
+        rgba(30, 27, 75, 0.95) 25%,
+        rgba(88, 28, 135, 0.95) 50%,
+        rgba(30, 27, 75, 0.95) 75%,
+        rgba(15, 23, 42, 0.95) 100%
+      ), url("/images/gaming-hero.png") center / cover fixed !important;
     color: #ffffff !important;
     min-height: 100vh;
   }
@@ -149,6 +157,22 @@
 
   .text-pink-400 {
     color: #f472b6 !important;
+  }
+
+  .text-violet-100 {
+    color: #ede9fe !important;
+  }
+
+  .text-violet-300 {
+    color: #c4b5fd !important;
+  }
+
+  .text-violet-400 {
+    color: #a78bfa !important;
+  }
+
+  .text-pink-300 {
+    color: #f9a8d4 !important;
   }
 }
 
@@ -341,4 +365,13 @@ html {
 
 .backdrop-blur-lg {
   backdrop-filter: blur(16px);
+}
+
+/* Enhanced text readability */
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.text-shadow-lg {
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
 }
